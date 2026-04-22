@@ -1,4 +1,3 @@
 spring:
   datasource:
-    username: root
-    password: 'sua_senha_aqui'
+    password: "sua_senha_aqui"
