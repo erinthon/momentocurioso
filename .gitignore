@@ -9,6 +9,9 @@
 *.swp
 *.swo
 
+# Local config (credentials)
+**/application-local.yml
+
 # Java / Maven
 backend/target/
 backend/.mvn/wrapper/maven-wrapper.jar
