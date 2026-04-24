@@ -1,15 +1,19 @@
 package com.momentocurioso.service.impl;
 
 import com.momentocurioso.dto.AiGeneratedContent;
+import com.momentocurioso.dto.response.PostResponse;
+import com.momentocurioso.dto.response.PostSummaryResponse;
 import com.momentocurioso.entity.Post;
 import com.momentocurioso.entity.PostStatus;
 import com.momentocurioso.entity.Topic;
 import com.momentocurioso.repository.PostRepository;
 import com.momentocurioso.service.PostService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.text.Normalizer;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -37,6 +41,22 @@ public class PostServiceImpl implements PostService {
         }
 
         return postRepository.save(post);
+    }
+
+    @Override
+    public List<PostSummaryResponse> listPublished(String topicSlug) {
+        List<Post> posts = topicSlug != null && !topicSlug.isBlank()
+                ? postRepository.findByTopicSlugAndStatusOrderByCreatedAtDesc(topicSlug, PostStatus.PUBLISHED)
+                : postRepository.findAllByStatusOrderByCreatedAtDesc(PostStatus.PUBLISHED);
+        return posts.stream().map(PostSummaryResponse::from).toList();
+    }
+
+    @Override
+    public PostResponse getPublishedBySlug(String slug) {
+        Post post = postRepository.findBySlug(slug)
+                .filter(p -> p.getStatus() == PostStatus.PUBLISHED)
+                .orElseThrow(() -> new EntityNotFoundException("Post not found: " + slug));
+        return PostResponse.from(post);
     }
 
     private String generateUniqueSlug(String title) {
