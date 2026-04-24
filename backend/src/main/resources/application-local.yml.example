@@ -1,3 +1,6 @@
 spring:
   datasource:
     password: "sua_senha_aqui"
+
+claude:
+  api-key: "sua_chave_claude_aqui"

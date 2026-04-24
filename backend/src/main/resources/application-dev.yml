@@ -24,3 +24,7 @@ app:
   jwt:
     secret: ${JWT_SECRET:dev-secret-key-change-in-production-must-be-long-enough}
     expiration-ms: 86400000
+
+claude:
+  api-key: ${CLAUDE_API_KEY}
+  model: claude-sonnet-4-6
