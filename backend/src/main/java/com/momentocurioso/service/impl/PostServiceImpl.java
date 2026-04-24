@@ -59,6 +59,31 @@ public class PostServiceImpl implements PostService {
         return PostResponse.from(post);
     }
 
+    @Override
+    public List<PostSummaryResponse> listAll() {
+        return postRepository.findAll().stream()
+                .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
+                .map(PostSummaryResponse::from)
+                .toList();
+    }
+
+    @Override
+    public PostResponse approve(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Post not found: " + id));
+        post.setStatus(PostStatus.PUBLISHED);
+        post.setPublishedAt(LocalDateTime.now());
+        return PostResponse.from(postRepository.save(post));
+    }
+
+    @Override
+    public PostResponse reject(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Post not found: " + id));
+        post.setStatus(PostStatus.REJECTED);
+        return PostResponse.from(postRepository.save(post));
+    }
+
     private String generateUniqueSlug(String title) {
         String base = Normalizer.normalize(title, Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")

@@ -15,4 +15,10 @@ public interface PostService {
     List<PostSummaryResponse> listPublished(String topicSlug);
 
     PostResponse getPublishedBySlug(String slug);
+
+    List<PostSummaryResponse> listAll();
+
+    PostResponse approve(Long id);
+
+    PostResponse reject(Long id);
 }

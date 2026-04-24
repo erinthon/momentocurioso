@@ -1,5 +1,6 @@
 package com.momentocurioso.service.impl;
 
+import com.momentocurioso.dto.response.JobStatusResponse;
 import com.momentocurioso.entity.ContentGenerationJob;
 import com.momentocurioso.entity.JobStatus;
 import com.momentocurioso.entity.Post;
@@ -10,6 +11,7 @@ import com.momentocurioso.service.ContentGenerationJobService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class ContentGenerationJobServiceImpl implements ContentGenerationJobService {
@@ -50,5 +52,12 @@ public class ContentGenerationJobServiceImpl implements ContentGenerationJobServ
         job.setFinishedAt(LocalDateTime.now());
         job.setErrorMessage(errorMessage);
         return jobRepository.save(job);
+    }
+
+    @Override
+    public List<JobStatusResponse> listAll() {
+        return jobRepository.findAllByOrderByStartedAtDesc().stream()
+                .map(JobStatusResponse::from)
+                .toList();
     }
 }
