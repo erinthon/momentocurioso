@@ -26,6 +26,9 @@ public class AiWriterServiceImpl implements AiWriterService {
     @Value("${claude.model}")
     private String model;
 
+    @Value("${claude.api-key:}")
+    private String apiKey;
+
     public AiWriterServiceImpl(RestClient claudeRestClient, ObjectMapper objectMapper) {
         this.claudeRestClient = claudeRestClient;
         this.objectMapper = objectMapper;
@@ -33,6 +36,10 @@ public class AiWriterServiceImpl implements AiWriterService {
 
     @Override
     public AiGeneratedContent generate(Topic topic, List<ScrapedArticle> articles) {
+        if (apiKey == null || apiKey.isBlank()) {
+            return mockContent(topic);
+        }
+
         String prompt = buildPrompt(topic, articles);
 
         Map<String, Object> requestBody = Map.of(
@@ -90,6 +97,17 @@ public class AiWriterServiceImpl implements AiWriterService {
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse AI-generated content: " + e.getMessage(), e);
         }
+    }
+
+    private AiGeneratedContent mockContent(Topic topic) {
+        return new AiGeneratedContent(
+                "[MOCK] Post sobre " + topic.getName(),
+                "Este é um resumo gerado localmente para desenvolvimento. Configure CLAUDE_API_KEY para conteúdo real.",
+                "<p>Este é um post de exemplo gerado em modo mock (sem CLAUDE_API_KEY configurada).</p>"
+                        + "<h2>Por que estou vendo isso?</h2>"
+                        + "<p>A variável de ambiente <code>CLAUDE_API_KEY</code> não está definida. "
+                        + "Adicione sua chave no <code>application-local.yml</code> para ativar a geração real.</p>"
+        );
     }
 
     private String truncate(String text, int maxChars) {
