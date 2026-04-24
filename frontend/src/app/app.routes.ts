@@ -4,12 +4,16 @@ import { authGuard } from './core/guards/auth.guard';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'blog/posts',
     pathMatch: 'full'
   },
   {
     path: 'auth',
     loadChildren: () => import('./features/auth/auth.routes').then(m => m.AUTH_ROUTES)
+  },
+  {
+    path: 'blog',
+    loadChildren: () => import('./features/blog/blog.routes').then(m => m.BLOG_ROUTES)
   },
   {
     path: 'home',
@@ -18,6 +22,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'home'
+    redirectTo: 'blog/posts'
   }
 ];
