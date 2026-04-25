@@ -9,6 +9,8 @@ import com.momentocurioso.entity.Topic;
 import com.momentocurioso.repository.PostRepository;
 import com.momentocurioso.service.PostService;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.text.Normalizer;
@@ -25,6 +27,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @CacheEvict(value = "posts", allEntries = true)
     public Post saveDraft(Topic topic, AiGeneratedContent content) {
         Post post = new Post();
         post.setTopic(topic);
@@ -44,6 +47,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Cacheable(value = "posts", key = "'list:' + #topicSlug")
     public List<PostSummaryResponse> listPublished(String topicSlug) {
         List<Post> posts = topicSlug != null && !topicSlug.isBlank()
                 ? postRepository.findByTopicSlugAndStatusOrderByCreatedAtDesc(topicSlug, PostStatus.PUBLISHED)
@@ -52,6 +56,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Cacheable(value = "posts", key = "'slug:' + #slug")
     public PostResponse getPublishedBySlug(String slug) {
         Post post = postRepository.findBySlug(slug)
                 .filter(p -> p.getStatus() == PostStatus.PUBLISHED)
@@ -68,6 +73,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @CacheEvict(value = "posts", allEntries = true)
     public PostResponse approve(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Post not found: " + id));
@@ -77,6 +83,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @CacheEvict(value = "posts", allEntries = true)
     public PostResponse reject(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Post not found: " + id));

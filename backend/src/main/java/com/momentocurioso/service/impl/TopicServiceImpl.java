@@ -5,6 +5,8 @@ import com.momentocurioso.dto.response.TopicResponse;
 import com.momentocurioso.entity.Topic;
 import com.momentocurioso.repository.TopicRepository;
 import com.momentocurioso.service.TopicService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +21,7 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
+    @CacheEvict(value = "topics", allEntries = true)
     public TopicResponse create(CreateTopicRequest request) {
         if (topicRepository.existsBySlug(request.slug())) {
             throw new IllegalArgumentException("Slug already in use: " + request.slug());
@@ -32,6 +35,7 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
+    @Cacheable("topics")
     public List<TopicResponse> listActive() {
         return topicRepository.findAllByActiveTrue()
                 .stream()
