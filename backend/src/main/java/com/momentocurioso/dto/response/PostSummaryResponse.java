@@ -1,6 +1,7 @@
 package com.momentocurioso.dto.response;
 
 import com.momentocurioso.entity.Post;
+import com.momentocurioso.entity.PostStatus;
 
 import java.time.LocalDateTime;
 
@@ -10,6 +11,8 @@ public record PostSummaryResponse(
         String slug,
         String summary,
         String topicSlug,
+        PostStatus status,
+        LocalDateTime createdAt,
         LocalDateTime publishedAt
 ) {
     public static PostSummaryResponse from(Post post) {
@@ -19,6 +22,8 @@ public record PostSummaryResponse(
                 post.getSlug(),
                 post.getSummary(),
                 post.getTopic().getSlug(),
+                post.getStatus(),
+                post.getCreatedAt(),
                 post.getPublishedAt()
         );
     }
