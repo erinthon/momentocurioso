@@ -328,7 +328,7 @@ interface Topic {
           <span class="wordmark-tagline">Mate a sua curiosidade</span>
         </div>
       </div>
-      <a class="nav-link" routerLink="/home">Admin</a>
+      <a class="nav-link" routerLink="/admin/topics">Admin</a>
     </nav>
 
     <header class="hero">

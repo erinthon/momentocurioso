@@ -357,7 +357,7 @@ interface PostDetail {
           <span class="wordmark-tagline">Mate a sua curiosidade</span>
         </div>
       </a>
-      <a class="nav-link" routerLink="/home">Admin</a>
+      <a class="nav-link" routerLink="/admin/topics">Admin</a>
     </nav>
 
     <div *ngIf="loading" class="state-loading">
