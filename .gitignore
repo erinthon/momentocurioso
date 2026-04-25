@@ -33,3 +33,6 @@ Thumbs.db
 # Logs
 *.log
 logs/
+
+# Brand guide (local reference only)
+brand-guide/
