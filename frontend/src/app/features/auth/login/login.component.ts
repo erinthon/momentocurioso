@@ -47,7 +47,7 @@ export class LoginComponent {
     this.error = '';
     const { email, password } = this.form.value;
     this.authService.login(email!, password!).subscribe({
-      next: () => this.router.navigate(['/home']),
+      next: () => this.router.navigate(['/admin/topics']),
       error: () => {
         this.error = 'Email ou senha inválidos';
         this.loading = false;
