@@ -11,5 +11,10 @@ export const ADMIN_ROUTES: Routes = [
     loadComponent: () =>
       import('./posts/posts.component').then(m => m.AdminPostsComponent)
   },
+  {
+    path: 'jobs',
+    loadComponent: () =>
+      import('./jobs/jobs.component').then(m => m.AdminJobsComponent)
+  },
   { path: '', redirectTo: 'topics', pathMatch: 'full' }
 ];
