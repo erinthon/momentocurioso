@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="14 10 80 80">
+  <style>
+    .s { stroke: #0a7c38; fill: none; }
+    .f { fill: #0a7c38; }
+    @media (prefers-color-scheme: dark) {
+      .s { stroke: #22c55e; }
+      .f { fill: #22c55e; }
+    }
+  </style>
+  <circle class="s" cx="54" cy="50" r="36" stroke-width="5.5"/>
+  <ellipse class="f" cx="44" cy="40" rx="10" ry="13" transform="rotate(-15 44 40)"/>
+  <ellipse class="f" cx="62" cy="37" rx="8" ry="10" transform="rotate(10 62 37)"/>
+  <ellipse class="f" cx="35" cy="56" rx="7" ry="9" transform="rotate(-5 35 56)"/>
+  <ellipse class="f" cx="64" cy="55" rx="6" ry="7" transform="rotate(5 64 55)"/>
+</svg>
