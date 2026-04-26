@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
         user.setEmail(request.email());
         user.setPassword(passwordEncoder.encode(request.password()));
         userRepository.save(user);
-        return new AuthResponse(jwtUtil.generateToken(user.getEmail()));
+        return new AuthResponse(jwtUtil.generateToken(user.getEmail(), user.getRole().name()), user.getRole().name());
     }
 
     @Override
@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
             throw new BadCredentialsException("Invalid credentials");
         }
-        return new AuthResponse(jwtUtil.generateToken(user.getEmail()));
+        return new AuthResponse(jwtUtil.generateToken(user.getEmail(), user.getRole().name()), user.getRole().name());
     }
 
     @Override
