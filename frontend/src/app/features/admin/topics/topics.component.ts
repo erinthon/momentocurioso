@@ -1,9 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink, Router } from '@angular/router';
 import { ApiService } from '../../../core/services/api.service';
-import { AuthService } from '../../../core/services/auth.service';
+import { AdminNavbarComponent } from '../../../shared/admin-navbar/admin-navbar.component';
 
 interface Topic {
   id: number;
@@ -25,38 +24,9 @@ interface Source {
 @Component({
   selector: 'app-admin-topics',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, AdminNavbarComponent],
   styles: [`
-    :host { display: block; min-height: 100vh; background: var(--ink); }
-
-    .navbar {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(11,11,18,.94);
-      backdrop-filter: blur(18px);
-      border-bottom: 1px solid var(--border);
-      padding: 0 2rem; height: 64px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-    .wordmark { display: flex; flex-direction: column; line-height: 1; }
-    .wordmark-momento { font-family: var(--font-display); font-weight: 400; font-size: 9px; letter-spacing: .18em; color: var(--bright); text-transform: uppercase; }
-    .wordmark-curioso { font-family: var(--font-display); font-weight: 800; font-size: 18px; color: var(--gold); letter-spacing: -.5px; line-height: 1.1; }
-    .wordmark-tagline { font-family: var(--font-mono); font-size: 7px; color: var(--mid); letter-spacing: .14em; margin-top: 1px; }
-    .nav-right { display: flex; align-items: center; gap: 24px; }
-    .nav-link {
-      font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em;
-      color: var(--mid); text-transform: uppercase; text-decoration: none;
-      transition: color var(--transition-fast); padding-bottom: 2px;
-      border-bottom: 2px solid transparent;
-      &:hover { color: var(--bright); }
-      &.active { color: var(--gold); border-bottom-color: var(--gold); }
-    }
-    .nav-logout {
-      font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em;
-      color: var(--dim); text-transform: uppercase; background: none; border: none;
-      cursor: pointer; transition: color var(--transition-fast);
-      &:hover { color: var(--coral); }
-    }
+    :host { display: block; min-height: 100vh; background: var(--bg); }
 
     .admin-header {
       padding: 40px 2rem 32px;
@@ -237,27 +207,7 @@ interface Source {
     @keyframes pulse { 0%,100%{opacity:1;width:34px}50%{opacity:.3;width:60px} }
   `],
   template: `
-    <nav class="navbar">
-      <a class="logo" routerLink="/blog/posts">
-        <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-          <circle cx="15" cy="15" r="10" stroke="#f5c518" stroke-width="2.2"/>
-          <line x1="22.5" y1="22.5" x2="32" y2="32" stroke="#f5c518" stroke-width="2.2" stroke-linecap="round"/>
-          <text x="11.5" y="20" font-family="Syne" font-weight="800" font-size="12" fill="#f5c518">?</text>
-        </svg>
-        <div class="wordmark">
-          <span class="wordmark-momento">Momento</span>
-          <span class="wordmark-curioso">CURIOSO</span>
-          <span class="wordmark-tagline">Admin</span>
-        </div>
-      </a>
-      <div class="nav-right">
-        <a class="nav-link active" routerLink="/admin/topics">Tópicos</a>
-        <a class="nav-link" routerLink="/admin/posts">Posts</a>
-        <a class="nav-link" routerLink="/admin/jobs">Jobs</a>
-        <a class="nav-link" routerLink="/admin/trigger">Trigger</a>
-        <button class="nav-logout" (click)="logout()">Sair</button>
-      </div>
-    </nav>
+    <app-admin-navbar />
 
     <div class="admin-header">
       <p class="admin-label">Admin · Gerenciamento</p>
@@ -410,8 +360,6 @@ interface Source {
 })
 export class AdminTopicsComponent implements OnInit {
   private api = inject(ApiService);
-  private auth = inject(AuthService);
-  private router = inject(Router);
 
   topics: Topic[] = [];
   selectedTopic: Topic | null = null;
@@ -519,11 +467,6 @@ export class AdminTopicsComponent implements OnInit {
         this.sources = this.sources.filter(s => s.id !== id);
       }
     });
-  }
-
-  logout(): void {
-    this.auth.logout();
-    this.router.navigate(['/auth/login']);
   }
 
   private loadTopics(): void {

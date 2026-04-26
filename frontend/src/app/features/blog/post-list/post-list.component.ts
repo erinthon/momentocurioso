@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { ApiService } from '../../../core/services/api.service';
+import { BlogNavbarComponent } from '../../../shared/blog-navbar/blog-navbar.component';
 
 interface PostSummary {
   id: number;
@@ -23,68 +24,8 @@ interface Topic {
 @Component({
   selector: 'app-post-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, BlogNavbarComponent],
   styles: [`
-    .navbar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(11,11,18,.88);
-      backdrop-filter: blur(18px);
-      border-bottom: 1px solid var(--border);
-      padding: 0 2rem;
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-    }
-    .logo-symbol {
-      flex-shrink: 0;
-    }
-    .wordmark {
-      display: flex;
-      flex-direction: column;
-      line-height: 1;
-    }
-    .wordmark-momento {
-      font-family: var(--font-display);
-      font-weight: 400;
-      font-size: 9px;
-      letter-spacing: 0.18em;
-      color: var(--bright);
-      text-transform: uppercase;
-    }
-    .wordmark-curioso {
-      font-family: var(--font-display);
-      font-weight: 800;
-      font-size: 18px;
-      color: var(--gold);
-      letter-spacing: -0.5px;
-      line-height: 1.1;
-    }
-    .wordmark-tagline {
-      font-family: var(--font-mono);
-      font-size: 7px;
-      color: var(--mid);
-      letter-spacing: 0.14em;
-      margin-top: 1px;
-    }
-    .nav-link {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      letter-spacing: 0.06em;
-      color: var(--mid);
-      transition: color var(--transition-fast);
-      text-transform: uppercase;
-    }
-    .nav-link:hover { color: var(--gold); }
-
     .hero {
       position: relative;
       padding: 72px 2rem 56px;
@@ -315,21 +256,7 @@ interface Topic {
     }
   `],
   template: `
-    <nav class="navbar">
-      <div class="logo" routerLink="/blog/posts">
-        <svg class="logo-symbol" width="36" height="36" viewBox="0 0 36 36" fill="none">
-          <circle cx="15" cy="15" r="10" stroke="#f5c518" stroke-width="2.2"/>
-          <line x1="22.5" y1="22.5" x2="32" y2="32" stroke="#f5c518" stroke-width="2.2" stroke-linecap="round"/>
-          <text x="11.5" y="20" font-family="Syne" font-weight="800" font-size="12" fill="#f5c518">?</text>
-        </svg>
-        <div class="wordmark">
-          <span class="wordmark-momento">Momento</span>
-          <span class="wordmark-curioso">CURIOSO</span>
-          <span class="wordmark-tagline">Mate a sua curiosidade</span>
-        </div>
-      </div>
-      <a class="nav-link" routerLink="/admin/topics">Admin</a>
-    </nav>
+    <app-blog-navbar />
 
     <header class="hero">
       <div class="hero-noise"></div>
