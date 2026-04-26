@@ -46,7 +46,7 @@ interface Topic {
     }
     .hero-inner {
       position: relative;
-      max-width: 680px;
+      max-width: 860px;
     }
     .hero-eyebrow {
       display: flex;
@@ -68,6 +68,12 @@ interface Topic {
       text-transform: uppercase;
       color: var(--text-3);
     }
+    .hero-lockup {
+      display: flex;
+      align-items: flex-end;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
     .hero-title {
       font-family: var(--fd);
       font-weight: 800;
@@ -75,11 +81,16 @@ interface Topic {
       color: var(--text);
       letter-spacing: -2.5px;
       line-height: 1.05;
-      margin-bottom: 20px;
+      margin: 0;
     }
     .hero-title em {
       font-style: normal;
       color: var(--green);
+    }
+    .hero-globe {
+      flex-shrink: 0;
+      pointer-events: none;
+      margin-bottom: 4px;
     }
     .hero-sub {
       font-family: var(--fb);
@@ -87,6 +98,10 @@ interface Topic {
       color: var(--text-3);
       line-height: 1.65;
       max-width: 520px;
+    }
+    @media (max-width: 600px) {
+      .hero-lockup { gap: 12px; }
+      .hero-globe svg { width: 72px; height: 72px; }
     }
 
     /* ── Filter bar ── */
@@ -336,9 +351,22 @@ interface Topic {
           <span class="hero-eyebrow-line"></span>
           <span class="hero-eyebrow-text">Blog · IA Editorial</span>
         </div>
-        <h1 class="hero-title">
-          Mate a sua<br/><em>curiosidade.</em>
-        </h1>
+        <div class="hero-lockup">
+          <h1 class="hero-title">
+            Mate a sua<br/><em>curiosidade.</em>
+          </h1>
+          <div class="hero-globe">
+            <svg width="110" height="110" viewBox="0 0 120 120" fill="none">
+              <circle cx="54" cy="50" r="36" stroke="var(--green)" stroke-width="5.5"/>
+              <ellipse cx="44" cy="40" rx="10" ry="13" fill="var(--green)" transform="rotate(-15 44 40)"/>
+              <ellipse cx="62" cy="37" rx="8" ry="10" fill="var(--green)" transform="rotate(10 62 37)"/>
+              <ellipse cx="35" cy="56" rx="7" ry="9" fill="var(--green)" transform="rotate(-5 35 56)"/>
+              <ellipse cx="64" cy="55" rx="6" ry="7" fill="var(--green)" transform="rotate(5 64 55)"/>
+              <line x1="54" y1="86" x2="54" y2="103" stroke="var(--green)" stroke-width="5.5" stroke-linecap="round"/>
+              <line x1="38" y1="103" x2="70" y2="103" stroke="var(--green)" stroke-width="5.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
         <p class="hero-sub">
           Conteúdo gerado por inteligência artificial sobre o que há de mais fascinante no mundo.
         </p>
