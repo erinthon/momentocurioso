@@ -64,7 +64,6 @@ import { ThemeService } from '../../core/services/theme.service';
         </div>
       </a>
       <div class="nav-right">
-        <a class="nav-link" routerLink="/admin/topics">Admin</a>
         <button class="theme-toggle" (click)="theme.toggle()">
           {{ theme.isDark() ? '☀ Claro' : '☾ Escuro' }}
         </button>
