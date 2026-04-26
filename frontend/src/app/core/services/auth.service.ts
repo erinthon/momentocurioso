@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { ApiService } from './api.service';
 
-interface AuthResponse {
+export interface AuthResponse {
   token: string;
+  role: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -28,5 +29,20 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     return !!localStorage.getItem('token');
+  }
+
+  getRole(): string {
+    const token = localStorage.getItem('token');
+    if (!token) return '';
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.role ?? '';
+    } catch {
+      return '';
+    }
+  }
+
+  isAdmin(): boolean {
+    return this.getRole() === 'ADMIN';
   }
 }
