@@ -25,53 +25,62 @@ interface AdminPost {
     :host { display: block; min-height: 100vh; background: var(--bg); }
 
     .admin-header {
-      padding: 40px 2rem 32px; border-bottom: 1px solid var(--border);
+      padding: 32px 2rem 24px;
+      background: var(--bg-1);
+      border-bottom: 1px solid var(--border);
       display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px;
     }
-    .header-left {}
-    .admin-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: .2em; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
-    .admin-title { font-family: var(--font-display); font-weight: 800; font-size: 36px; color: var(--bright); letter-spacing: -1.5px; }
-
-    .filter-tabs {
-      display: flex; gap: 0; border: 1px solid var(--border);
+    .header-eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .eyebrow-line { width: 24px; height: 2px; background: var(--green); flex-shrink: 0; }
+    .eyebrow-text {
+      font-family: var(--fu); font-size: 10px; font-weight: 600;
+      letter-spacing: .18em; text-transform: uppercase; color: var(--text-3);
     }
+    .admin-title {
+      font-family: var(--fd); font-weight: 800; font-size: 32px;
+      color: var(--text); letter-spacing: -1.2px;
+    }
+
+    .filter-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
     .tab-btn {
-      font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em;
-      text-transform: uppercase; background: none; color: var(--dim);
-      border: none; border-right: 1px solid var(--border);
-      padding: 8px 16px; cursor: pointer;
-      transition: background var(--transition-fast), color var(--transition-fast);
-      &:last-child { border-right: none; }
-      &:hover { color: var(--bright); background: var(--ink-2); }
-      &.active { color: var(--gold); background: rgba(245,197,24,.08); }
+      font-family: var(--fu); font-size: 12px; font-weight: 600; letter-spacing: .04em;
+      color: var(--text-3); background: var(--bg-1); border: 1px solid var(--border);
+      border-radius: 40px; padding: 7px 16px; cursor: pointer; transition: all var(--t);
+      white-space: nowrap;
+      &:hover { background: var(--green-pale); color: var(--green); border-color: var(--green); }
+      &.active { background: var(--green); color: #fff; border-color: var(--green); }
     }
     .tab-count {
-      font-family: var(--font-mono); font-size: 9px; color: var(--dim);
-      background: var(--ink-2); padding: 1px 5px; border-radius: 2px;
-      margin-left: 4px;
+      font-family: var(--fu); font-size: 10px; font-weight: 500;
+      opacity: .7; margin-left: 4px;
     }
-    .tab-btn.active .tab-count { color: var(--gold); background: rgba(245,197,24,.12); }
 
-    .content { padding: 32px 2rem 80px; max-width: 1200px; margin: 0 auto; }
+    .content { padding: 28px 2rem 80px; max-width: 1200px; margin: 0 auto; }
 
     .results-bar {
-      display: flex; align-items: center; gap: 16px; margin-bottom: 24px;
+      display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
     }
-    .sep-gold { width: 34px; height: 2px; background: var(--gold); display: block; flex-shrink: 0; }
-    .results-label { font-family: var(--font-mono); font-size: 10px; color: var(--mid); letter-spacing: .12em; text-transform: uppercase; }
+    .results-label {
+      font-family: var(--fu); font-size: 11px; font-weight: 600;
+      color: var(--text-3); letter-spacing: .1em; text-transform: uppercase;
+    }
 
+    .table-wrapper {
+      background: var(--bg-1); border: 1px solid var(--border);
+      border-radius: var(--r); overflow: hidden;
+    }
     .posts-table { width: 100%; border-collapse: collapse; }
     .posts-table th {
-      font-family: var(--font-mono); font-size: 9px; letter-spacing: .16em;
-      color: var(--dim); text-transform: uppercase; text-align: left;
-      padding: 10px 16px; border-bottom: 1px solid var(--border);
-      background: var(--ink-1); font-weight: 400;
+      font-family: var(--fu); font-size: 10px; font-weight: 600; letter-spacing: .14em;
+      color: var(--text-4); text-transform: uppercase; text-align: left;
+      padding: 12px 16px; border-bottom: 1px solid var(--border);
+      background: var(--bg-1);
     }
     .posts-table td {
-      padding: 16px; border-bottom: 1px solid var(--border);
-      vertical-align: top;
+      padding: 16px; border-bottom: 1px solid var(--border); vertical-align: top;
     }
-    .posts-table tr:hover td { background: var(--ink-1); }
+    .posts-table tr:last-child td { border-bottom: none; }
+    .posts-table tr:hover td { background: var(--bg-2); }
 
     .col-title { width: 35%; }
     .col-topic { width: 12%; }
@@ -80,43 +89,44 @@ interface AdminPost {
     .col-actions { width: 27%; text-align: right; }
 
     .post-title {
-      font-family: var(--font-display); font-weight: 800; font-size: 14px;
-      color: var(--bright); letter-spacing: -.3px; line-height: 1.3; margin-bottom: 4px;
+      font-family: var(--fd); font-weight: 700; font-size: 14px;
+      color: var(--text); letter-spacing: -.3px; line-height: 1.3; margin-bottom: 3px;
     }
     .post-slug {
-      font-family: var(--font-mono); font-size: 10px; color: var(--dim);
-      letter-spacing: .06em;
+      font-family: var(--fu); font-size: 10px; color: var(--text-4); letter-spacing: .06em;
     }
     .post-summary {
-      font-family: var(--font-body); font-size: 12px; color: var(--mid);
-      line-height: 1.5; margin-top: 6px;
+      font-family: var(--fb); font-size: 12px; color: var(--text-3);
+      line-height: 1.5; margin-top: 5px;
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
     }
-    .topic-badge {
-      font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em;
-      color: var(--mid); text-transform: uppercase;
+    .topic-label {
+      font-family: var(--fu); font-size: 11px; font-weight: 600;
+      color: var(--text-3); letter-spacing: .06em;
     }
-    .status-badge {
-      font-family: var(--font-mono); font-size: 9px; letter-spacing: .1em;
-      text-transform: uppercase; padding: 3px 8px; border-radius: var(--radius-tag);
-      white-space: nowrap; display: inline-block;
+    .date-val {
+      font-family: var(--fu); font-size: 11px; color: var(--text-4); letter-spacing: .06em;
     }
-    .status-draft { background: rgba(124,124,142,.15); color: var(--mid); border: 1px solid var(--border); }
-    .status-published { background: rgba(245,197,24,.12); color: var(--gold); border: 1px solid rgba(245,197,24,.3); }
-    .status-rejected { background: rgba(255,77,46,.1); color: var(--coral); border: 1px solid rgba(255,77,46,.25); }
-    .date-val { font-family: var(--font-mono); font-size: 10px; color: var(--dim); letter-spacing: .1em; }
 
     .actions { display: flex; align-items: center; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
     .btn-action {
-      font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em;
-      text-transform: uppercase; background: none; border: 1px solid;
-      padding: 5px 12px; cursor: pointer; border-radius: var(--radius-tag);
-      transition: background var(--transition-fast), color var(--transition-fast);
-      white-space: nowrap;
+      font-family: var(--fu); font-size: 11px; font-weight: 600; letter-spacing: .04em;
+      border-radius: var(--r); padding: 6px 13px; cursor: pointer;
+      border: 1.5px solid; transition: all var(--t); white-space: nowrap; text-decoration: none;
+      display: inline-flex; align-items: center;
     }
-    .btn-approve { color: var(--gold); border-color: rgba(245,197,24,.4); &:hover { background: var(--gold); color: var(--ink); } }
-    .btn-reject { color: var(--coral); border-color: rgba(255,77,46,.3); &:hover { background: var(--coral); color: #fff; } }
-    .btn-view { color: var(--mid); border-color: var(--border); &:hover { color: var(--bright); border-color: var(--mid); } }
+    .btn-approve {
+      color: var(--green); border-color: var(--green); background: transparent;
+      &:hover { background: var(--green); color: #fff; }
+    }
+    .btn-reject {
+      color: var(--coral); border-color: rgba(220,38,38,.4); background: transparent;
+      &:hover { background: var(--coral); color: #fff; border-color: var(--coral); }
+    }
+    .btn-view {
+      color: var(--text-3); border-color: var(--border); background: transparent;
+      &:hover { color: var(--green); border-color: var(--green); }
+    }
     .btn-action:disabled { opacity: .35; cursor: not-allowed; }
 
     .state-loading, .state-empty {
@@ -124,25 +134,26 @@ interface AdminPost {
       gap: 16px; padding: 80px 0; text-align: center;
     }
     .state-loading p, .state-empty p {
-      font-family: var(--font-mono); font-size: 11px; color: var(--dim);
-      letter-spacing: .12em; text-transform: uppercase;
+      font-family: var(--fu); font-size: 12px; color: var(--text-4);
+      letter-spacing: .1em; text-transform: uppercase;
     }
-    .pulse { display: block; width: 34px; height: 2px; background: var(--gold); animation: pulse 1.4s ease-in-out infinite; }
-    @keyframes pulse { 0%,100%{opacity:1;width:34px}50%{opacity:.3;width:60px} }
+    .pulse-bar { width: 32px; height: 3px; background: var(--green); border-radius: 2px; animation: pulse 1.4s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{width:32px;opacity:1} 50%{width:56px;opacity:.4} }
 
     @media (max-width: 900px) {
       .admin-header { flex-direction: column; align-items: flex-start; }
-      .col-summary, .col-actions th { display: none; }
-      .posts-table td:last-child { display: none; }
-      .content { padding: 24px 1rem 60px; }
+      .content { padding: 20px 1rem 60px; }
     }
   `],
   template: `
     <app-admin-navbar />
 
     <div class="admin-header">
-      <div class="header-left">
-        <p class="admin-label">Admin · Moderação</p>
+      <div>
+        <div class="header-eyebrow">
+          <span class="eyebrow-line"></span>
+          <span class="eyebrow-text">Admin · Moderação</span>
+        </div>
         <h1 class="admin-title">Posts</h1>
       </div>
       <div class="filter-tabs">
@@ -163,80 +174,82 @@ interface AdminPost {
 
     <div class="content">
       <div *ngIf="loading" class="state-loading">
-        <span class="pulse"></span>
+        <span class="pulse-bar"></span>
         <p>Carregando posts...</p>
       </div>
 
       <ng-container *ngIf="!loading">
         <div class="results-bar">
-          <span class="sep-gold"></span>
+          <span class="sep-short"></span>
           <span class="results-label">{{ filtered.length }} {{ filtered.length === 1 ? 'post' : 'posts' }}</span>
         </div>
 
         <div *ngIf="filtered.length === 0" class="state-empty">
-          <span class="sep-gold"></span>
+          <span class="sep-short"></span>
           <p>Nenhum post {{ filterLabel }}</p>
         </div>
 
-        <table class="posts-table" *ngIf="filtered.length > 0">
-          <thead>
-            <tr>
-              <th class="col-title">Título</th>
-              <th class="col-topic">Tópico</th>
-              <th class="col-status">Status</th>
-              <th class="col-date">Criado em</th>
-              <th class="col-actions">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let p of filtered">
-              <td>
-                <div class="post-title">{{ p.title }}</div>
-                <div class="post-slug">/{{ p.slug }}</div>
-                <div class="post-summary">{{ p.summary }}</div>
-              </td>
-              <td>
-                <span class="topic-badge">{{ p.topicSlug }}</span>
-              </td>
-              <td>
-                <span class="status-badge"
-                  [class.status-draft]="p.status === 'DRAFT'"
-                  [class.status-published]="p.status === 'PUBLISHED'"
-                  [class.status-rejected]="p.status === 'REJECTED'">
-                  {{ statusLabel(p.status) }}
-                </span>
-              </td>
-              <td>
-                <span class="date-val">{{ formatDate(p.createdAt) }}</span>
-              </td>
-              <td>
-                <div class="actions">
-                  <button
-                    class="btn-action btn-approve"
-                    *ngIf="p.status !== 'PUBLISHED'"
-                    (click)="approve(p)"
-                    [disabled]="pendingId === p.id">
-                    {{ pendingId === p.id ? '...' : '✓ Publicar' }}
-                  </button>
-                  <button
-                    class="btn-action btn-reject"
-                    *ngIf="p.status !== 'REJECTED'"
-                    (click)="reject(p)"
-                    [disabled]="pendingId === p.id">
-                    {{ pendingId === p.id ? '...' : '✕ Rejeitar' }}
-                  </button>
-                  <a
-                    class="btn-action btn-view"
-                    *ngIf="p.status === 'PUBLISHED'"
-                    [routerLink]="['/blog/posts', p.slug]"
-                    target="_blank">
-                    Ver →
-                  </a>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-wrapper" *ngIf="filtered.length > 0">
+          <table class="posts-table">
+            <thead>
+              <tr>
+                <th class="col-title">Título</th>
+                <th class="col-topic">Tópico</th>
+                <th class="col-status">Status</th>
+                <th class="col-date">Criado em</th>
+                <th class="col-actions">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of filtered">
+                <td>
+                  <div class="post-title">{{ p.title }}</div>
+                  <div class="post-slug">/{{ p.slug }}</div>
+                  <div class="post-summary">{{ p.summary }}</div>
+                </td>
+                <td>
+                  <span class="topic-label">{{ p.topicSlug }}</span>
+                </td>
+                <td>
+                  <span class="tag"
+                    [class.tag-ghost]="p.status === 'DRAFT'"
+                    [class.tag-green]="p.status === 'PUBLISHED'"
+                    [class.tag-breaking]="p.status === 'REJECTED'">
+                    {{ statusLabel(p.status) }}
+                  </span>
+                </td>
+                <td>
+                  <span class="date-val">{{ formatDate(p.createdAt) }}</span>
+                </td>
+                <td>
+                  <div class="actions">
+                    <button
+                      class="btn-action btn-approve"
+                      *ngIf="p.status !== 'PUBLISHED'"
+                      (click)="approve(p)"
+                      [disabled]="pendingId === p.id">
+                      {{ pendingId === p.id ? '...' : '✓ Publicar' }}
+                    </button>
+                    <button
+                      class="btn-action btn-reject"
+                      *ngIf="p.status !== 'REJECTED'"
+                      (click)="reject(p)"
+                      [disabled]="pendingId === p.id">
+                      {{ pendingId === p.id ? '...' : '✕ Rejeitar' }}
+                    </button>
+                    <a
+                      class="btn-action btn-view"
+                      *ngIf="p.status === 'PUBLISHED'"
+                      [routerLink]="['/blog/posts', p.slug]"
+                      target="_blank">
+                      Ver →
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </ng-container>
     </div>
   `

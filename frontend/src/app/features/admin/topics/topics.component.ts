@@ -29,189 +29,182 @@ interface Source {
     :host { display: block; min-height: 100vh; background: var(--bg); }
 
     .admin-header {
-      padding: 40px 2rem 32px;
+      padding: 32px 2rem 24px;
+      background: var(--bg-1);
       border-bottom: 1px solid var(--border);
     }
-    .admin-label {
-      font-family: var(--font-mono); font-size: 10px; letter-spacing: .2em;
-      color: var(--gold); text-transform: uppercase; margin-bottom: 8px;
+    .header-eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .eyebrow-line { width: 24px; height: 2px; background: var(--green); flex-shrink: 0; }
+    .eyebrow-text {
+      font-family: var(--fu); font-size: 10px; font-weight: 600;
+      letter-spacing: .18em; text-transform: uppercase; color: var(--text-3);
     }
     .admin-title {
-      font-family: var(--font-display); font-weight: 800; font-size: 36px;
-      color: var(--bright); letter-spacing: -1.5px; margin-bottom: 0;
+      font-family: var(--fd); font-weight: 800; font-size: 32px;
+      color: var(--text); letter-spacing: -1.2px;
     }
 
     .layout {
       display: grid;
       grid-template-columns: 380px 1fr;
-      gap: 0;
-      min-height: calc(100vh - 148px);
+      min-height: calc(100vh - 130px);
     }
     @media (max-width: 900px) {
       .layout { grid-template-columns: 1fr; }
       .panel-right { border-left: none; border-top: 1px solid var(--border); }
     }
 
-    .panel { padding: 32px; overflow-y: auto; }
+    .panel { padding: 24px; overflow-y: auto; }
     .panel-left { border-right: 1px solid var(--border); }
-    .panel-right { background: var(--ink-1); }
+    .panel-right { background: var(--bg-1); }
 
     .panel-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 24px;
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;
     }
     .panel-title {
-      font-family: var(--font-display); font-weight: 800; font-size: 16px;
-      color: var(--bright); letter-spacing: -.3px;
+      font-family: var(--fd); font-weight: 700; font-size: 15px;
+      color: var(--text); letter-spacing: -.3px;
     }
     .panel-count {
-      font-family: var(--font-mono); font-size: 10px; color: var(--dim);
-      letter-spacing: .12em; margin-left: 8px;
+      font-family: var(--fu); font-size: 10px; color: var(--text-4);
+      letter-spacing: .1em; margin-left: 6px;
     }
+    .panel-topic-name {
+      font-family: var(--fu); font-size: 11px; font-weight: 600;
+      color: var(--green); margin-left: 6px;
+    }
+
     .btn-new {
-      font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em;
-      text-transform: uppercase; background: none;
-      border: 1px solid var(--gold); color: var(--gold);
-      padding: 6px 14px; cursor: pointer; border-radius: 2px;
-      transition: background var(--transition-fast), color var(--transition-fast);
-      &:hover { background: var(--gold); color: var(--ink); }
+      font-family: var(--fu); font-size: 11px; font-weight: 600; letter-spacing: .04em;
+      background: var(--bg-1); border: 1px solid var(--border); color: var(--text-3);
+      padding: 6px 14px; border-radius: 40px; cursor: pointer; transition: all var(--t);
+      &:hover { background: var(--green-pale); color: var(--green); border-color: var(--green); }
+      &.open { background: var(--green); color: #fff; border-color: var(--green); }
     }
-    .btn-new.open { background: var(--gold); color: var(--ink); }
+    .btn-submit {
+      font-family: var(--fu); font-size: 13px; font-weight: 600;
+      background: var(--green); color: #fff; border: none;
+      padding: 9px 20px; border-radius: var(--r); cursor: pointer;
+      transition: background var(--t), transform var(--t);
+      &:hover:not(:disabled) { background: var(--green-2); transform: translateY(-1px); }
+      &:disabled { opacity: .45; cursor: not-allowed; }
+    }
+    .btn-cancel {
+      font-family: var(--fu); font-size: 13px; font-weight: 600;
+      background: transparent; color: var(--text-3);
+      border: 1px solid var(--border); padding: 9px 16px; border-radius: var(--r);
+      cursor: pointer; transition: all var(--t);
+      &:hover { border-color: var(--green); color: var(--green); }
+    }
+    .btn-delete {
+      font-family: var(--fu); font-size: 11px; background: none;
+      border: 1px solid transparent; color: var(--text-4);
+      cursor: pointer; padding: 4px 8px; border-radius: var(--r);
+      opacity: 0; transition: all var(--t); flex-shrink: 0;
+      &:hover { color: var(--coral); border-color: rgba(220,38,38,.3); }
+    }
+    .source-item:hover .btn-delete { opacity: 1; }
 
     .form-panel {
-      background: var(--ink-2); border: 1px solid var(--border);
-      padding: 20px; margin-bottom: 24px;
+      background: var(--bg-2); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 20px; margin-bottom: 18px;
     }
     .form-title {
-      font-family: var(--font-mono); font-size: 10px; letter-spacing: .16em;
-      color: var(--gold); text-transform: uppercase; margin-bottom: 16px;
+      font-family: var(--fu); font-size: 10px; font-weight: 600; letter-spacing: .14em;
+      color: var(--green); text-transform: uppercase; margin-bottom: 16px;
     }
-    .form-row { margin-bottom: 14px; }
+    .form-row { margin-bottom: 12px; }
     .form-row label {
-      display: block; font-family: var(--font-mono); font-size: 10px;
-      letter-spacing: .12em; color: var(--mid); text-transform: uppercase;
-      margin-bottom: 6px;
+      display: block; font-family: var(--fu); font-size: 10px; font-weight: 600;
+      letter-spacing: .12em; color: var(--text-3); text-transform: uppercase; margin-bottom: 5px;
     }
     .form-row input, .form-row select, .form-row textarea {
-      width: 100%; box-sizing: border-box;
-      background: var(--ink); border: 1px solid var(--border);
-      color: var(--bright); font-family: var(--font-body); font-size: 14px;
-      padding: 8px 12px; outline: none;
-      transition: border-color var(--transition-fast);
-      &:focus { border-color: var(--gold); }
-      &::placeholder { color: var(--dim); }
+      width: 100%; box-sizing: border-box; background: var(--bg);
+      border: 1px solid var(--border); border-radius: var(--r);
+      color: var(--text); font-family: var(--fb); font-size: 14px;
+      padding: 9px 12px; outline: none; transition: border-color var(--t);
+      &:focus { border-color: var(--green); }
+      &::placeholder { color: var(--text-4); }
     }
     .form-row textarea { resize: vertical; min-height: 64px; }
     .form-row select { cursor: pointer; }
     .form-check {
       display: flex; align-items: center; gap: 10px;
-      font-family: var(--font-body); font-size: 14px; color: var(--mid);
-      cursor: pointer;
+      font-family: var(--fb); font-size: 14px; color: var(--text-3); cursor: pointer;
     }
-    .form-check input[type=checkbox] { accent-color: var(--gold); width: 16px; height: 16px; cursor: pointer; }
+    .form-check input[type=checkbox] { accent-color: var(--green); width: 16px; height: 16px; cursor: pointer; }
     .form-actions { display: flex; gap: 10px; margin-top: 16px; }
-    .btn-submit {
-      font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em;
-      text-transform: uppercase; background: var(--gold); color: var(--ink);
-      border: none; padding: 8px 20px; cursor: pointer;
-      transition: opacity var(--transition-fast);
-      &:hover { opacity: .85; }
-      &:disabled { opacity: .4; cursor: not-allowed; }
-    }
-    .btn-cancel {
-      font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em;
-      text-transform: uppercase; background: none; color: var(--mid);
-      border: 1px solid var(--border); padding: 8px 16px; cursor: pointer;
-      transition: color var(--transition-fast), border-color var(--transition-fast);
-      &:hover { color: var(--bright); border-color: var(--mid); }
-    }
     .form-error {
-      font-family: var(--font-mono); font-size: 11px; color: var(--coral);
-      letter-spacing: .08em; margin-top: 8px;
+      font-family: var(--fu); font-size: 11px; color: var(--coral);
+      letter-spacing: .04em; margin-top: 8px;
     }
 
     .topic-card {
-      border: 1px solid var(--border); padding: 18px 20px;
-      margin-bottom: 1px; cursor: pointer;
-      background: var(--ink-1);
-      transition: background var(--transition-base), border-color var(--transition-base);
-      &:hover { background: var(--ink-2); border-color: var(--gold); }
-      &.selected { background: var(--ink-2); border-color: var(--gold); border-left-width: 3px; }
+      background: var(--bg-1); border: 1px solid var(--border); border-radius: var(--r);
+      padding: 16px 18px; margin-bottom: 8px; cursor: pointer;
+      transition: border-color var(--t), background var(--t), box-shadow var(--t);
+      &:hover { border-color: var(--green); background: var(--bg-2); }
+      &.selected { border-color: var(--green); border-left: 3px solid var(--green); background: var(--bg-2); }
     }
     .topic-name {
-      font-family: var(--font-display); font-weight: 800; font-size: 15px;
-      color: var(--bright); letter-spacing: -.3px; margin-bottom: 4px;
+      font-family: var(--fd); font-weight: 700; font-size: 14px;
+      color: var(--text); letter-spacing: -.3px; margin-bottom: 2px;
     }
     .topic-slug {
-      font-family: var(--font-mono); font-size: 10px; color: var(--gold);
-      letter-spacing: .12em; margin-bottom: 6px;
+      font-family: var(--fu); font-size: 10px; font-weight: 600;
+      color: var(--green); letter-spacing: .08em; margin-bottom: 6px;
     }
     .topic-desc {
-      font-family: var(--font-body); font-size: 13px; color: var(--mid);
-      line-height: 1.5; margin-bottom: 10px;
+      font-family: var(--fb); font-size: 12px; color: var(--text-3);
+      line-height: 1.5; margin-bottom: 8px;
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
     }
-    .topic-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .badge {
-      font-family: var(--font-mono); font-size: 9px; letter-spacing: .1em;
-      text-transform: uppercase; padding: 2px 7px; border-radius: var(--radius-tag);
-    }
-    .badge-active { background: rgba(245,197,24,.15); color: var(--gold); border: 1px solid rgba(245,197,24,.3); }
-    .badge-inactive { background: var(--ink-3); color: var(--dim); border: 1px solid var(--border); }
-    .badge-auto { background: rgba(255,77,46,.1); color: var(--coral); border: 1px solid rgba(255,77,46,.25); }
+    .topic-badges { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 
     .source-item {
       display: flex; align-items: center; gap: 12px;
-      border: 1px solid var(--border); padding: 14px 16px;
-      margin-bottom: 1px; background: var(--ink);
-      transition: border-color var(--transition-fast);
-      &:hover { border-color: var(--dim); }
-      &:hover .btn-delete { opacity: 1; }
+      background: var(--bg); border: 1px solid var(--border); border-radius: var(--r);
+      padding: 11px 14px; margin-bottom: 8px; transition: border-color var(--t);
+      &:hover { border-color: var(--border-2); }
     }
-    .source-type {
-      font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em;
-      text-transform: uppercase; padding: 3px 8px;
-      border-radius: var(--radius-tag); flex-shrink: 0;
-    }
-    .type-rss { background: rgba(245,197,24,.12); color: var(--gold); border: 1px solid rgba(245,197,24,.25); }
-    .type-html { background: rgba(124,124,142,.12); color: var(--mid); border: 1px solid var(--border); }
     .source-url {
-      font-family: var(--font-mono); font-size: 11px; color: var(--mid);
-      letter-spacing: .04em; flex: 1; overflow: hidden;
+      font-family: var(--fu); font-size: 11px; color: var(--text-3);
+      letter-spacing: .02em; flex: 1; overflow: hidden;
       text-overflow: ellipsis; white-space: nowrap;
-    }
-    .btn-delete {
-      font-family: var(--font-mono); font-size: 10px; letter-spacing: .06em;
-      background: none; border: 1px solid transparent; color: var(--dim);
-      cursor: pointer; padding: 4px 8px; opacity: 0;
-      transition: color var(--transition-fast), border-color var(--transition-fast), opacity var(--transition-fast);
-      flex-shrink: 0;
-      &:hover { color: var(--coral); border-color: rgba(255,77,46,.4); }
     }
 
     .state-empty {
       display: flex; flex-direction: column; align-items: center;
-      gap: 16px; padding: 60px 0; text-align: center;
+      gap: 14px; padding: 48px 0; text-align: center;
     }
-    .state-empty p { font-family: var(--font-mono); font-size: 11px; color: var(--dim); letter-spacing: .12em; text-transform: uppercase; }
-    .sep-gold { width: 34px; height: 2px; background: var(--gold); display: block; }
-
+    .state-empty p {
+      font-family: var(--fu); font-size: 12px; color: var(--text-4);
+      letter-spacing: .1em; text-transform: uppercase;
+    }
     .panel-placeholder {
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      height: 100%; gap: 16px; color: var(--dim); padding: 60px 2rem; text-align: center;
+      height: 100%; gap: 14px; padding: 60px 2rem; text-align: center;
     }
-    .placeholder-icon { font-family: var(--font-display); font-weight: 800; font-size: 64px; color: rgba(245,197,24,.08); line-height: 1; }
-    .placeholder-text { font-family: var(--font-mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; }
-
-    .pulse { display: block; width: 34px; height: 2px; background: var(--gold); animation: pulse 1.4s ease-in-out infinite; }
-    @keyframes pulse { 0%,100%{opacity:1;width:34px}50%{opacity:.3;width:60px} }
+    .placeholder-icon {
+      font-family: var(--fd); font-weight: 800; font-size: 64px;
+      color: var(--border-2); line-height: 1;
+    }
+    .placeholder-text {
+      font-family: var(--fu); font-size: 12px; color: var(--text-4);
+      letter-spacing: .12em; text-transform: uppercase; max-width: 240px; line-height: 1.5;
+    }
+    .pulse-bar { width: 32px; height: 3px; background: var(--green); border-radius: 2px; animation: pulse 1.4s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{width:32px;opacity:1} 50%{width:56px;opacity:.4} }
   `],
   template: `
     <app-admin-navbar />
 
     <div class="admin-header">
-      <p class="admin-label">Admin · Gerenciamento</p>
-      <h1 class="admin-title">Tópicos & Fontes</h1>
+      <div class="header-eyebrow">
+        <span class="eyebrow-line"></span>
+        <span class="eyebrow-text">Admin · Gerenciamento</span>
+      </div>
+      <h1 class="admin-title">Tópicos &amp; Fontes</h1>
     </div>
 
     <div class="layout">
@@ -227,7 +220,6 @@ interface Source {
           </button>
         </div>
 
-        <!-- Create topic form -->
         <div class="form-panel" *ngIf="showCreateTopic">
           <p class="form-title">Novo Tópico</p>
           <div class="form-row">
@@ -257,14 +249,13 @@ interface Source {
           <p class="form-error" *ngIf="topicError">{{ topicError }}</p>
         </div>
 
-        <!-- Topics list -->
         <div *ngIf="loadingTopics" class="state-empty">
-          <span class="pulse"></span>
+          <span class="pulse-bar"></span>
           <p>Carregando...</p>
         </div>
 
         <div *ngIf="!loadingTopics && topics.length === 0" class="state-empty">
-          <span class="sep-gold"></span>
+          <span class="sep-short"></span>
           <p>Nenhum tópico cadastrado</p>
         </div>
 
@@ -277,11 +268,11 @@ interface Source {
             <div class="topic-name">{{ t.name }}</div>
             <div class="topic-slug">/{{ t.slug }}</div>
             <div class="topic-desc" *ngIf="t.description">{{ t.description }}</div>
-            <div class="topic-meta">
-              <span class="badge" [class.badge-active]="t.active" [class.badge-inactive]="!t.active">
+            <div class="topic-badges">
+              <span class="tag" [class.tag-pale]="t.active" [class.tag-ghost]="!t.active">
                 {{ t.active ? 'Ativo' : 'Inativo' }}
               </span>
-              <span class="badge badge-auto" *ngIf="t.autoPublish">Auto-publish</span>
+              <span class="tag tag-amber" *ngIf="t.autoPublish">Auto-publish</span>
             </div>
           </div>
         </div>
@@ -291,7 +282,7 @@ interface Source {
       <div class="panel panel-right">
         <ng-container *ngIf="!selectedTopic">
           <div class="panel-placeholder">
-            <span class="placeholder-icon">?</span>
+            <span class="placeholder-icon">←</span>
             <p class="placeholder-text">Selecione um tópico para gerenciar suas fontes</p>
           </div>
         </ng-container>
@@ -301,16 +292,13 @@ interface Source {
             <div>
               <span class="panel-title">Fontes</span>
               <span class="panel-count" *ngIf="!loadingSources">{{ sources.length }}</span>
-              <span style="font-family:var(--font-mono);font-size:10px;color:var(--gold);letter-spacing:.08em;margin-left:8px;">
-                — {{ selectedTopic.name }}
-              </span>
+              <span class="panel-topic-name">— {{ selectedTopic.name }}</span>
             </div>
             <button class="btn-new" [class.open]="showAddSource" (click)="toggleAddSource()">
               {{ showAddSource ? '— Cancelar' : '+ Fonte' }}
             </button>
           </div>
 
-          <!-- Add source form -->
           <div class="form-panel" *ngIf="showAddSource">
             <p class="form-title">Nova Fonte</p>
             <div class="form-row">
@@ -333,20 +321,19 @@ interface Source {
             <p class="form-error" *ngIf="sourceError">{{ sourceError }}</p>
           </div>
 
-          <!-- Sources list -->
           <div *ngIf="loadingSources" class="state-empty">
-            <span class="pulse"></span>
+            <span class="pulse-bar"></span>
             <p>Carregando fontes...</p>
           </div>
 
           <div *ngIf="!loadingSources && sources.length === 0" class="state-empty">
-            <span class="sep-gold"></span>
+            <span class="sep-short"></span>
             <p>Nenhuma fonte cadastrada para este tópico</p>
           </div>
 
           <div *ngIf="!loadingSources && sources.length > 0">
             <div class="source-item" *ngFor="let s of sources">
-              <span class="source-type" [class.type-rss]="s.type === 'RSS'" [class.type-html]="s.type === 'HTML'">
+              <span class="tag" [class.tag-green]="s.type === 'RSS'" [class.tag-ghost]="s.type !== 'RSS'">
                 {{ s.type }}
               </span>
               <span class="source-url" [title]="s.url">{{ s.url }}</span>

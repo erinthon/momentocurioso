@@ -26,109 +26,110 @@ interface Job {
     :host { display: block; min-height: 100vh; background: var(--bg); }
 
     .admin-header {
-      padding: 40px 2rem 32px; border-bottom: 1px solid var(--border);
+      padding: 32px 2rem 24px;
+      background: var(--bg-1);
+      border-bottom: 1px solid var(--border);
       display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px;
     }
-    .admin-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: .2em; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
-    .admin-title { font-family: var(--font-display); font-weight: 800; font-size: 36px; color: var(--bright); letter-spacing: -1.5px; }
+    .header-eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .eyebrow-line { width: 24px; height: 2px; background: var(--green); flex-shrink: 0; }
+    .eyebrow-text {
+      font-family: var(--fu); font-size: 10px; font-weight: 600;
+      letter-spacing: .18em; text-transform: uppercase; color: var(--text-3);
+    }
+    .admin-title {
+      font-family: var(--fd); font-weight: 800; font-size: 32px;
+      color: var(--text); letter-spacing: -1.2px;
+    }
 
-    .filter-tabs { display: flex; gap: 0; border: 1px solid var(--border); }
+    .filter-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
     .tab-btn {
-      font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em;
-      text-transform: uppercase; background: none; color: var(--dim);
-      border: none; border-right: 1px solid var(--border);
-      padding: 8px 16px; cursor: pointer;
-      transition: background var(--transition-fast), color var(--transition-fast);
-      &:last-child { border-right: none; }
-      &:hover { color: var(--bright); background: var(--ink-2); }
-      &.active { color: var(--gold); background: rgba(245,197,24,.08); }
+      font-family: var(--fu); font-size: 12px; font-weight: 600; letter-spacing: .04em;
+      color: var(--text-3); background: var(--bg-1); border: 1px solid var(--border);
+      border-radius: 40px; padding: 7px 16px; cursor: pointer; transition: all var(--t);
+      white-space: nowrap;
+      &:hover { background: var(--green-pale); color: var(--green); border-color: var(--green); }
+      &.active { background: var(--green); color: #fff; border-color: var(--green); }
     }
-    .tab-count {
-      font-family: var(--font-mono); font-size: 9px; color: var(--dim);
-      background: var(--ink-2); padding: 1px 5px; border-radius: 2px; margin-left: 4px;
+    .tab-count { font-family: var(--fu); font-size: 10px; opacity: .7; margin-left: 4px; }
+
+    .content { padding: 28px 2rem 80px; max-width: 1200px; margin: 0 auto; }
+
+    .results-bar { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+    .results-label {
+      font-family: var(--fu); font-size: 11px; font-weight: 600;
+      color: var(--text-3); letter-spacing: .1em; text-transform: uppercase;
     }
-    .tab-btn.active .tab-count { color: var(--gold); background: rgba(245,197,24,.12); }
 
-    .content { padding: 32px 2rem 80px; max-width: 1200px; margin: 0 auto; }
+    .table-header {
+      display: grid;
+      grid-template-columns: 80px 120px 90px 1fr 160px 100px;
+      gap: 12px; padding: 10px 16px; margin-bottom: 4px;
+    }
+    .th {
+      font-family: var(--fu); font-size: 10px; font-weight: 600;
+      letter-spacing: .14em; color: var(--text-4); text-transform: uppercase;
+    }
 
-    .results-bar { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
-    .sep-gold { width: 34px; height: 2px; background: var(--gold); display: block; flex-shrink: 0; }
-    .results-label { font-family: var(--font-mono); font-size: 10px; color: var(--mid); letter-spacing: .12em; text-transform: uppercase; }
-
-    .jobs-list { display: flex; flex-direction: column; gap: 1px; }
+    .jobs-list { display: flex; flex-direction: column; gap: 6px; }
 
     .job-row {
       display: grid;
-      grid-template-columns: 120px 100px 100px 1fr 140px 100px;
+      grid-template-columns: 80px 120px 90px 1fr 160px 100px;
       align-items: center;
-      gap: 16px;
-      padding: 16px;
-      background: var(--ink-1);
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--bg-1);
       border: 1px solid var(--border);
+      border-radius: var(--r);
       border-left: 3px solid transparent;
-      transition: border-color var(--transition-fast), background var(--transition-fast);
-      &:hover { background: var(--ink-2); }
-      &.status-done { border-left-color: var(--gold); }
+      transition: border-color var(--t), background var(--t);
+      &:hover { background: var(--bg-2); }
+      &.status-done { border-left-color: var(--green); }
       &.status-failed { border-left-color: var(--coral); }
-      &.status-running { border-left-color: var(--bright); }
+      &.status-running { border-left-color: var(--amber); }
     }
     @media (max-width: 900px) {
+      .table-header { display: none; }
       .job-row { grid-template-columns: 1fr 1fr; }
     }
 
     .job-id {
-      font-family: var(--font-mono); font-size: 10px; color: var(--dim);
-      letter-spacing: .1em;
+      font-family: var(--fu); font-size: 11px; font-weight: 600;
+      color: var(--text-4); letter-spacing: .08em;
     }
     .job-topic {
-      font-family: var(--font-mono); font-size: 11px; color: var(--mid);
-      letter-spacing: .08em; text-transform: uppercase;
+      font-family: var(--fu); font-size: 11px; font-weight: 600;
+      color: var(--text-2); letter-spacing: .04em;
     }
-    .job-trigger {
-      font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em;
-      text-transform: uppercase; padding: 3px 8px; border-radius: var(--radius-tag);
-    }
-    .trigger-manual { background: rgba(245,197,24,.1); color: var(--gold); border: 1px solid rgba(245,197,24,.25); }
-    .trigger-scheduler { background: var(--ink-3); color: var(--mid); border: 1px solid var(--border); }
 
     .status-badge {
-      font-family: var(--font-mono); font-size: 9px; letter-spacing: .12em;
-      text-transform: uppercase; padding: 3px 8px; border-radius: var(--radius-tag);
       display: inline-flex; align-items: center; gap: 6px;
     }
-    .badge-pending { background: var(--ink-3); color: var(--dim); border: 1px solid var(--border); }
-    .badge-running { background: rgba(230,226,221,.08); color: var(--bright); border: 1px solid rgba(230,226,221,.2); }
-    .badge-done { background: rgba(245,197,24,.12); color: var(--gold); border: 1px solid rgba(245,197,24,.3); }
-    .badge-failed { background: rgba(255,77,46,.1); color: var(--coral); border: 1px solid rgba(255,77,46,.25); }
     .running-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--bright);
+      width: 6px; height: 6px; border-radius: 50%; background: var(--amber);
       animation: blink 1s ease-in-out infinite;
     }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
 
-    .job-duration {
-      font-family: var(--font-mono); font-size: 10px; color: var(--dim);
-      letter-spacing: .08em;
+    .job-times { display: flex; flex-direction: column; gap: 2px; }
+    .time-line {
+      font-family: var(--fu); font-size: 10px; color: var(--text-4); letter-spacing: .06em;
     }
-    .job-error {
-      font-family: var(--font-mono); font-size: 10px; color: var(--coral);
-      letter-spacing: .04em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    }
-    .job-times {
-      display: flex; flex-direction: column; gap: 2px;
-    }
-    .time-line { font-family: var(--font-mono); font-size: 10px; color: var(--dim); letter-spacing: .08em; }
-    .time-label { color: var(--dim); margin-right: 4px; }
+    .time-label { color: var(--text-4); margin-right: 4px; font-weight: 600; }
 
-    .job-action {}
+    .job-error {
+      font-family: var(--fu); font-size: 10px; color: var(--coral);
+      letter-spacing: .02em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      margin-top: 4px;
+    }
+
     .btn-view-post {
-      font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em;
-      text-transform: uppercase; background: none; color: var(--gold);
-      border: 1px solid rgba(245,197,24,.3); padding: 4px 10px;
-      text-decoration: none; display: inline-block;
-      transition: background var(--transition-fast);
-      &:hover { background: rgba(245,197,24,.1); }
+      font-family: var(--fu); font-size: 11px; font-weight: 600; letter-spacing: .04em;
+      color: var(--green); border: 1.5px solid var(--green); border-radius: var(--r);
+      padding: 5px 12px; text-decoration: none; display: inline-block;
+      transition: background var(--t);
+      &:hover { background: var(--green-pale); }
     }
 
     .state-loading, .state-empty {
@@ -136,24 +137,15 @@ interface Job {
       gap: 16px; padding: 80px 0; text-align: center;
     }
     .state-loading p, .state-empty p {
-      font-family: var(--font-mono); font-size: 11px; color: var(--dim);
-      letter-spacing: .12em; text-transform: uppercase;
+      font-family: var(--fu); font-size: 12px; color: var(--text-4);
+      letter-spacing: .1em; text-transform: uppercase;
     }
-    .pulse { display: block; width: 34px; height: 2px; background: var(--gold); animation: pulse 1.4s ease-in-out infinite; }
-    @keyframes pulse { 0%,100%{opacity:1;width:34px}50%{opacity:.3;width:60px} }
+    .pulse-bar { width: 32px; height: 3px; background: var(--green); border-radius: 2px; animation: pulse 1.4s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{width:32px;opacity:1} 50%{width:56px;opacity:.4} }
 
-    .table-header {
-      display: grid;
-      grid-template-columns: 120px 100px 100px 1fr 140px 100px;
-      gap: 16px; padding: 10px 16px;
-      margin-bottom: 2px;
-    }
-    .th {
-      font-family: var(--font-mono); font-size: 9px; letter-spacing: .16em;
-      color: var(--dim); text-transform: uppercase;
-    }
     @media (max-width: 900px) {
-      .table-header { display: none; }
+      .admin-header { flex-direction: column; align-items: flex-start; }
+      .content { padding: 20px 1rem 60px; }
     }
   `],
   template: `
@@ -161,7 +153,10 @@ interface Job {
 
     <div class="admin-header">
       <div>
-        <p class="admin-label">Admin · Monitoramento</p>
+        <div class="header-eyebrow">
+          <span class="eyebrow-line"></span>
+          <span class="eyebrow-text">Admin · Monitoramento</span>
+        </div>
         <h1 class="admin-title">Jobs de Geração</h1>
       </div>
       <div class="filter-tabs">
@@ -169,31 +164,31 @@ interface Job {
           Todos <span class="tab-count">{{ jobs.length }}</span>
         </button>
         <button class="tab-btn" [class.active]="activeFilter === 'DONE'" (click)="setFilter('DONE')">
-          Done <span class="tab-count">{{ countBy('DONE') }}</span>
+          Concluídos <span class="tab-count">{{ countBy('DONE') }}</span>
         </button>
         <button class="tab-btn" [class.active]="activeFilter === 'FAILED'" (click)="setFilter('FAILED')">
-          Failed <span class="tab-count">{{ countBy('FAILED') }}</span>
+          Falhos <span class="tab-count">{{ countBy('FAILED') }}</span>
         </button>
         <button class="tab-btn" [class.active]="activeFilter === 'RUNNING'" (click)="setFilter('RUNNING')">
-          Running <span class="tab-count">{{ countBy('RUNNING') }}</span>
+          Executando <span class="tab-count">{{ countBy('RUNNING') }}</span>
         </button>
       </div>
     </div>
 
     <div class="content">
       <div *ngIf="loading" class="state-loading">
-        <span class="pulse"></span>
+        <span class="pulse-bar"></span>
         <p>Carregando jobs...</p>
       </div>
 
       <ng-container *ngIf="!loading">
         <div class="results-bar">
-          <span class="sep-gold"></span>
+          <span class="sep-short"></span>
           <span class="results-label">{{ filtered.length }} {{ filtered.length === 1 ? 'job' : 'jobs' }}</span>
         </div>
 
         <div *ngIf="filtered.length === 0" class="state-empty">
-          <span class="sep-gold"></span>
+          <span class="sep-short"></span>
           <p>Nenhum job encontrado</p>
         </div>
 
@@ -202,7 +197,7 @@ interface Job {
             <span class="th">ID</span>
             <span class="th">Tópico</span>
             <span class="th">Origem</span>
-            <span class="th">Status / Erro</span>
+            <span class="th">Status</span>
             <span class="th">Horários</span>
             <span class="th">Post</span>
           </div>
@@ -218,18 +213,18 @@ interface Job {
 
               <span class="job-topic">{{ j.topicSlug }}</span>
 
-              <span class="job-trigger"
-                [class.trigger-manual]="j.triggeredBy === 'MANUAL'"
-                [class.trigger-scheduler]="j.triggeredBy === 'SCHEDULER'">
+              <span class="tag"
+                [class.tag-green]="j.triggeredBy === 'MANUAL'"
+                [class.tag-ghost]="j.triggeredBy === 'SCHEDULER'">
                 {{ j.triggeredBy === 'MANUAL' ? 'Manual' : 'Auto' }}
               </span>
 
               <div>
-                <span class="status-badge"
-                  [class.badge-pending]="j.status === 'PENDING'"
-                  [class.badge-running]="j.status === 'RUNNING'"
-                  [class.badge-done]="j.status === 'DONE'"
-                  [class.badge-failed]="j.status === 'FAILED'">
+                <span class="status-badge tag"
+                  [class.tag-ghost]="j.status === 'PENDING'"
+                  [class.tag-amber]="j.status === 'RUNNING'"
+                  [class.tag-green]="j.status === 'DONE'"
+                  [class.tag-breaking]="j.status === 'FAILED'">
                   <span *ngIf="j.status === 'RUNNING'" class="running-dot"></span>
                   {{ statusLabel(j.status) }}
                 </span>
@@ -250,7 +245,7 @@ interface Job {
                 </span>
               </div>
 
-              <div class="job-action">
+              <div>
                 <a
                   *ngIf="j.postId && j.status === 'DONE'"
                   class="btn-view-post"
