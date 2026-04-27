@@ -7,6 +7,7 @@ import com.momentocurioso.entity.ScrapedArticle;
 import com.momentocurioso.entity.Topic;
 import com.momentocurioso.service.AiWriterService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -52,6 +53,12 @@ public class AiWriterServiceImpl implements AiWriterService {
                 .uri("/v1/messages")
                 .body(requestBody)
                 .retrieve()
+                .onStatus(status -> status.value() == 401,
+                        (req, res) -> { throw new RuntimeException("Claude API: unauthorized — check your API key (401)"); })
+                .onStatus(status -> status.value() == 429,
+                        (req, res) -> { throw new RuntimeException("Claude API: rate limit exceeded, try again later (429)"); })
+                .onStatus(HttpStatusCode::is5xxServerError,
+                        (req, res) -> { throw new RuntimeException("Claude API server error: " + res.getStatusCode()); })
                 .body(JsonNode.class);
 
         String generatedText = response.path("content").get(0).path("text").asText();
