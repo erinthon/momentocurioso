@@ -1,12 +1,13 @@
 package com.momentocurioso.service;
 
 import com.momentocurioso.dto.response.JobStatusResponse;
+import com.momentocurioso.dto.response.PageResponse;
 import com.momentocurioso.entity.ContentGenerationJob;
+import com.momentocurioso.entity.JobStatus;
 import com.momentocurioso.entity.Post;
 import com.momentocurioso.entity.Topic;
 import com.momentocurioso.entity.TriggerSource;
-
-import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 public interface ContentGenerationJobService {
 
@@ -18,5 +19,5 @@ public interface ContentGenerationJobService {
 
     ContentGenerationJob markFailed(ContentGenerationJob job, String errorMessage);
 
-    List<JobStatusResponse> listAll();
+    PageResponse<JobStatusResponse> listAllAdmin(JobStatus status, Pageable pageable);
 }

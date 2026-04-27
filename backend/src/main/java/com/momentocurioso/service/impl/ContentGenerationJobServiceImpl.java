@@ -1,6 +1,7 @@
 package com.momentocurioso.service.impl;
 
 import com.momentocurioso.dto.response.JobStatusResponse;
+import com.momentocurioso.dto.response.PageResponse;
 import com.momentocurioso.entity.ContentGenerationJob;
 import com.momentocurioso.entity.JobStatus;
 import com.momentocurioso.entity.Post;
@@ -8,10 +9,12 @@ import com.momentocurioso.entity.Topic;
 import com.momentocurioso.entity.TriggerSource;
 import com.momentocurioso.repository.ContentGenerationJobRepository;
 import com.momentocurioso.service.ContentGenerationJobService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 public class ContentGenerationJobServiceImpl implements ContentGenerationJobService {
@@ -55,9 +58,13 @@ public class ContentGenerationJobServiceImpl implements ContentGenerationJobServ
     }
 
     @Override
-    public List<JobStatusResponse> listAll() {
-        return jobRepository.findAllByOrderByStartedAtDesc().stream()
-                .map(JobStatusResponse::from)
-                .toList();
+    public PageResponse<JobStatusResponse> listAllAdmin(JobStatus status, Pageable pageable) {
+        PageRequest pageRequest = PageRequest.of(
+                pageable.getPageNumber(), pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "startedAt"));
+        var page = status != null
+                ? jobRepository.findAllByStatusOrderByStartedAtDesc(status, pageRequest)
+                : jobRepository.findAllByOrderByStartedAtDesc(pageRequest);
+        return PageResponse.from(page.map(JobStatusResponse::from));
     }
 }

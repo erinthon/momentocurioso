@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.text.Normalizer;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -79,11 +78,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostSummaryResponse> listAll() {
-        return postRepository.findAll().stream()
-                .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
-                .map(PostSummaryResponse::from)
-                .toList();
+    public PageResponse<PostSummaryResponse> listAllAdmin(PostStatus status, Pageable pageable) {
+        PageRequest pageRequest = PageRequest.of(
+                pageable.getPageNumber(), pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createdAt"));
+        var page = status != null
+                ? postRepository.findAllByStatus(status, pageRequest)
+                : postRepository.findAll(pageRequest);
+        return PageResponse.from(page.map(PostSummaryResponse::from));
     }
 
     @Override

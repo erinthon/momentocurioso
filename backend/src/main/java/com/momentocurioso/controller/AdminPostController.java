@@ -2,9 +2,12 @@ package com.momentocurioso.controller;
 
 import com.momentocurioso.dto.request.TriggerJobRequest;
 import com.momentocurioso.dto.response.JobStatusResponse;
+import com.momentocurioso.dto.response.PageResponse;
 import com.momentocurioso.dto.response.PostResponse;
 import com.momentocurioso.dto.response.PostSummaryResponse;
 import com.momentocurioso.entity.ContentGenerationJob;
+import com.momentocurioso.entity.JobStatus;
+import com.momentocurioso.entity.PostStatus;
 import com.momentocurioso.entity.Topic;
 import com.momentocurioso.entity.TriggerSource;
 import com.momentocurioso.repository.TopicRepository;
@@ -13,10 +16,11 @@ import com.momentocurioso.service.ContentGenerationJobService;
 import com.momentocurioso.service.PostService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
@@ -38,8 +42,10 @@ public class AdminPostController {
     }
 
     @GetMapping("/posts")
-    public ResponseEntity<List<PostSummaryResponse>> listAll() {
-        return ResponseEntity.ok(postService.listAll());
+    public ResponseEntity<PageResponse<PostSummaryResponse>> listAll(
+            @RequestParam(required = false) PostStatus status,
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(postService.listAllAdmin(status, pageable));
     }
 
     @PatchMapping("/posts/{id}/approve")
@@ -63,7 +69,9 @@ public class AdminPostController {
     }
 
     @GetMapping("/jobs")
-    public ResponseEntity<List<JobStatusResponse>> listJobs() {
-        return ResponseEntity.ok(jobService.listAll());
+    public ResponseEntity<PageResponse<JobStatusResponse>> listJobs(
+            @RequestParam(required = false) JobStatus status,
+            @PageableDefault(size = 20, sort = "startedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(jobService.listAllAdmin(status, pageable));
     }
 }

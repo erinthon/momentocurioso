@@ -17,6 +17,15 @@ interface AdminPost {
   publishedAt: string | null;
 }
 
+interface PageResponse<T> {
+  content: T[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
+}
+
 @Component({
   selector: 'app-admin-posts',
   standalone: true,
@@ -140,6 +149,15 @@ interface AdminPost {
     .pulse-bar { width: 32px; height: 3px; background: var(--green); border-radius: 2px; animation: pulse 1.4s ease-in-out infinite; }
     @keyframes pulse { 0%,100%{width:32px;opacity:1} 50%{width:56px;opacity:.4} }
 
+    .load-more-wrapper { display: flex; justify-content: center; margin-top: 28px; }
+    .btn-load-more {
+      font-family: var(--fu); font-size: 12px; font-weight: 600; letter-spacing: .06em;
+      color: var(--green); background: transparent; border: 1.5px solid var(--green);
+      border-radius: 40px; padding: 9px 28px; cursor: pointer; transition: all var(--t);
+      &:hover { background: var(--green); color: #fff; }
+      &:disabled { opacity: .35; cursor: not-allowed; }
+    }
+
     @media (max-width: 900px) {
       .admin-header { flex-direction: column; align-items: flex-start; }
       .content { padding: 20px 1rem 60px; }
@@ -158,16 +176,16 @@ interface AdminPost {
       </div>
       <div class="filter-tabs">
         <button class="tab-btn" [class.active]="activeFilter === 'ALL'" (click)="setFilter('ALL')">
-          Todos <span class="tab-count">{{ posts.length }}</span>
+          Todos <span *ngIf="activeFilter === 'ALL'" class="tab-count">{{ totalElements }}</span>
         </button>
         <button class="tab-btn" [class.active]="activeFilter === 'DRAFT'" (click)="setFilter('DRAFT')">
-          Draft <span class="tab-count">{{ countByStatus('DRAFT') }}</span>
+          Draft <span *ngIf="activeFilter === 'DRAFT'" class="tab-count">{{ totalElements }}</span>
         </button>
         <button class="tab-btn" [class.active]="activeFilter === 'PUBLISHED'" (click)="setFilter('PUBLISHED')">
-          Publicados <span class="tab-count">{{ countByStatus('PUBLISHED') }}</span>
+          Publicados <span *ngIf="activeFilter === 'PUBLISHED'" class="tab-count">{{ totalElements }}</span>
         </button>
         <button class="tab-btn" [class.active]="activeFilter === 'REJECTED'" (click)="setFilter('REJECTED')">
-          Rejeitados <span class="tab-count">{{ countByStatus('REJECTED') }}</span>
+          Rejeitados <span *ngIf="activeFilter === 'REJECTED'" class="tab-count">{{ totalElements }}</span>
         </button>
       </div>
     </div>
@@ -181,15 +199,15 @@ interface AdminPost {
       <ng-container *ngIf="!loading">
         <div class="results-bar">
           <span class="sep-short"></span>
-          <span class="results-label">{{ filtered.length }} {{ filtered.length === 1 ? 'post' : 'posts' }}</span>
+          <span class="results-label">{{ posts.length }} de {{ totalElements }} {{ totalElements === 1 ? 'post' : 'posts' }}</span>
         </div>
 
-        <div *ngIf="filtered.length === 0" class="state-empty">
+        <div *ngIf="posts.length === 0" class="state-empty">
           <span class="sep-short"></span>
           <p>Nenhum post {{ filterLabel }}</p>
         </div>
 
-        <div class="table-wrapper" *ngIf="filtered.length > 0">
+        <div class="table-wrapper" *ngIf="posts.length > 0">
           <table class="posts-table">
             <thead>
               <tr>
@@ -201,7 +219,7 @@ interface AdminPost {
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let p of filtered">
+              <tr *ngFor="let p of posts">
                 <td>
                   <div class="post-title">{{ p.title }}</div>
                   <div class="post-slug">/{{ p.slug }}</div>
@@ -250,6 +268,12 @@ interface AdminPost {
             </tbody>
           </table>
         </div>
+
+        <div class="load-more-wrapper" *ngIf="!last && posts.length > 0">
+          <button class="btn-load-more" (click)="loadMore()" [disabled]="loadingMore">
+            {{ loadingMore ? 'Carregando...' : 'Carregar mais' }}
+          </button>
+        </div>
       </ng-container>
     </div>
   `
@@ -258,10 +282,14 @@ export class AdminPostsComponent implements OnInit {
   private api = inject(ApiService);
 
   posts: AdminPost[] = [];
-  filtered: AdminPost[] = [];
   activeFilter: 'ALL' | PostStatus = 'ALL';
   loading = true;
+  loadingMore = false;
   pendingId: number | null = null;
+  page = 0;
+  readonly pageSize = 20;
+  totalElements = 0;
+  last = false;
 
   get filterLabel(): string {
     const map: Record<string, string> = { ALL: '', DRAFT: 'em rascunho', PUBLISHED: 'publicado', REJECTED: 'rejeitado' };
@@ -269,16 +297,17 @@ export class AdminPostsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadPosts();
+    this.fetchPosts(true);
   }
 
   setFilter(f: 'ALL' | PostStatus): void {
     this.activeFilter = f;
-    this.applyFilter();
+    this.fetchPosts(true);
   }
 
-  countByStatus(status: PostStatus): number {
-    return this.posts.filter(p => p.status === status).length;
+  loadMore(): void {
+    this.page++;
+    this.fetchPosts(false);
   }
 
   statusLabel(s: PostStatus): string {
@@ -297,7 +326,6 @@ export class AdminPostsComponent implements OnInit {
         post.status = 'PUBLISHED';
         post.publishedAt = new Date().toISOString();
         this.pendingId = null;
-        this.applyFilter();
       },
       error: () => { this.pendingId = null; }
     });
@@ -309,26 +337,38 @@ export class AdminPostsComponent implements OnInit {
       next: () => {
         post.status = 'REJECTED';
         this.pendingId = null;
-        this.applyFilter();
       },
       error: () => { this.pendingId = null; }
     });
   }
 
-  private loadPosts(): void {
-    this.api.get<AdminPost[]>('/admin/posts').subscribe({
-      next: (posts) => {
-        this.posts = posts;
-        this.applyFilter();
-        this.loading = false;
-      },
-      error: () => { this.loading = false; }
-    });
-  }
+  private fetchPosts(reset: boolean): void {
+    if (reset) {
+      this.posts = [];
+      this.page = 0;
+      this.loading = true;
+    } else {
+      this.loadingMore = true;
+    }
 
-  private applyFilter(): void {
-    this.filtered = this.activeFilter === 'ALL'
-      ? this.posts
-      : this.posts.filter(p => p.status === this.activeFilter);
+    const params: Record<string, string> = {
+      page: String(this.page),
+      size: String(this.pageSize)
+    };
+    if (this.activeFilter !== 'ALL') params['status'] = this.activeFilter;
+
+    this.api.get<PageResponse<AdminPost>>('/admin/posts', params).subscribe({
+      next: (res) => {
+        this.posts = [...this.posts, ...res.content];
+        this.totalElements = res.totalElements;
+        this.last = res.last;
+        this.loading = false;
+        this.loadingMore = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.loadingMore = false;
+      }
+    });
   }
 }

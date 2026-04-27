@@ -18,6 +18,15 @@ interface Job {
   postId: number | null;
 }
 
+interface PageResponse<T> {
+  content: T[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
+}
+
 @Component({
   selector: 'app-admin-jobs',
   standalone: true,
@@ -143,6 +152,15 @@ interface Job {
     .pulse-bar { width: 32px; height: 3px; background: var(--green); border-radius: 2px; animation: pulse 1.4s ease-in-out infinite; }
     @keyframes pulse { 0%,100%{width:32px;opacity:1} 50%{width:56px;opacity:.4} }
 
+    .load-more-wrapper { display: flex; justify-content: center; margin-top: 24px; }
+    .btn-load-more {
+      font-family: var(--fu); font-size: 12px; font-weight: 600; letter-spacing: .06em;
+      color: var(--green); background: transparent; border: 1.5px solid var(--green);
+      border-radius: 40px; padding: 9px 28px; cursor: pointer; transition: all var(--t);
+      &:hover { background: var(--green); color: #fff; }
+      &:disabled { opacity: .35; cursor: not-allowed; }
+    }
+
     @media (max-width: 900px) {
       .admin-header { flex-direction: column; align-items: flex-start; }
       .content { padding: 20px 1rem 60px; }
@@ -161,16 +179,16 @@ interface Job {
       </div>
       <div class="filter-tabs">
         <button class="tab-btn" [class.active]="activeFilter === 'ALL'" (click)="setFilter('ALL')">
-          Todos <span class="tab-count">{{ jobs.length }}</span>
+          Todos <span *ngIf="activeFilter === 'ALL'" class="tab-count">{{ totalElements }}</span>
         </button>
         <button class="tab-btn" [class.active]="activeFilter === 'DONE'" (click)="setFilter('DONE')">
-          Concluídos <span class="tab-count">{{ countBy('DONE') }}</span>
+          Concluídos <span *ngIf="activeFilter === 'DONE'" class="tab-count">{{ totalElements }}</span>
         </button>
         <button class="tab-btn" [class.active]="activeFilter === 'FAILED'" (click)="setFilter('FAILED')">
-          Falhos <span class="tab-count">{{ countBy('FAILED') }}</span>
+          Falhos <span *ngIf="activeFilter === 'FAILED'" class="tab-count">{{ totalElements }}</span>
         </button>
         <button class="tab-btn" [class.active]="activeFilter === 'RUNNING'" (click)="setFilter('RUNNING')">
-          Executando <span class="tab-count">{{ countBy('RUNNING') }}</span>
+          Executando <span *ngIf="activeFilter === 'RUNNING'" class="tab-count">{{ totalElements }}</span>
         </button>
       </div>
     </div>
@@ -184,15 +202,15 @@ interface Job {
       <ng-container *ngIf="!loading">
         <div class="results-bar">
           <span class="sep-short"></span>
-          <span class="results-label">{{ filtered.length }} {{ filtered.length === 1 ? 'job' : 'jobs' }}</span>
+          <span class="results-label">{{ jobs.length }} de {{ totalElements }} {{ totalElements === 1 ? 'job' : 'jobs' }}</span>
         </div>
 
-        <div *ngIf="filtered.length === 0" class="state-empty">
+        <div *ngIf="jobs.length === 0" class="state-empty">
           <span class="sep-short"></span>
           <p>Nenhum job encontrado</p>
         </div>
 
-        <ng-container *ngIf="filtered.length > 0">
+        <ng-container *ngIf="jobs.length > 0">
           <div class="table-header">
             <span class="th">ID</span>
             <span class="th">Tópico</span>
@@ -203,7 +221,7 @@ interface Job {
           </div>
           <div class="jobs-list">
             <div
-              *ngFor="let j of filtered"
+              *ngFor="let j of jobs"
               class="job-row"
               [class.status-done]="j.status === 'DONE'"
               [class.status-failed]="j.status === 'FAILED'"
@@ -255,6 +273,12 @@ interface Job {
               </div>
             </div>
           </div>
+
+          <div class="load-more-wrapper" *ngIf="!last">
+            <button class="btn-load-more" (click)="loadMore()" [disabled]="loadingMore">
+              {{ loadingMore ? 'Carregando...' : 'Carregar mais' }}
+            </button>
+          </div>
         </ng-container>
       </ng-container>
     </div>
@@ -264,28 +288,26 @@ export class AdminJobsComponent implements OnInit {
   private api = inject(ApiService);
 
   jobs: Job[] = [];
-  filtered: Job[] = [];
   activeFilter: 'ALL' | JobStatus = 'ALL';
   loading = true;
+  loadingMore = false;
+  page = 0;
+  readonly pageSize = 20;
+  totalElements = 0;
+  last = false;
 
   ngOnInit(): void {
-    this.api.get<Job[]>('/admin/jobs').subscribe({
-      next: (jobs) => {
-        this.jobs = jobs;
-        this.applyFilter();
-        this.loading = false;
-      },
-      error: () => { this.loading = false; }
-    });
+    this.fetchJobs(true);
   }
 
   setFilter(f: 'ALL' | JobStatus): void {
     this.activeFilter = f;
-    this.applyFilter();
+    this.fetchJobs(true);
   }
 
-  countBy(status: JobStatus): number {
-    return this.jobs.filter(j => j.status === status).length;
+  loadMore(): void {
+    this.page++;
+    this.fetchJobs(false);
   }
 
   statusLabel(s: JobStatus): string {
@@ -304,9 +326,33 @@ export class AdminJobsComponent implements OnInit {
     return `${Math.floor(ms / 60000)}m ${Math.floor((ms % 60000) / 1000)}s`;
   }
 
-  private applyFilter(): void {
-    this.filtered = this.activeFilter === 'ALL'
-      ? this.jobs
-      : this.jobs.filter(j => j.status === this.activeFilter);
+  private fetchJobs(reset: boolean): void {
+    if (reset) {
+      this.jobs = [];
+      this.page = 0;
+      this.loading = true;
+    } else {
+      this.loadingMore = true;
+    }
+
+    const params: Record<string, string> = {
+      page: String(this.page),
+      size: String(this.pageSize)
+    };
+    if (this.activeFilter !== 'ALL') params['status'] = this.activeFilter;
+
+    this.api.get<PageResponse<Job>>('/admin/jobs', params).subscribe({
+      next: (res) => {
+        this.jobs = [...this.jobs, ...res.content];
+        this.totalElements = res.totalElements;
+        this.last = res.last;
+        this.loading = false;
+        this.loadingMore = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.loadingMore = false;
+      }
+    });
   }
 }
