@@ -4,7 +4,7 @@ import com.momentocurioso.dto.request.TriggerJobRequest;
 import com.momentocurioso.dto.response.JobStatusResponse;
 import com.momentocurioso.dto.response.PostResponse;
 import com.momentocurioso.dto.response.PostSummaryResponse;
-import com.momentocurioso.entity.Post;
+import com.momentocurioso.entity.ContentGenerationJob;
 import com.momentocurioso.entity.Topic;
 import com.momentocurioso.entity.TriggerSource;
 import com.momentocurioso.repository.TopicRepository;
@@ -57,9 +57,9 @@ public class AdminPostController {
         Topic topic = topicRepository.findById(request.topicId())
                 .orElseThrow(() -> new EntityNotFoundException("Topic not found: " + request.topicId()));
 
-        Post post = scheduler.runForTopic(topic, TriggerSource.MANUAL);
+        ContentGenerationJob job = scheduler.runForTopic(topic, TriggerSource.MANUAL);
 
-        return ResponseEntity.ok(jobService.listAll().get(0));
+        return ResponseEntity.ok(JobStatusResponse.from(job));
     }
 
     @GetMapping("/jobs")

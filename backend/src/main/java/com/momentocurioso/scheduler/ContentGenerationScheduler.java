@@ -52,7 +52,7 @@ public class ContentGenerationScheduler {
         }
     }
 
-    public Post runForTopic(Topic topic, TriggerSource triggerSource) {
+    public ContentGenerationJob runForTopic(Topic topic, TriggerSource triggerSource) {
         ContentGenerationJob job = jobService.createJob(topic, triggerSource);
         jobService.markRunning(job);
 
@@ -61,21 +61,17 @@ public class ContentGenerationScheduler {
 
             if (articles.isEmpty()) {
                 log.info("No new articles for topic '{}' — skipping generation", topic.getSlug());
-                jobService.markDone(job, null);
-                return null;
+                return jobService.markDone(job, null);
             }
 
             AiGeneratedContent content = aiWriterService.generate(topic, articles);
             Post post = postService.saveDraft(topic, content);
-            jobService.markDone(job, post);
-
             log.info("Content generated for topic '{}' — post id={} status={}", topic.getSlug(), post.getId(), post.getStatus());
-            return post;
+            return jobService.markDone(job, post);
 
         } catch (Exception e) {
             log.error("Content generation failed for topic '{}': {}", topic.getSlug(), e.getMessage(), e);
-            jobService.markFailed(job, e.getMessage());
-            return null;
+            return jobService.markFailed(job, e.getMessage());
         }
     }
 }
