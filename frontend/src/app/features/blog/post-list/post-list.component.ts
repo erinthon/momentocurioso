@@ -1,7 +1,8 @@
 import { Component, OnInit, inject, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { ApiService } from '../../../core/services/api.service';
 import { BlogNavbarComponent } from '../../../shared/blog-navbar/blog-navbar.component';
 
@@ -514,20 +515,15 @@ export class PostListComponent implements OnInit, AfterViewInit {
     if (this.activeTopicSlug) params['topicSlug'] = this.activeTopicSlug;
 
     forkJoin({
-      topics: this.api.get<Topic[]>('/topics'),
-      posts: this.api.get<PostSummary[]>('/posts', params)
-    }).subscribe({
-      next: ({ topics, posts }) => {
-        this.topics = topics.filter(t => t.active);
-        this.topicMap.clear();
-        topics.forEach(t => this.topicMap.set(t.slug, t.name));
-        this.posts = posts;
-        this.loading = false;
-        setTimeout(() => this.revealCards(), 50);
-      },
-      error: () => {
-        this.loading = false;
-      }
+      topics: this.api.get<Topic[]>('/topics').pipe(catchError(() => of([] as Topic[]))),
+      posts: this.api.get<PostSummary[]>('/posts', params).pipe(catchError(() => of([] as PostSummary[])))
+    }).subscribe(({ topics, posts }) => {
+      this.topics = topics.filter(t => t.active);
+      this.topicMap.clear();
+      topics.forEach(t => this.topicMap.set(t.slug, t.name));
+      this.posts = posts;
+      this.loading = false;
+      setTimeout(() => this.revealCards(), 50);
     });
   }
 
