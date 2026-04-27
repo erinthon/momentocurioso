@@ -41,7 +41,7 @@ public class ContentGenerationScheduler {
         this.jobService = jobService;
     }
 
-    @Scheduled(fixedRateString = "${scheduler.content-generation.rate-ms:21600000}",
+    @Scheduled(fixedDelayString = "${scheduler.content-generation.delay-ms:21600000}",
                initialDelayString = "${scheduler.content-generation.initial-delay-ms:60000}")
     public void run() {
         List<Topic> activeTopics = topicRepository.findAllByActiveTrue();
