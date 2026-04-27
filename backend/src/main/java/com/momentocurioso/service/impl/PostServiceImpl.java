@@ -77,6 +77,9 @@ public class PostServiceImpl implements PostService {
     public PostResponse approve(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Post not found: " + id));
+        if (post.getStatus() != PostStatus.DRAFT) {
+            throw new IllegalStateException("Only DRAFT posts can be approved, current status: " + post.getStatus());
+        }
         post.setStatus(PostStatus.PUBLISHED);
         post.setPublishedAt(LocalDateTime.now());
         return PostResponse.from(postRepository.save(post));
@@ -87,6 +90,9 @@ public class PostServiceImpl implements PostService {
     public PostResponse reject(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Post not found: " + id));
+        if (post.getStatus() != PostStatus.DRAFT) {
+            throw new IllegalStateException("Only DRAFT posts can be rejected, current status: " + post.getStatus());
+        }
         post.setStatus(PostStatus.REJECTED);
         return PostResponse.from(postRepository.save(post));
     }
