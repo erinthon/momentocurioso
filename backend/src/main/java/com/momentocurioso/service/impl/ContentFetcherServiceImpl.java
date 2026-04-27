@@ -12,6 +12,7 @@ import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -88,7 +89,8 @@ public class ContentFetcherServiceImpl implements ContentFetcherService {
                 .get();
 
         String title = doc.title();
-        String content = doc.body().text();
+        Element mainEl = doc.selectFirst("article, main, [role=main], .content, .post-content, #content, #main");
+        String content = (mainEl != null ? mainEl : doc.body()).text();
 
         ScrapedArticle article = buildArticle(site, title, content, url);
         return List.of(scrapedArticleRepository.save(article));
