@@ -25,7 +25,6 @@ A scheduled pipeline fetches content from RSS feeds and HTML pages, sends it to 
 ```
 backend/   → Spring Boot API (port 8080, base path /api)
 frontend/  → Angular SPA (port 4200)
-docker/    → Docker Compose for local MySQL
 ```
 
 ## Running locally
