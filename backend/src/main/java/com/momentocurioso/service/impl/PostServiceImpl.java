@@ -1,6 +1,7 @@
 package com.momentocurioso.service.impl;
 
 import com.momentocurioso.dto.AiGeneratedContent;
+import com.momentocurioso.dto.response.PageResponse;
 import com.momentocurioso.dto.response.PostResponse;
 import com.momentocurioso.dto.response.PostSummaryResponse;
 import com.momentocurioso.entity.Post;
@@ -12,7 +13,6 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -59,14 +59,14 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Cacheable(value = "posts", key = "'list:' + #topicSlug + ':p' + #pageable.pageNumber")
-    public Page<PostSummaryResponse> listPublished(String topicSlug, Pageable pageable) {
+    public PageResponse<PostSummaryResponse> listPublished(String topicSlug, Pageable pageable) {
         PageRequest pageRequest = PageRequest.of(
                 pageable.getPageNumber(), pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<Post> posts = topicSlug != null && !topicSlug.isBlank()
+        var posts = topicSlug != null && !topicSlug.isBlank()
                 ? postRepository.findByTopicSlugAndStatus(topicSlug, PostStatus.PUBLISHED, pageRequest)
                 : postRepository.findAllByStatus(PostStatus.PUBLISHED, pageRequest);
-        return posts.map(PostSummaryResponse::from);
+        return PageResponse.from(posts.map(PostSummaryResponse::from));
     }
 
     @Override

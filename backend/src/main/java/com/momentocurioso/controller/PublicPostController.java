@@ -1,9 +1,9 @@
 package com.momentocurioso.controller;
 
+import com.momentocurioso.dto.response.PageResponse;
 import com.momentocurioso.dto.response.PostResponse;
 import com.momentocurioso.dto.response.PostSummaryResponse;
 import com.momentocurioso.service.PostService;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -20,7 +20,7 @@ public class PublicPostController {
     }
 
     @GetMapping("/posts")
-    public ResponseEntity<Page<PostSummaryResponse>> list(
+    public ResponseEntity<PageResponse<PostSummaryResponse>> list(
             @RequestParam(required = false) String topicSlug,
             @PageableDefault(size = 12, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(postService.listPublished(topicSlug, pageable));
