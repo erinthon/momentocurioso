@@ -8,3 +8,5 @@ claude:
 app:
   jwt:
     secret: "seu_jwt_secret_aqui_minimo_32_caracteres"
+# cors:
+#   allowed-origins: "http://localhost:4200,http://localhost:3000"
