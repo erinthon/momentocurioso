@@ -12,6 +12,10 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.text.Normalizer;
@@ -54,12 +58,15 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    @Cacheable(value = "posts", key = "'list:' + #topicSlug")
-    public List<PostSummaryResponse> listPublished(String topicSlug) {
-        List<Post> posts = topicSlug != null && !topicSlug.isBlank()
-                ? postRepository.findByTopicSlugAndStatusOrderByCreatedAtDesc(topicSlug, PostStatus.PUBLISHED)
-                : postRepository.findAllByStatusOrderByCreatedAtDesc(PostStatus.PUBLISHED);
-        return posts.stream().map(PostSummaryResponse::from).toList();
+    @Cacheable(value = "posts", key = "'list:' + #topicSlug + ':p' + #pageable.pageNumber")
+    public Page<PostSummaryResponse> listPublished(String topicSlug, Pageable pageable) {
+        PageRequest pageRequest = PageRequest.of(
+                pageable.getPageNumber(), pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<Post> posts = topicSlug != null && !topicSlug.isBlank()
+                ? postRepository.findByTopicSlugAndStatus(topicSlug, PostStatus.PUBLISHED, pageRequest)
+                : postRepository.findAllByStatus(PostStatus.PUBLISHED, pageRequest);
+        return posts.map(PostSummaryResponse::from);
     }
 
     @Override

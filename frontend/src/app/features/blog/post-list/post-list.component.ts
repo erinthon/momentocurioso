@@ -3,6 +3,13 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+
+interface PagedPosts {
+  content: PostSummary[];
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
+}
 import { ApiService } from '../../../core/services/api.service';
 import { BlogNavbarComponent } from '../../../shared/blog-navbar/blog-navbar.component';
 
@@ -342,6 +349,33 @@ interface Topic {
       0%, 100% { width: 40px; opacity: 1; }
       50% { width: 70px; opacity: .4; }
     }
+    .load-more-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 2.5rem 0 1rem;
+    }
+    .btn-load-more {
+      padding: .65rem 2rem;
+      background: transparent;
+      border: 1.5px solid var(--green);
+      color: var(--green);
+      border-radius: var(--r);
+      font-family: var(--ff);
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .18s, color .18s;
+      min-width: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+    }
+    .btn-load-more:hover:not(:disabled) {
+      background: var(--green);
+      color: #fff;
+    }
+    .btn-load-more:disabled { opacity: .5; cursor: default; }
   `],
   template: `
     <app-blog-navbar />
@@ -396,7 +430,7 @@ interface Topic {
       <div class="section-header">
         <span class="sep-short"></span>
         <span class="section-label">{{ activeTopicSlug ? getTopicName(activeTopicSlug) : 'Todos os posts' }}</span>
-        <span class="section-count" *ngIf="!loading">{{ posts.length }} {{ posts.length === 1 ? 'post' : 'posts' }}</span>
+        <span class="section-count" *ngIf="!loading">{{ totalElements }} {{ totalElements === 1 ? 'post' : 'posts' }}</span>
       </div>
 
       <div *ngIf="loading" class="state-loading">
@@ -469,6 +503,13 @@ interface Topic {
           </a>
         </div>
       </ng-container>
+
+      <div class="load-more-wrap" *ngIf="!loading && hasMore">
+        <button class="btn-load-more" (click)="loadMore()" [disabled]="loadingMore">
+          <span *ngIf="!loadingMore">Carregar mais</span>
+          <span *ngIf="loadingMore" class="pulse-bar"></span>
+        </button>
+      </div>
     </main>
   `
 })
@@ -481,6 +522,11 @@ export class PostListComponent implements OnInit, AfterViewInit {
   posts: PostSummary[] = [];
   activeTopicSlug: string | null = null;
   loading = true;
+  loadingMore = false;
+  hasMore = false;
+  totalElements = 0;
+  private page = 0;
+  private readonly pageSize = 12;
 
   private topicMap = new Map<string, string>();
 
@@ -511,18 +557,41 @@ export class PostListComponent implements OnInit, AfterViewInit {
 
   private loadData(): void {
     this.loading = true;
-    const params: Record<string, string> = {};
+    this.page = 0;
+    this.posts = [];
+    const params: Record<string, string> = { page: '0', size: String(this.pageSize) };
     if (this.activeTopicSlug) params['topicSlug'] = this.activeTopicSlug;
+
+    const emptyPage: PagedPosts = { content: [], totalElements: 0, totalPages: 0, last: true };
 
     forkJoin({
       topics: this.api.get<Topic[]>('/topics').pipe(catchError(() => of([] as Topic[]))),
-      posts: this.api.get<PostSummary[]>('/posts', params).pipe(catchError(() => of([] as PostSummary[])))
+      posts: this.api.get<PagedPosts>('/posts', params).pipe(catchError(() => of(emptyPage)))
     }).subscribe(({ topics, posts }) => {
       this.topics = topics.filter(t => t.active);
       this.topicMap.clear();
       topics.forEach(t => this.topicMap.set(t.slug, t.name));
-      this.posts = posts;
+      this.posts = posts.content;
+      this.totalElements = posts.totalElements;
+      this.hasMore = !posts.last;
       this.loading = false;
+      setTimeout(() => this.revealCards(), 50);
+    });
+  }
+
+  loadMore(): void {
+    if (this.loadingMore || !this.hasMore) return;
+    this.loadingMore = true;
+    this.page++;
+    const params: Record<string, string> = { page: String(this.page), size: String(this.pageSize) };
+    if (this.activeTopicSlug) params['topicSlug'] = this.activeTopicSlug;
+
+    this.api.get<PagedPosts>('/posts', params).pipe(catchError(() => of(null))).subscribe(paged => {
+      if (paged) {
+        this.posts = [...this.posts, ...paged.content];
+        this.hasMore = !paged.last;
+      }
+      this.loadingMore = false;
       setTimeout(() => this.revealCards(), 50);
     });
   }
