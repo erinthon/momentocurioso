@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ApiService } from '../../../core/services/api.service';
 import { BlogNavbarComponent } from '../../../shared/blog-navbar/blog-navbar.component';
 
@@ -346,7 +345,7 @@ interface PostDetail {
       </header>
 
       <div class="article-wrapper">
-        <article class="article-content rv" [innerHTML]="safeContent"></article>
+        <article class="article-content rv" [innerHTML]="postContent"></article>
 
         <footer class="article-footer rv">
           <a class="footer-back" routerLink="/blog/posts">← Voltar ao blog</a>
@@ -359,10 +358,9 @@ interface PostDetail {
 export class PostDetailComponent implements OnInit, OnDestroy {
   private api = inject(ApiService);
   private route = inject(ActivatedRoute);
-  private sanitizer = inject(DomSanitizer);
 
   post: PostDetail | null = null;
-  safeContent: SafeHtml = '';
+  postContent = '';
   loading = true;
   readingProgress = 0;
   readingTime = 0;
@@ -380,7 +378,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     this.api.get<PostDetail>(`/posts/${slug}`).subscribe({
       next: (post) => {
         this.post = post;
-        this.safeContent = this.sanitizer.bypassSecurityTrustHtml(post.content);
+        this.postContent = post.content;
         this.readingTime = this.calcReadingTime(post.content);
         this.loading = false;
         setTimeout(() => this.revealElements(), 80);
