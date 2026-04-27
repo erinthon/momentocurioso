@@ -11,11 +11,13 @@ import com.momentocurioso.service.PostService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.text.Normalizer;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -43,7 +45,12 @@ public class PostServiceImpl implements PostService {
             post.setStatus(PostStatus.DRAFT);
         }
 
-        return postRepository.save(post);
+        try {
+            return postRepository.save(post);
+        } catch (DataIntegrityViolationException e) {
+            post.setSlug(post.getSlug() + "-" + UUID.randomUUID().toString().substring(0, 8));
+            return postRepository.save(post);
+        }
     }
 
     @Override
