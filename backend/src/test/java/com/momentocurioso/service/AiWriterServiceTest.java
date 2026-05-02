@@ -1,49 +1,55 @@
 package com.momentocurioso.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.momentocurioso.dto.AiGeneratedContent;
+import com.momentocurioso.entity.AiProvider;
+import com.momentocurioso.entity.AiProviderType;
 import com.momentocurioso.entity.ScrapedArticle;
 import com.momentocurioso.entity.Topic;
+import com.momentocurioso.repository.AiProviderRepository;
 import com.momentocurioso.service.impl.AiWriterServiceImpl;
+import com.momentocurioso.service.strategy.LlmStrategy;
+import com.momentocurioso.service.strategy.LlmStrategyFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
-import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.client.RestClient;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
 class AiWriterServiceTest {
 
     @Mock
-    private RestClient claudeRestClient;
+    private AiProviderRepository aiProviderRepository;
+
+    @Mock
+    private LlmStrategyFactory strategyFactory;
+
+    @Mock
+    private LlmStrategy llmStrategy;
 
     private AiWriterServiceImpl aiWriterService;
 
     @BeforeEach
     void setUp() {
-        // apiKey field stays null → triggers mock content branch (no API call made)
-        aiWriterService = new AiWriterServiceImpl(claudeRestClient, new ObjectMapper());
+        aiWriterService = new AiWriterServiceImpl(aiProviderRepository, strategyFactory);
     }
 
     // ── BUG-009: Testes sem @SpringBootTest — rodam sem MySQL ─────────────────
 
     @Test
-    void generate_withoutApiKey_returnsMockContent() {
+    void generate_withNoActiveProvider_returnsMockContent() {
+        when(aiProviderRepository.findFirstByActiveTrue()).thenReturn(Optional.empty());
+
         Topic topic = new Topic();
         topic.setName("IA");
         topic.setSlug("ia");
@@ -56,7 +62,9 @@ class AiWriterServiceTest {
     }
 
     @Test
-    void generate_withArticles_withoutApiKey_returnsMockContent() {
+    void generate_withNoActiveProvider_andArticles_returnsMockContent() {
+        when(aiProviderRepository.findFirstByActiveTrue()).thenReturn(Optional.empty());
+
         Topic topic = new Topic();
         topic.setName("Tecnologia");
         topic.setSlug("tecnologia");
@@ -72,32 +80,42 @@ class AiWriterServiceTest {
         assertThat(result.content()).isNotBlank();
     }
 
-    // ── BUG-016: Claude API com erros HTTP lança exceção com mensagem descritiva ──
+    @Test
+    void generate_withActiveProvider_delegatesToStrategy() {
+        AiProvider provider = new AiProvider();
+        provider.setName("Claude Test");
+        provider.setType(AiProviderType.CLAUDE);
+        provider.setModel("claude-sonnet-4-6");
+        provider.setApiKey("test-api-key");
 
-    private void setupApiMode() {
-        ReflectionTestUtils.setField(aiWriterService, "apiKey", "test-api-key");
-        ReflectionTestUtils.setField(aiWriterService, "model", "claude-sonnet-4-6");
-    }
+        when(aiProviderRepository.findFirstByActiveTrue()).thenReturn(Optional.of(provider));
+        when(strategyFactory.create(provider)).thenReturn(llmStrategy);
+        when(llmStrategy.generate(anyString())).thenReturn(
+                new AiGeneratedContent("Título gerado", "Resumo gerado", "<p>Conteúdo gerado</p>")
+        );
 
-    private RestClient.ResponseSpec stubRestClientChain(RuntimeException toThrow) {
-        var uriSpec = mock(RestClient.RequestBodyUriSpec.class);
-        var bodySpec = mock(RestClient.RequestBodySpec.class);
-        var responseSpec = mock(RestClient.ResponseSpec.class);
+        Topic topic = new Topic();
+        topic.setName("Tech");
+        topic.setSlug("tech");
 
-        doReturn(uriSpec).when(claudeRestClient).post();
-        doReturn(bodySpec).when(uriSpec).uri(anyString());
-        doReturn(bodySpec).when(bodySpec).body(any(Object.class));
-        doReturn(responseSpec).when(bodySpec).retrieve();
-        doReturn(responseSpec).when(responseSpec).onStatus(any(), any());
-        doThrow(toThrow).when(responseSpec).body(any(Class.class));
+        AiGeneratedContent result = aiWriterService.generate(topic, List.of());
 
-        return responseSpec;
+        verify(strategyFactory).create(provider);
+        verify(llmStrategy).generate(any());
+        assertThat(result.title()).isEqualTo("Título gerado");
     }
 
     @Test
-    void generate_when429FromClaude_throwsExceptionWithRateLimitMessage() {
-        setupApiMode();
-        stubRestClientChain(new RuntimeException("Claude API: rate limit exceeded, try again later (429)"));
+    void generate_whenStrategyThrows_exceptionPropagates() {
+        AiProvider provider = new AiProvider();
+        provider.setName("Claude Test");
+        provider.setType(AiProviderType.CLAUDE);
+        provider.setModel("claude-sonnet-4-6");
+        provider.setApiKey("test-api-key");
+
+        when(aiProviderRepository.findFirstByActiveTrue()).thenReturn(Optional.of(provider));
+        when(strategyFactory.create(provider)).thenReturn(llmStrategy);
+        when(llmStrategy.generate(anyString())).thenThrow(new RuntimeException("API error"));
 
         Topic topic = new Topic();
         topic.setName("Tech");
@@ -105,34 +123,6 @@ class AiWriterServiceTest {
 
         assertThatThrownBy(() -> aiWriterService.generate(topic, List.of()))
                 .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("rate limit");
-    }
-
-    @Test
-    void generate_when401FromClaude_throwsExceptionWithUnauthorizedMessage() {
-        setupApiMode();
-        stubRestClientChain(new RuntimeException("Claude API: unauthorized — check your API key (401)"));
-
-        Topic topic = new Topic();
-        topic.setName("Tech");
-        topic.setSlug("tech");
-
-        assertThatThrownBy(() -> aiWriterService.generate(topic, List.of()))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("401");
-    }
-
-    @Test
-    void generate_when500FromClaude_throwsExceptionWithServerErrorMessage() {
-        setupApiMode();
-        stubRestClientChain(new RuntimeException("Claude API server error: 500 INTERNAL_SERVER_ERROR"));
-
-        Topic topic = new Topic();
-        topic.setName("Tech");
-        topic.setSlug("tech");
-
-        assertThatThrownBy(() -> aiWriterService.generate(topic, List.of()))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("500");
+                .hasMessageContaining("API error");
     }
 }
