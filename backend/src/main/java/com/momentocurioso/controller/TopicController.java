@@ -1,6 +1,7 @@
 package com.momentocurioso.controller;
 
 import com.momentocurioso.dto.request.CreateTopicRequest;
+import com.momentocurioso.dto.request.UpdateTopicRequest;
 import com.momentocurioso.dto.response.TopicResponse;
 import com.momentocurioso.service.TopicService;
 import jakarta.validation.Valid;
@@ -27,5 +28,22 @@ public class TopicController {
     @GetMapping("/topics")
     public ResponseEntity<List<TopicResponse>> listActive() {
         return ResponseEntity.ok(topicService.listActive());
+    }
+
+    @GetMapping("/admin/topics")
+    public ResponseEntity<List<TopicResponse>> listAll() {
+        return ResponseEntity.ok(topicService.listAll());
+    }
+
+    @PutMapping("/admin/topics/{id}")
+    public ResponseEntity<TopicResponse> update(@PathVariable Long id,
+                                                @Valid @RequestBody UpdateTopicRequest request) {
+        return ResponseEntity.ok(topicService.update(id, request));
+    }
+
+    @DeleteMapping("/admin/topics/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        topicService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

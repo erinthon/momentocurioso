@@ -1,6 +1,7 @@
 package com.momentocurioso.service.impl;
 
 import com.momentocurioso.dto.request.CreateSourceSiteRequest;
+import com.momentocurioso.dto.request.UpdateSourceSiteRequest;
 import com.momentocurioso.dto.response.SourceSiteResponse;
 import com.momentocurioso.entity.SourceSite;
 import com.momentocurioso.entity.Topic;
@@ -51,5 +52,14 @@ public class SourceSiteServiceImpl implements SourceSiteService {
             throw new EntityNotFoundException("Source site not found: " + id);
         }
         sourceSiteRepository.deleteById(id);
+    }
+
+    @Override
+    public SourceSiteResponse update(Long id, UpdateSourceSiteRequest request) {
+        SourceSite site = sourceSiteRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Source site not found: " + id));
+        site.setUrl(request.url());
+        site.setType(request.type());
+        return SourceSiteResponse.from(sourceSiteRepository.save(site));
     }
 }

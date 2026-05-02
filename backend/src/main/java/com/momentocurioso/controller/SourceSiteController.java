@@ -1,6 +1,7 @@
 package com.momentocurioso.controller;
 
 import com.momentocurioso.dto.request.CreateSourceSiteRequest;
+import com.momentocurioso.dto.request.UpdateSourceSiteRequest;
 import com.momentocurioso.dto.response.SourceSiteResponse;
 import com.momentocurioso.service.SourceSiteService;
 import jakarta.validation.Valid;
@@ -33,5 +34,11 @@ public class SourceSiteController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         sourceSiteService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/admin/sources/{id}")
+    public ResponseEntity<SourceSiteResponse> update(@PathVariable Long id,
+                                                      @Valid @RequestBody UpdateSourceSiteRequest request) {
+        return ResponseEntity.ok(sourceSiteService.update(id, request));
     }
 }
