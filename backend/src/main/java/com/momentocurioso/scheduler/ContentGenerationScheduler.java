@@ -11,6 +11,7 @@ import com.momentocurioso.service.AiWriterService;
 import com.momentocurioso.service.ContentFetcherService;
 import com.momentocurioso.service.ContentGenerationJobService;
 import com.momentocurioso.service.PostService;
+import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -52,6 +53,12 @@ public class ContentGenerationScheduler {
         }
     }
 
+    public ContentGenerationJob runForTopic(Long topicId, TriggerSource triggerSource) {
+        Topic topic = topicRepository.findById(topicId)
+                .orElseThrow(() -> new EntityNotFoundException("Topic not found: " + topicId));
+        return runForTopic(topic, triggerSource);
+    }
+
     public ContentGenerationJob runForTopic(Topic topic, TriggerSource triggerSource) {
         ContentGenerationJob job = jobService.createJob(topic, triggerSource);
         jobService.markRunning(job);
@@ -65,6 +72,7 @@ public class ContentGenerationScheduler {
             }
 
             AiGeneratedContent content = aiWriterService.generate(topic, articles);
+            contentFetcherService.markUsed(articles);
             Post post = postService.saveDraft(topic, content);
             log.info("Content generated for topic '{}' — post id={} status={}", topic.getSlug(), post.getId(), post.getStatus());
             return jobService.markDone(job, post);

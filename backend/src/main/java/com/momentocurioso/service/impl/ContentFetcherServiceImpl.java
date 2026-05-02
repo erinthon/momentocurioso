@@ -96,6 +96,12 @@ public class ContentFetcherServiceImpl implements ContentFetcherService {
         return List.of(scrapedArticleRepository.save(article));
     }
 
+    @Override
+    public void markUsed(List<ScrapedArticle> articles) {
+        articles.forEach(a -> a.setUsed(true));
+        scrapedArticleRepository.saveAll(articles);
+    }
+
     private ScrapedArticle buildArticle(SourceSite site, String title, String content, String url) {
         ScrapedArticle article = new ScrapedArticle();
         article.setSourceSite(site);

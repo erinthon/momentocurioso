@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface TopicService {
     TopicResponse create(CreateTopicRequest request);
+    TopicResponse findById(Long id);
     List<TopicResponse> listActive();
     List<TopicResponse> listAll();
     TopicResponse update(Long id, UpdateTopicRequest request);

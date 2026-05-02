@@ -8,13 +8,10 @@ import com.momentocurioso.dto.response.PostSummaryResponse;
 import com.momentocurioso.entity.ContentGenerationJob;
 import com.momentocurioso.entity.JobStatus;
 import com.momentocurioso.entity.PostStatus;
-import com.momentocurioso.entity.Topic;
 import com.momentocurioso.entity.TriggerSource;
-import com.momentocurioso.repository.TopicRepository;
 import com.momentocurioso.scheduler.ContentGenerationScheduler;
 import com.momentocurioso.service.ContentGenerationJobService;
 import com.momentocurioso.service.PostService;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -29,16 +26,13 @@ public class AdminPostController {
     private final PostService postService;
     private final ContentGenerationJobService jobService;
     private final ContentGenerationScheduler scheduler;
-    private final TopicRepository topicRepository;
 
     public AdminPostController(PostService postService,
                                ContentGenerationJobService jobService,
-                               ContentGenerationScheduler scheduler,
-                               TopicRepository topicRepository) {
+                               ContentGenerationScheduler scheduler) {
         this.postService = postService;
         this.jobService = jobService;
         this.scheduler = scheduler;
-        this.topicRepository = topicRepository;
     }
 
     @GetMapping("/posts")
@@ -60,11 +54,7 @@ public class AdminPostController {
 
     @PostMapping("/content/trigger")
     public ResponseEntity<JobStatusResponse> trigger(@Valid @RequestBody TriggerJobRequest request) {
-        Topic topic = topicRepository.findById(request.topicId())
-                .orElseThrow(() -> new EntityNotFoundException("Topic not found: " + request.topicId()));
-
-        ContentGenerationJob job = scheduler.runForTopic(topic, TriggerSource.MANUAL);
-
+        ContentGenerationJob job = scheduler.runForTopic(request.topicId(), TriggerSource.MANUAL);
         return ResponseEntity.ok(JobStatusResponse.from(job));
     }
 

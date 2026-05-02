@@ -38,6 +38,13 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
+    public TopicResponse findById(Long id) {
+        Topic topic = topicRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Topic not found: " + id));
+        return TopicResponse.from(topic);
+    }
+
+    @Override
     @Cacheable("topics")
     public List<TopicResponse> listActive() {
         return topicRepository.findAllByActiveTrue()

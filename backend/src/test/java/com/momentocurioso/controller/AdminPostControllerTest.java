@@ -7,13 +7,13 @@ import com.momentocurioso.entity.ContentGenerationJob;
 import com.momentocurioso.entity.JobStatus;
 import com.momentocurioso.entity.Topic;
 import com.momentocurioso.entity.TriggerSource;
-import com.momentocurioso.repository.TopicRepository;
 import com.momentocurioso.scheduler.ContentGenerationScheduler;
 import com.momentocurioso.security.JwtUtil;
 import com.momentocurioso.service.ContentGenerationJobService;
 import com.momentocurioso.service.PostService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.core.userdetails.UserDetailsService;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,9 +23,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -53,9 +51,6 @@ class AdminPostControllerTest {
     private ContentGenerationScheduler scheduler;
 
     @MockBean
-    private TopicRepository topicRepository;
-
-    @MockBean
     private JwtUtil jwtUtil;
 
     @MockBean
@@ -77,8 +72,7 @@ class AdminPostControllerTest {
         job.setTriggeredBy(TriggerSource.MANUAL);
         job.setStartedAt(LocalDateTime.now());
 
-        when(topicRepository.findById(1L)).thenReturn(Optional.of(topic));
-        when(scheduler.runForTopic(eq(topic), eq(TriggerSource.MANUAL))).thenReturn(job);
+        when(scheduler.runForTopic(eq(1L), eq(TriggerSource.MANUAL))).thenReturn(job);
 
         mockMvc.perform(post("/admin/content/trigger")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -90,7 +84,7 @@ class AdminPostControllerTest {
 
     @Test
     void trigger_withInvalidTopicId_returns404() throws Exception {
-        when(topicRepository.findById(9999L))
+        when(scheduler.runForTopic(eq(9999L), eq(TriggerSource.MANUAL)))
                 .thenThrow(new EntityNotFoundException("Topic not found: 9999"));
 
         mockMvc.perform(post("/admin/content/trigger")

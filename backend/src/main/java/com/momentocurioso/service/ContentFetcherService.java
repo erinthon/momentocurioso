@@ -8,4 +8,6 @@ import java.util.List;
 public interface ContentFetcherService {
 
     List<ScrapedArticle> fetchAndSave(Topic topic);
+
+    void markUsed(List<ScrapedArticle> articles);
 }
