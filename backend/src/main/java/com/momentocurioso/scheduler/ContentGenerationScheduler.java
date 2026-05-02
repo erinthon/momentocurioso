@@ -63,23 +63,26 @@ public class ContentGenerationScheduler {
         ContentGenerationJob job = jobService.createJob(topic, triggerSource);
         jobService.markRunning(job);
 
+        int articlesFound = 0;
         try {
             List<ScrapedArticle> articles = contentFetcherService.fetchAndSave(topic);
+            articlesFound = articles.size();
 
             if (articles.isEmpty()) {
                 log.info("No new articles for topic '{}' — skipping generation", topic.getSlug());
-                return jobService.markDone(job, null);
+                return jobService.markDone(job, null, 0, 0);
             }
 
             AiGeneratedContent content = aiWriterService.generate(topic, articles);
             contentFetcherService.markUsed(articles);
             Post post = postService.saveDraft(topic, content);
-            log.info("Content generated for topic '{}' — post id={} status={}", topic.getSlug(), post.getId(), post.getStatus());
-            return jobService.markDone(job, post);
+            log.info("Content generated for topic '{}' — post id={} articles={} status={}",
+                    topic.getSlug(), post.getId(), articles.size(), post.getStatus());
+            return jobService.markDone(job, post, articles.size(), articles.size());
 
         } catch (Exception e) {
             log.error("Content generation failed for topic '{}': {}", topic.getSlug(), e.getMessage(), e);
-            return jobService.markFailed(job, e.getMessage());
+            return jobService.markFailed(job, e.getMessage(), articlesFound);
         }
     }
 }

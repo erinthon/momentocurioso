@@ -23,6 +23,9 @@ interface JobResult {
   finishedAt: string | null;
   errorMessage: string | null;
   postId: number | null;
+  articlesFound: number | null;
+  articlesUsed: number | null;
+  summary: string | null;
 }
 
 @Component({
@@ -154,6 +157,12 @@ interface JobResult {
     }
     .val-green { color: var(--green) !important; }
     .val-coral { color: var(--coral) !important; }
+    .result-summary {
+      font-family: var(--fu); font-size: 12px; color: var(--text-3);
+      letter-spacing: .04em; margin-top: 4px; margin-bottom: 8px;
+      padding: 10px 14px; background: var(--bg-2); border-radius: var(--r);
+      border: 1px solid var(--border);
+    }
     .result-error {
       font-family: var(--fb); font-size: 13px; color: var(--coral);
       margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);
@@ -280,7 +289,16 @@ interface JobResult {
               <label>Post gerado</label>
               <span class="val-green">#{{ result.postId }}</span>
             </div>
+            <div class="result-field" *ngIf="result.articlesFound !== null && result.articlesFound !== undefined">
+              <label>Artigos encontrados</label>
+              <span>{{ result.articlesFound }}</span>
+            </div>
+            <div class="result-field" *ngIf="result.articlesUsed !== null && result.articlesUsed !== undefined">
+              <label>Artigos usados</label>
+              <span>{{ result.articlesUsed }}</span>
+            </div>
           </div>
+          <div class="result-summary" *ngIf="result.summary">{{ result.summary }}</div>
           <div class="result-error" *ngIf="result.errorMessage">
             {{ result.errorMessage }}
           </div>
@@ -337,7 +355,10 @@ export class AdminTriggerComponent implements OnInit {
           startedAt: new Date().toISOString(),
           finishedAt: null,
           errorMessage: err?.error?.message ?? 'Erro ao disparar o job.',
-          postId: null
+          postId: null,
+          articlesFound: null,
+          articlesUsed: null,
+          summary: null
         };
         this.running = false;
       }

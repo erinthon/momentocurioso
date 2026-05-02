@@ -15,9 +15,9 @@ public interface ContentGenerationJobService {
 
     ContentGenerationJob markRunning(ContentGenerationJob job);
 
-    ContentGenerationJob markDone(ContentGenerationJob job, Post post);
+    ContentGenerationJob markDone(ContentGenerationJob job, Post post, int articlesFound, int articlesUsed);
 
-    ContentGenerationJob markFailed(ContentGenerationJob job, String errorMessage);
+    ContentGenerationJob markFailed(ContentGenerationJob job, String errorMessage, int articlesFound);
 
     PageResponse<JobStatusResponse> listAllAdmin(JobStatus status, Pageable pageable);
 }

@@ -2,6 +2,7 @@ package com.momentocurioso.service.impl;
 
 import com.momentocurioso.entity.ScrapedArticle;
 import com.momentocurioso.entity.SourceSite;
+import com.momentocurioso.entity.SourceType;
 import com.momentocurioso.entity.Topic;
 import com.momentocurioso.repository.ScrapedArticleRepository;
 import com.momentocurioso.repository.SourceSiteRepository;
@@ -21,6 +22,7 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ContentFetcherServiceImpl implements ContentFetcherService {
@@ -39,21 +41,37 @@ public class ContentFetcherServiceImpl implements ContentFetcherService {
     @Override
     public List<ScrapedArticle> fetchAndSave(Topic topic) {
         List<SourceSite> sites = sourceSiteRepository.findByTopicIdAndActiveTrue(topic.getId());
-        List<ScrapedArticle> saved = new ArrayList<>();
+        List<String> fetchErrors = new ArrayList<>();
 
         for (SourceSite site : sites) {
             try {
-                List<ScrapedArticle> articles = switch (site.getType()) {
-                    case RSS -> fetchRss(site);
-                    case HTML -> fetchHtml(site);
-                };
-                saved.addAll(articles);
+                if (site.getType() == SourceType.RSS) {
+                    fetchRss(site);
+                } else {
+                    fetchHtml(site);
+                }
             } catch (Exception e) {
+                String msg = "Fonte id=%d (%s): %s".formatted(site.getId(), site.getUrl(), e.getMessage());
+                fetchErrors.add(msg);
                 log.error("Failed to fetch from source site id={} url={}: {}", site.getId(), site.getUrl(), e.getMessage());
             }
         }
 
-        return saved;
+        // Return all unprocessed articles: newly fetched + previously scraped but not yet used
+        // (covers re-runs after failed jobs where markUsed was never called)
+        List<ScrapedArticle> unprocessed = sites.stream()
+                .flatMap(s -> scrapedArticleRepository.findBySourceSiteIdAndUsedFalse(s.getId()).stream())
+                .collect(Collectors.toList());
+
+        if (unprocessed.isEmpty() && !fetchErrors.isEmpty()) {
+            throw new RuntimeException("Falha ao buscar artigos das fontes: " + String.join("; ", fetchErrors));
+        }
+
+        if (!fetchErrors.isEmpty()) {
+            log.warn("Some sources failed but {} unprocessed article(s) available: {}", unprocessed.size(), fetchErrors);
+        }
+
+        return unprocessed;
     }
 
     private List<ScrapedArticle> fetchRss(SourceSite site) throws Exception {

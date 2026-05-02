@@ -42,18 +42,30 @@ public class ContentGenerationJobServiceImpl implements ContentGenerationJobServ
     }
 
     @Override
-    public ContentGenerationJob markDone(ContentGenerationJob job, Post post) {
+    public ContentGenerationJob markDone(ContentGenerationJob job, Post post, int articlesFound, int articlesUsed) {
         job.setStatus(JobStatus.DONE);
         job.setFinishedAt(LocalDateTime.now());
         job.setPost(post);
+        job.setArticlesFound(articlesFound);
+        job.setArticlesUsed(articlesUsed);
+        if (articlesFound == 0) {
+            job.setSummary("Nenhum artigo novo encontrado");
+        } else {
+            job.setSummary(articlesUsed + " artigo(s) coletado(s) · rascunho #" + post.getId() + " gerado");
+        }
         return jobRepository.save(job);
     }
 
     @Override
-    public ContentGenerationJob markFailed(ContentGenerationJob job, String errorMessage) {
+    public ContentGenerationJob markFailed(ContentGenerationJob job, String errorMessage, int articlesFound) {
         job.setStatus(JobStatus.FAILED);
         job.setFinishedAt(LocalDateTime.now());
         job.setErrorMessage(errorMessage);
+        job.setArticlesFound(articlesFound);
+        job.setArticlesUsed(0);
+        job.setSummary(articlesFound > 0
+                ? articlesFound + " artigo(s) coletado(s) · falha na geração pela IA"
+                : "Falha antes da coleta de artigos");
         return jobRepository.save(job);
     }
 

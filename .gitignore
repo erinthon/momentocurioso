@@ -36,3 +36,6 @@ logs/
 
 # Brand guide (local reference only)
 brand-guide/
+
+# Scripts locais (não versionados)
+scripts/

@@ -14,7 +14,10 @@ public record JobStatusResponse(
         LocalDateTime startedAt,
         LocalDateTime finishedAt,
         String errorMessage,
-        Long postId
+        Long postId,
+        Integer articlesFound,
+        Integer articlesUsed,
+        String summary
 ) {
     public static JobStatusResponse from(ContentGenerationJob job) {
         return new JobStatusResponse(
@@ -25,7 +28,10 @@ public record JobStatusResponse(
                 job.getStartedAt(),
                 job.getFinishedAt(),
                 job.getErrorMessage(),
-                job.getPost() != null ? job.getPost().getId() : null
+                job.getPost() != null ? job.getPost().getId() : null,
+                job.getArticlesFound(),
+                job.getArticlesUsed(),
+                job.getSummary()
         );
     }
 }

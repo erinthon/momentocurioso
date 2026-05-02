@@ -39,4 +39,11 @@ public class ContentGenerationJob {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
+
+    private Integer articlesFound;
+
+    private Integer articlesUsed;
+
+    @Column(columnDefinition = "TEXT")
+    private String summary;
 }

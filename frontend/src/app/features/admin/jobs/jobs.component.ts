@@ -16,6 +16,9 @@ interface Job {
   finishedAt: string | null;
   errorMessage: string | null;
   postId: number | null;
+  articlesFound: number | null;
+  articlesUsed: number | null;
+  summary: string | null;
 }
 
 interface PageResponse<T> {
@@ -126,6 +129,20 @@ interface PageResponse<T> {
       font-family: var(--fu); font-size: 10px; color: var(--text-4); letter-spacing: .06em;
     }
     .time-label { color: var(--text-4); margin-right: 4px; font-weight: 600; }
+
+    .job-summary {
+      font-family: var(--fu); font-size: 10px; color: var(--text-3);
+      letter-spacing: .04em; margin-top: 5px;
+    }
+    .job-articles {
+      display: flex; align-items: center; gap: 5px; margin-top: 4px;
+    }
+    .art-chip {
+      font-family: var(--fu); font-size: 9px; font-weight: 600;
+      color: var(--text-4); letter-spacing: .06em; background: var(--bg-2);
+      border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px;
+    }
+    .art-sep { font-size: 9px; color: var(--text-4); }
 
     .job-error {
       font-family: var(--fu); font-size: 10px; color: var(--coral);
@@ -246,6 +263,12 @@ interface PageResponse<T> {
                   <span *ngIf="j.status === 'RUNNING'" class="running-dot"></span>
                   {{ statusLabel(j.status) }}
                 </span>
+                <div class="job-summary" *ngIf="j.summary">{{ j.summary }}</div>
+                <div class="job-articles" *ngIf="j.articlesFound !== null && j.articlesFound !== undefined && j.status !== 'PENDING' && j.status !== 'RUNNING'">
+                  <span class="art-chip">{{ j.articlesFound }} encontrado(s)</span>
+                  <span class="art-sep">·</span>
+                  <span class="art-chip">{{ j.articlesUsed }} usado(s)</span>
+                </div>
                 <div class="job-error" *ngIf="j.errorMessage" [title]="j.errorMessage">
                   {{ j.errorMessage }}
                 </div>
