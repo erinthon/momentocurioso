@@ -78,7 +78,8 @@ import { AuthService } from '../../core/services/auth.service';
         <a class="nav-link" routerLink="/admin/topics"  routerLinkActive="active">Tópicos</a>
         <a class="nav-link" routerLink="/admin/posts"   routerLinkActive="active">Posts</a>
         <a class="nav-link" routerLink="/admin/jobs"    routerLinkActive="active">Jobs</a>
-        <a class="nav-link" routerLink="/admin/trigger" routerLinkActive="active">Trigger</a>
+        <a class="nav-link" routerLink="/admin/trigger"   routerLinkActive="active">Trigger</a>
+        <a class="nav-link" routerLink="/admin/providers" routerLinkActive="active">Providers</a>
         <button class="theme-toggle" (click)="theme.toggle()">
           {{ theme.isDark() ? '☀ Claro' : '☾ Escuro' }}
         </button>

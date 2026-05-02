@@ -21,5 +21,10 @@ export const ADMIN_ROUTES: Routes = [
     loadComponent: () =>
       import('./trigger/trigger.component').then(m => m.AdminTriggerComponent)
   },
+  {
+    path: 'providers',
+    loadComponent: () =>
+      import('./providers/providers.component').then(m => m.AdminProvidersComponent)
+  },
   { path: '', redirectTo: 'topics', pathMatch: 'full' }
 ];
