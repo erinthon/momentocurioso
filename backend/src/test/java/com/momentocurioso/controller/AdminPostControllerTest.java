@@ -99,7 +99,7 @@ class AdminPostControllerTest {
     void approvePost_whenStatusIsPublished_returns400WithMessage() throws Exception {
         when(postService.approve(1L))
                 .thenThrow(new IllegalStateException(
-                        "Only DRAFT posts can be approved, current status: PUBLISHED"));
+                        "Post is already published, current status: PUBLISHED"));
 
         mockMvc.perform(patch("/admin/posts/1/approve"))
                 .andExpect(status().isBadRequest())
@@ -107,10 +107,10 @@ class AdminPostControllerTest {
     }
 
     @Test
-    void approvePost_whenStatusIsRejected_returns400WithMessage() throws Exception {
+    void approvePost_whenAlreadyPublished_returns400WithMessage() throws Exception {
         when(postService.approve(2L))
                 .thenThrow(new IllegalStateException(
-                        "Only DRAFT posts can be approved, current status: REJECTED"));
+                        "Post is already published, current status: PUBLISHED"));
 
         mockMvc.perform(patch("/admin/posts/2/approve"))
                 .andExpect(status().isBadRequest());
@@ -119,7 +119,8 @@ class AdminPostControllerTest {
     @Test
     void approvePost_whenStatusIsDraft_returns200() throws Exception {
         PostResponse response = new PostResponse(
-                1L, "Título", "titulo", "Resumo", "<p>Conteúdo</p>", "tecnologia", LocalDateTime.now());
+                1L, "Título", "titulo", "Resumo", "<p>Conteúdo</p>", "tecnologia",
+                com.momentocurioso.entity.PostStatus.PUBLISHED, LocalDateTime.now(), LocalDateTime.now());
         when(postService.approve(1L)).thenReturn(response);
 
         mockMvc.perform(patch("/admin/posts/1/approve"))

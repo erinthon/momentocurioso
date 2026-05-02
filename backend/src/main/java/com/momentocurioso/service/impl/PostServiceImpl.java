@@ -1,6 +1,7 @@
 package com.momentocurioso.service.impl;
 
 import com.momentocurioso.dto.AiGeneratedContent;
+import com.momentocurioso.dto.request.UpdatePostRequest;
 import com.momentocurioso.dto.response.PageResponse;
 import com.momentocurioso.dto.response.PostResponse;
 import com.momentocurioso.dto.response.PostSummaryResponse;
@@ -89,12 +90,19 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public PostResponse findAdminById(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Post not found: " + id));
+        return PostResponse.from(post);
+    }
+
+    @Override
     @CacheEvict(value = "posts", allEntries = true)
     public PostResponse approve(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Post not found: " + id));
-        if (post.getStatus() != PostStatus.DRAFT) {
-            throw new IllegalStateException("Only DRAFT posts can be approved, current status: " + post.getStatus());
+        if (post.getStatus() == PostStatus.PUBLISHED) {
+            throw new IllegalStateException("Post is already published, current status: " + post.getStatus());
         }
         post.setStatus(PostStatus.PUBLISHED);
         post.setPublishedAt(LocalDateTime.now());
@@ -111,6 +119,39 @@ public class PostServiceImpl implements PostService {
         }
         post.setStatus(PostStatus.REJECTED);
         return PostResponse.from(postRepository.save(post));
+    }
+
+    @Override
+    @CacheEvict(value = "posts", allEntries = true)
+    public PostResponse unpublish(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Post not found: " + id));
+        if (post.getStatus() != PostStatus.PUBLISHED) {
+            throw new IllegalStateException("Only PUBLISHED posts can be unpublished, current status: " + post.getStatus());
+        }
+        post.setStatus(PostStatus.DRAFT);
+        post.setPublishedAt(null);
+        return PostResponse.from(postRepository.save(post));
+    }
+
+    @Override
+    @CacheEvict(value = "posts", allEntries = true)
+    public PostResponse update(Long id, UpdatePostRequest request) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Post not found: " + id));
+        post.setTitle(request.title());
+        post.setSummary(request.summary());
+        post.setContent(request.content());
+        return PostResponse.from(postRepository.save(post));
+    }
+
+    @Override
+    @CacheEvict(value = "posts", allEntries = true)
+    public void delete(Long id) {
+        if (!postRepository.existsById(id)) {
+            throw new EntityNotFoundException("Post not found: " + id);
+        }
+        postRepository.deleteById(id);
     }
 
     private String generateUniqueSlug(String title) {

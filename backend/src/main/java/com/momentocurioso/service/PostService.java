@@ -1,6 +1,7 @@
 package com.momentocurioso.service;
 
 import com.momentocurioso.dto.AiGeneratedContent;
+import com.momentocurioso.dto.request.UpdatePostRequest;
 import com.momentocurioso.dto.response.PageResponse;
 import com.momentocurioso.dto.response.PostResponse;
 import com.momentocurioso.dto.response.PostSummaryResponse;
@@ -19,7 +20,15 @@ public interface PostService {
 
     PostResponse getPublishedBySlug(String slug);
 
+    PostResponse findAdminById(Long id);
+
     PostResponse approve(Long id);
 
     PostResponse reject(Long id);
+
+    PostResponse unpublish(Long id);
+
+    PostResponse update(Long id, UpdatePostRequest request);
+
+    void delete(Long id);
 }

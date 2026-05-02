@@ -67,17 +67,20 @@ class PostServiceImplTest {
 
         assertThatThrownBy(() -> postService.approve(1L))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("DRAFT");
+                .hasMessageContaining("already published");
     }
 
     @Test
-    void approve_whenRejected_throwsIllegalStateException() {
+    void approve_whenRejected_setsStatusPublished() {
         Post post = buildPost(1L, PostStatus.REJECTED);
         when(postRepository.findById(1L)).thenReturn(Optional.of(post));
+        when(postRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        assertThatThrownBy(() -> postService.approve(1L))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("DRAFT");
+        var response = postService.approve(1L);
+
+        assertThat(response.status()).isEqualTo(PostStatus.PUBLISHED);
+        assertThat(response.publishedAt()).isNotNull();
+        verify(postRepository).save(argThat(p -> p.getStatus() == PostStatus.PUBLISHED));
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.momentocurioso.controller;
 
 import com.momentocurioso.dto.request.TriggerJobRequest;
+import com.momentocurioso.dto.request.UpdatePostRequest;
 import com.momentocurioso.dto.response.JobStatusResponse;
 import com.momentocurioso.dto.response.PageResponse;
 import com.momentocurioso.dto.response.PostResponse;
@@ -42,6 +43,23 @@ public class AdminPostController {
         return ResponseEntity.ok(postService.listAllAdmin(status, pageable));
     }
 
+    @GetMapping("/posts/{id}")
+    public ResponseEntity<PostResponse> getPost(@PathVariable Long id) {
+        return ResponseEntity.ok(postService.findAdminById(id));
+    }
+
+    @PutMapping("/posts/{id}")
+    public ResponseEntity<PostResponse> updatePost(@PathVariable Long id,
+                                                    @Valid @RequestBody UpdatePostRequest request) {
+        return ResponseEntity.ok(postService.update(id, request));
+    }
+
+    @DeleteMapping("/posts/{id}")
+    public ResponseEntity<Void> deletePost(@PathVariable Long id) {
+        postService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @PatchMapping("/posts/{id}/approve")
     public ResponseEntity<PostResponse> approve(@PathVariable Long id) {
         return ResponseEntity.ok(postService.approve(id));
@@ -50,6 +68,11 @@ public class AdminPostController {
     @PatchMapping("/posts/{id}/reject")
     public ResponseEntity<PostResponse> reject(@PathVariable Long id) {
         return ResponseEntity.ok(postService.reject(id));
+    }
+
+    @PatchMapping("/posts/{id}/unpublish")
+    public ResponseEntity<PostResponse> unpublish(@PathVariable Long id) {
+        return ResponseEntity.ok(postService.unpublish(id));
     }
 
     @PostMapping("/content/trigger")
