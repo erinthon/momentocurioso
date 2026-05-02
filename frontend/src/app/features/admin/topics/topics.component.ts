@@ -104,6 +104,16 @@ interface Source {
       &:hover { color: var(--coral); border-color: rgba(220,38,38,.3); }
     }
     .source-item:hover .btn-delete { opacity: 1; }
+    .source-item:hover .btn-icon { opacity: 1; }
+
+    .btn-icon {
+      font-size: 13px; background: none; border: 1px solid transparent;
+      color: var(--text-4); cursor: pointer; padding: 4px 7px; border-radius: var(--r);
+      opacity: 0; transition: all var(--t); flex-shrink: 0;
+      &:hover { background: var(--bg-2); border-color: var(--border); color: var(--green); }
+    }
+    .btn-icon-danger { &:hover { color: var(--coral) !important; border-color: rgba(220,38,38,.3) !important; } }
+    .topic-card:hover .btn-icon { opacity: 1; }
 
     .form-panel {
       background: var(--bg-2); border: 1px solid var(--border);
@@ -146,6 +156,11 @@ interface Source {
       &:hover { border-color: var(--green); background: var(--bg-2); }
       &.selected { border-color: var(--green); border-left: 3px solid var(--green); background: var(--bg-2); }
     }
+    .topic-card-header {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;
+    }
+    .topic-info { flex: 1; min-width: 0; }
+    .topic-card-actions { display: flex; gap: 2px; flex-shrink: 0; }
     .topic-name {
       font-family: var(--fd); font-weight: 700; font-size: 14px;
       color: var(--text); letter-spacing: -.3px; margin-bottom: 2px;
@@ -161,6 +176,44 @@ interface Source {
     }
     .topic-badges { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 
+    .inline-edit-form {
+      border-top: 1px solid var(--border); padding-top: 14px; margin-top: 10px;
+    }
+    .inline-form-row { margin-bottom: 10px; }
+    .inline-form-row label {
+      display: block; font-family: var(--fu); font-size: 10px; font-weight: 600;
+      letter-spacing: .12em; color: var(--text-3); text-transform: uppercase; margin-bottom: 4px;
+    }
+    .inline-form-row input, .inline-form-row textarea {
+      width: 100%; box-sizing: border-box; background: var(--bg);
+      border: 1px solid var(--border); border-radius: var(--r);
+      color: var(--text); font-family: var(--fb); font-size: 13px;
+      padding: 7px 10px; outline: none; transition: border-color var(--t);
+      &:focus { border-color: var(--green); }
+    }
+    .inline-form-row textarea { resize: vertical; min-height: 52px; }
+    .inline-form-check {
+      display: flex; align-items: center; gap: 8px;
+      font-family: var(--fu); font-size: 12px; color: var(--text-3); cursor: pointer;
+    }
+    .inline-form-check input[type=checkbox] { accent-color: var(--green); cursor: pointer; }
+    .inline-form-actions { display: flex; gap: 8px; margin-top: 12px; }
+    .btn-save-sm {
+      font-family: var(--fu); font-size: 12px; font-weight: 600;
+      background: var(--green); color: #fff; border: none;
+      padding: 7px 14px; border-radius: var(--r); cursor: pointer;
+      transition: background var(--t);
+      &:hover:not(:disabled) { background: var(--green-2); }
+      &:disabled { opacity: .5; cursor: not-allowed; }
+    }
+    .btn-cancel-sm {
+      font-family: var(--fu); font-size: 12px; font-weight: 600;
+      background: none; color: var(--text-3);
+      border: 1px solid var(--border); padding: 7px 12px; border-radius: var(--r);
+      cursor: pointer; transition: all var(--t);
+      &:hover { border-color: var(--border-2); color: var(--text); }
+    }
+
     .source-item {
       display: flex; align-items: center; gap: 12px;
       background: var(--bg); border: 1px solid var(--border); border-radius: var(--r);
@@ -171,6 +224,15 @@ interface Source {
       font-family: var(--fu); font-size: 11px; color: var(--text-3);
       letter-spacing: .02em; flex: 1; overflow: hidden;
       text-overflow: ellipsis; white-space: nowrap;
+    }
+
+    .source-edit-form {
+      background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--r);
+      padding: 14px; margin-bottom: 8px;
+    }
+    .source-edit-title {
+      font-family: var(--fu); font-size: 10px; font-weight: 600; letter-spacing: .12em;
+      color: var(--green); text-transform: uppercase; margin-bottom: 12px;
     }
 
     .state-empty {
@@ -265,14 +327,53 @@ interface Source {
             class="topic-card"
             [class.selected]="selectedTopic?.id === t.id"
             (click)="selectTopic(t)">
-            <div class="topic-name">{{ t.name }}</div>
-            <div class="topic-slug">/{{ t.slug }}</div>
-            <div class="topic-desc" *ngIf="t.description">{{ t.description }}</div>
-            <div class="topic-badges">
-              <span class="tag" [class.tag-pale]="t.active" [class.tag-ghost]="!t.active">
-                {{ t.active ? 'Ativo' : 'Inativo' }}
-              </span>
-              <span class="tag tag-amber" *ngIf="t.autoPublish">Auto-publish</span>
+
+            <!-- Card header: info + action buttons -->
+            <div class="topic-card-header">
+              <div class="topic-info">
+                <div class="topic-name">{{ t.name }}</div>
+                <div class="topic-slug">/{{ t.slug }}</div>
+              </div>
+              <div class="topic-card-actions" (click)="$event.stopPropagation()">
+                <button class="btn-icon" title="Editar tópico" (click)="startEditTopic(t)">✎</button>
+                <button class="btn-icon btn-icon-danger" title="Remover tópico" (click)="deleteTopic(t)">✕</button>
+              </div>
+            </div>
+
+            <!-- Normal display content -->
+            <ng-container *ngIf="editingTopicId !== t.id">
+              <div class="topic-desc" *ngIf="t.description">{{ t.description }}</div>
+              <div class="topic-badges">
+                <span class="tag" [class.tag-pale]="t.active" [class.tag-ghost]="!t.active">
+                  {{ t.active ? 'Ativo' : 'Inativo' }}
+                </span>
+                <span class="tag tag-amber" *ngIf="t.autoPublish">Auto-publish</span>
+              </div>
+            </ng-container>
+
+            <!-- Inline edit form -->
+            <div class="inline-edit-form" *ngIf="editingTopicId === t.id" (click)="$event.stopPropagation()">
+              <div class="inline-form-row">
+                <label>Nome *</label>
+                <input [(ngModel)]="editTopicForm.name" placeholder="Nome do tópico"/>
+              </div>
+              <div class="inline-form-row">
+                <label>Descrição</label>
+                <textarea [(ngModel)]="editTopicForm.description" placeholder="Descrição..."></textarea>
+              </div>
+              <div class="inline-form-row">
+                <label class="inline-form-check">
+                  <input type="checkbox" [(ngModel)]="editTopicForm.autoPublish"/>
+                  Auto-publicar posts gerados
+                </label>
+              </div>
+              <div class="inline-form-actions">
+                <button class="btn-save-sm" (click)="updateTopic(t.id)" [disabled]="savingEditTopic">
+                  {{ savingEditTopic ? 'Salvando…' : 'Salvar' }}
+                </button>
+                <button class="btn-cancel-sm" (click)="cancelEditTopic()">Cancelar</button>
+              </div>
+              <p class="form-error" *ngIf="editTopicError">{{ editTopicError }}</p>
             </div>
           </div>
         </div>
@@ -331,15 +432,41 @@ interface Source {
             <p>Nenhuma fonte cadastrada para este tópico</p>
           </div>
 
-          <div *ngIf="!loadingSources && sources.length > 0">
-            <div class="source-item" *ngFor="let s of sources">
-              <span class="tag" [class.tag-green]="s.type === 'RSS'" [class.tag-ghost]="s.type !== 'RSS'">
-                {{ s.type }}
-              </span>
-              <span class="source-url" [title]="s.url">{{ s.url }}</span>
-              <button class="btn-delete" (click)="deleteSource(s.id)" title="Remover fonte">✕</button>
-            </div>
-          </div>
+          <ng-container *ngIf="!loadingSources && sources.length > 0">
+            <ng-container *ngFor="let s of sources">
+              <!-- Normal source row -->
+              <div class="source-item" *ngIf="editingSourceId !== s.id">
+                <span class="tag" [class.tag-green]="s.type === 'RSS'" [class.tag-ghost]="s.type !== 'RSS'">
+                  {{ s.type }}
+                </span>
+                <span class="source-url" [title]="s.url">{{ s.url }}</span>
+                <button class="btn-icon" (click)="startEditSource(s)" title="Editar fonte">✎</button>
+                <button class="btn-delete" (click)="deleteSource(s.id)" title="Remover fonte">✕</button>
+              </div>
+              <!-- Inline source edit form -->
+              <div class="source-edit-form" *ngIf="editingSourceId === s.id">
+                <p class="source-edit-title">Editar Fonte</p>
+                <div class="form-row">
+                  <label>URL *</label>
+                  <input [(ngModel)]="editSourceForm.url" placeholder="https://..."/>
+                </div>
+                <div class="form-row">
+                  <label>Tipo *</label>
+                  <select [(ngModel)]="editSourceForm.type" class="form-row">
+                    <option value="RSS">RSS — Feed RSS/Atom</option>
+                    <option value="HTML">HTML — Scraping de página</option>
+                  </select>
+                </div>
+                <div class="form-actions">
+                  <button class="btn-save-sm" (click)="updateSource(s.id)" [disabled]="savingEditSource">
+                    {{ savingEditSource ? 'Salvando…' : 'Salvar' }}
+                  </button>
+                  <button class="btn-cancel-sm" (click)="cancelEditSource()">Cancelar</button>
+                </div>
+                <p class="form-error" *ngIf="editSourceError">{{ editSourceError }}</p>
+              </div>
+            </ng-container>
+          </ng-container>
         </ng-container>
       </div>
     </div>
@@ -366,14 +493,28 @@ export class AdminTopicsComponent implements OnInit {
   newTopic = { name: '', slug: '', description: '', autoPublish: false };
   newSource = { url: '', type: 'RSS' as 'RSS' | 'HTML' };
 
+  // Edit topic state
+  editingTopicId: number | null = null;
+  editTopicForm = { name: '', description: '', autoPublish: false };
+  savingEditTopic = false;
+  editTopicError = '';
+
+  // Edit source state
+  editingSourceId: number | null = null;
+  editSourceForm = { url: '', type: 'RSS' as 'RSS' | 'HTML' };
+  savingEditSource = false;
+  editSourceError = '';
+
   ngOnInit(): void {
     this.loadTopics();
   }
 
   selectTopic(topic: Topic): void {
+    if (this.editingTopicId === topic.id) return;
     this.selectedTopic = topic;
     this.showAddSource = false;
     this.sourceError = '';
+    this.editingSourceId = null;
     this.newSource = { url: '', type: 'RSS' };
     this.loadSources(topic.id);
   }
@@ -382,12 +523,14 @@ export class AdminTopicsComponent implements OnInit {
     this.showCreateTopic = !this.showCreateTopic;
     this.topicError = '';
     this.newTopic = { name: '', slug: '', description: '', autoPublish: false };
+    if (this.showCreateTopic) this.editingTopicId = null;
   }
 
   toggleAddSource(): void {
     this.showAddSource = !this.showAddSource;
     this.sourceError = '';
     this.newSource = { url: '', type: 'RSS' };
+    if (this.showAddSource) this.editingSourceId = null;
   }
 
   autoSlug(): void {
@@ -423,6 +566,53 @@ export class AdminTopicsComponent implements OnInit {
     });
   }
 
+  startEditTopic(topic: Topic): void {
+    this.showCreateTopic = false;
+    this.editingTopicId = topic.id;
+    this.editTopicForm = { name: topic.name, description: topic.description ?? '', autoPublish: topic.autoPublish };
+    this.editTopicError = '';
+  }
+
+  cancelEditTopic(): void {
+    this.editingTopicId = null;
+    this.editTopicError = '';
+  }
+
+  updateTopic(id: number): void {
+    if (!this.editTopicForm.name.trim()) {
+      this.editTopicError = 'Nome é obrigatório.';
+      return;
+    }
+    this.savingEditTopic = true;
+    this.editTopicError = '';
+    this.api.put<Topic>(`/admin/topics/${id}`, this.editTopicForm).subscribe({
+      next: (updated) => {
+        this.topics = this.topics.map(t => t.id === id ? updated : t);
+        if (this.selectedTopic?.id === id) {
+          this.selectedTopic = updated;
+        }
+        this.editingTopicId = null;
+        this.savingEditTopic = false;
+      },
+      error: (err) => {
+        this.editTopicError = err?.error?.message ?? 'Erro ao atualizar tópico.';
+        this.savingEditTopic = false;
+      }
+    });
+  }
+
+  deleteTopic(topic: Topic): void {
+    this.api.delete<void>(`/admin/topics/${topic.id}`).subscribe({
+      next: () => {
+        this.topics = this.topics.map(t => t.id === topic.id ? { ...t, active: false } : t);
+        if (this.selectedTopic?.id === topic.id) {
+          this.selectedTopic = null;
+          this.sources = [];
+        }
+      }
+    });
+  }
+
   addSource(): void {
     this.sourceError = '';
     if (!this.newSource.url.trim()) {
@@ -448,6 +638,38 @@ export class AdminTopicsComponent implements OnInit {
     });
   }
 
+  startEditSource(source: Source): void {
+    this.showAddSource = false;
+    this.editingSourceId = source.id;
+    this.editSourceForm = { url: source.url, type: source.type };
+    this.editSourceError = '';
+  }
+
+  cancelEditSource(): void {
+    this.editingSourceId = null;
+    this.editSourceError = '';
+  }
+
+  updateSource(id: number): void {
+    if (!this.editSourceForm.url.trim()) {
+      this.editSourceError = 'URL é obrigatória.';
+      return;
+    }
+    this.savingEditSource = true;
+    this.editSourceError = '';
+    this.api.patch<Source>(`/admin/sources/${id}`, this.editSourceForm).subscribe({
+      next: (updated) => {
+        this.sources = this.sources.map(s => s.id === id ? updated : s);
+        this.editingSourceId = null;
+        this.savingEditSource = false;
+      },
+      error: (err) => {
+        this.editSourceError = err?.error?.message ?? 'Erro ao atualizar fonte.';
+        this.savingEditSource = false;
+      }
+    });
+  }
+
   deleteSource(id: number): void {
     this.api.delete<void>(`/admin/sources/${id}`).subscribe({
       next: () => {
@@ -457,7 +679,7 @@ export class AdminTopicsComponent implements OnInit {
   }
 
   private loadTopics(): void {
-    this.api.get<Topic[]>('/topics').subscribe({
+    this.api.get<Topic[]>('/admin/topics').subscribe({
       next: (topics) => {
         this.topics = topics;
         this.loadingTopics = false;
