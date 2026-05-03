@@ -16,6 +16,7 @@ interface QueuedArticle {
   scrapedAt: string;
   queuedProviderName: string | null;
   queuedProviderId: number | null;
+  selected: boolean;
 }
 
 interface AiProvider {
@@ -142,6 +143,23 @@ interface JobStatusResponse {
       &:disabled { opacity: .4; cursor: not-allowed; }
     }
 
+    /* ── Selection controls ── */
+    .selection-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 16px; background: var(--bg-2);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      font-family: var(--fu); font-size: 10px; color: var(--text-4);
+    }
+    .selection-bar input[type="checkbox"] { accent-color: #2563eb; cursor: pointer; }
+    .selection-count { font-weight: 700; color: var(--text-3); }
+    .btn-select-all, .btn-deselect-all {
+      font-family: var(--fu); font-size: 9px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; background: none; border: none;
+      color: #2563eb; cursor: pointer; padding: 0;
+      &:hover { text-decoration: underline; }
+    }
+    .sep { color: var(--border); }
+
     /* ── Articles table in group ── */
     .group-table-wrapper {
       background: var(--bg-1); border: 1px solid var(--border);
@@ -153,9 +171,14 @@ interface JobStatusResponse {
       text-transform: uppercase; color: var(--text-4); text-align: left;
       padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--bg-2);
     }
+    .group-table th.col-check, .group-table td.col-check {
+      width: 36px; padding-left: 14px; padding-right: 0;
+    }
+    .group-table td.col-check input[type="checkbox"] { accent-color: #2563eb; cursor: pointer; }
     .group-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
     .group-table tr:last-child td { border-bottom: none; }
     .group-table tr:hover td { background: var(--bg-2); }
+    .group-table tr.deselected td { opacity: .45; }
     .art-title { font-family: var(--fd); font-weight: 700; font-size: 13px; color: var(--text); letter-spacing: -.3px; }
     .art-url { font-family: var(--fu); font-size: 10px; color: var(--text-4); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 340px; }
     .art-date { font-family: var(--fu); font-size: 11px; color: var(--text-4); }
@@ -251,7 +274,9 @@ interface JobStatusResponse {
           <div class="group-title-wrap">
             <span class="group-eyebrow">Tópico</span>
             <span class="group-title">{{ group.topicName }}</span>
-            <span class="group-count">{{ group.articles.length }} artigo{{ group.articles.length !== 1 ? 's' : '' }} na fila</span>
+            <span class="group-count">
+              {{ selectedCount(group) }} de {{ group.articles.length }} selecionado{{ selectedCount(group) !== 1 ? 's' : '' }}
+            </span>
           </div>
 
           <div class="provider-selector" *ngIf="!group.generating && !group.result">
@@ -269,9 +294,9 @@ interface JobStatusResponse {
             </ng-container>
             <button
               class="btn-generate"
-              [disabled]="!group.mockMode && !group.selectedProviderId"
+              [disabled]="selectedCount(group) === 0 || (!group.mockMode && !group.selectedProviderId)"
               (click)="generate(group)">
-              Gerar Post Rascunho
+              Gerar Post com {{ selectedCount(group) }} artigo{{ selectedCount(group) !== 1 ? 's' : '' }}
             </button>
           </div>
 
@@ -282,27 +307,42 @@ interface JobStatusResponse {
         </div>
 
         <div class="group-table-wrapper">
-          <table class="group-table" *ngIf="!group.generating && !group.result">
-            <thead>
-              <tr>
-                <th>Título do Artigo</th>
-                <th>Tipo</th>
-                <th>Provider Preferido</th>
-                <th>Coletado em</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let a of group.articles">
-                <td>
-                  <div class="art-title">{{ a.title }}</div>
-                  <div class="art-url">{{ a.sourceUrl }}</div>
-                </td>
-                <td><span class="src-chip" [class.rss]="a.sourceSiteType === 'RSS'" [class.html]="a.sourceSiteType === 'HTML'">{{ a.sourceSiteType }}</span></td>
-                <td><span class="art-provider">{{ a.queuedProviderName || '—' }}</span></td>
-                <td><span class="art-date">{{ formatDate(a.scrapedAt) }}</span></td>
-              </tr>
-            </tbody>
-          </table>
+          <ng-container *ngIf="!group.generating && !group.result">
+            <div class="selection-bar">
+              <input type="checkbox"
+                [checked]="allSelected(group)"
+                (change)="toggleAll(group, $any($event.target).checked)">
+              <span class="selection-count">{{ selectedCount(group) }}/{{ group.articles.length }}</span>
+              <button class="btn-select-all" (click)="toggleAll(group, true)">Todos</button>
+              <span class="sep">·</span>
+              <button class="btn-deselect-all" (click)="toggleAll(group, false)">Nenhum</button>
+            </div>
+            <table class="group-table">
+              <thead>
+                <tr>
+                  <th class="col-check"></th>
+                  <th>Título do Artigo</th>
+                  <th>Tipo</th>
+                  <th>Provider Preferido</th>
+                  <th>Coletado em</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let a of group.articles" [class.deselected]="!a.selected">
+                  <td class="col-check">
+                    <input type="checkbox" [(ngModel)]="a.selected" [ngModelOptions]="{standalone:true}">
+                  </td>
+                  <td>
+                    <div class="art-title">{{ a.title }}</div>
+                    <div class="art-url">{{ a.sourceUrl }}</div>
+                  </td>
+                  <td><span class="src-chip" [class.rss]="a.sourceSiteType === 'RSS'" [class.html]="a.sourceSiteType === 'HTML'">{{ a.sourceSiteType }}</span></td>
+                  <td><span class="art-provider">{{ a.queuedProviderName || '—' }}</span></td>
+                  <td><span class="art-date">{{ formatDate(a.scrapedAt) }}</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </ng-container>
 
           <div *ngIf="group.result" class="result-card" [class.result-success]="group.result.success" [class.result-error]="!group.result.success">
             <div class="result-title">{{ group.result.success ? 'Post gerado com sucesso' : 'Falha na geração' }}</div>
@@ -341,12 +381,23 @@ export class AdminAiWriterComponent implements OnInit {
     });
   }
 
+  selectedCount(group: TopicGroup): number {
+    return group.articles.filter(a => a.selected).length;
+  }
+
+  allSelected(group: TopicGroup): boolean {
+    return group.articles.length > 0 && group.articles.every(a => a.selected);
+  }
+
+  toggleAll(group: TopicGroup, checked: boolean): void {
+    group.articles.forEach(a => a.selected = checked);
+  }
+
   generate(group: TopicGroup): void {
-    if (!group.mockMode && !group.selectedProviderId) return;
+    const articleIds = group.articles.filter(a => a.selected).map(a => a.id);
+    if (articleIds.length === 0 || (!group.mockMode && !group.selectedProviderId)) return;
     group.generating = true;
     group.result = null;
-
-    const articleIds = group.articles.map(a => a.id);
     this.api.post<JobStatusResponse>('/admin/ai-writer/generate', {
       topicId: group.topicId,
       aiProviderId: group.mockMode ? null : group.selectedProviderId,
@@ -401,7 +452,7 @@ export class AdminAiWriterComponent implements OnInit {
           mockMode: false
         });
       }
-      map.get(a.topicId)!.articles.push(a);
+      map.get(a.topicId)!.articles.push({ ...a, selected: true });
     }
     return Array.from(map.values());
   }
