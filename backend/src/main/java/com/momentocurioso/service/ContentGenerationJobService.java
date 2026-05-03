@@ -15,11 +15,11 @@ public interface ContentGenerationJobService {
 
     ContentGenerationJob markRunning(ContentGenerationJob job);
 
-    ContentGenerationJob markDone(ContentGenerationJob job, Post post, int articlesFound, int articlesUsed);
+    ContentGenerationJob markDone(ContentGenerationJob job, Post post, int articlesFound, int articlesUsed, int articlesSkipped);
 
-    ContentGenerationJob markDone(ContentGenerationJob job, Post post, int articlesFound, int articlesUsed, String summary);
+    ContentGenerationJob markDone(ContentGenerationJob job, Post post, int articlesFound, int articlesUsed, int articlesSkipped, String summary);
 
-    ContentGenerationJob markFailed(ContentGenerationJob job, String errorMessage, int articlesFound);
+    ContentGenerationJob markFailed(ContentGenerationJob job, String errorMessage, int articlesFound, int articlesSkipped);
 
     PageResponse<JobStatusResponse> listAllAdmin(JobStatus status, Pageable pageable);
 }

@@ -8,6 +8,7 @@ import com.momentocurioso.entity.Topic;
 import com.momentocurioso.repository.ScrapedArticleRepository;
 import com.momentocurioso.repository.SourceSiteRepository;
 import com.momentocurioso.service.ContentFetcherService;
+import com.momentocurioso.service.FetchResult;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
@@ -40,20 +41,22 @@ public class ContentFetcherServiceImpl implements ContentFetcherService {
     }
 
     @Override
-    public List<ScrapedArticle> fetchAndSave(Topic topic) {
+    public FetchResult fetchAndSave(Topic topic) {
         List<SourceSite> sites = sourceSiteRepository.findByTopicIdAndActiveTrue(topic.getId());
         List<ScrapedArticle> newlySaved = new ArrayList<>();
         List<String> fetchErrors = new ArrayList<>();
+        int totalSkipped = 0;
 
         for (SourceSite site : sites) {
             try {
-                List<ScrapedArticle> scraped;
+                SiteResult result;
                 if (site.getType() == SourceType.RSS) {
-                    scraped = fetchRss(site, topic);
+                    result = fetchRss(site, topic);
                 } else {
-                    scraped = fetchHtml(site, topic);
+                    result = fetchHtml(site, topic);
                 }
-                newlySaved.addAll(scraped);
+                newlySaved.addAll(result.articles());
+                totalSkipped += result.skipped();
             } catch (Exception e) {
                 String msg = "Fonte id=%d (%s): %s".formatted(site.getId(), site.getUrl(), e.getMessage());
                 fetchErrors.add(msg);
@@ -62,12 +65,10 @@ public class ContentFetcherServiceImpl implements ContentFetcherService {
         }
 
         if (topic.isRequireApproval()) {
-            // Return only newly scraped articles. Previously saved PENDING articles
-            // await user approval and must not be re-surfaced here on each run.
             if (newlySaved.isEmpty() && !fetchErrors.isEmpty()) {
                 throw new RuntimeException("Falha ao buscar artigos das fontes: " + String.join("; ", fetchErrors));
             }
-            return newlySaved;
+            return new FetchResult(newlySaved, totalSkipped);
         }
 
         // Auto-publish topics: return all unused articles (new + leftover from failed runs)
@@ -83,7 +84,7 @@ public class ContentFetcherServiceImpl implements ContentFetcherService {
             log.warn("Some sources failed but {} unprocessed article(s) available: {}", unprocessed.size(), fetchErrors);
         }
 
-        return unprocessed;
+        return new FetchResult(unprocessed, totalSkipped);
     }
 
     @Override
@@ -96,14 +97,16 @@ public class ContentFetcherServiceImpl implements ContentFetcherService {
                 .collect(Collectors.toList());
     }
 
-    private List<ScrapedArticle> fetchRss(SourceSite site, Topic topic) throws Exception {
+    private SiteResult fetchRss(SourceSite site, Topic topic) throws Exception {
         List<ScrapedArticle> results = new ArrayList<>();
+        int skipped = 0;
         SyndFeedInput input = new SyndFeedInput();
         SyndFeed feed = input.build(new XmlReader(new URL(site.getUrl())));
 
         for (SyndEntry entry : feed.getEntries()) {
             String url = entry.getLink();
             if (scrapedArticleRepository.existsBySourceUrlAndSourceSiteId(url, site.getId())) {
+                skipped++;
                 continue;
             }
 
@@ -114,13 +117,13 @@ public class ContentFetcherServiceImpl implements ContentFetcherService {
             results.add(scrapedArticleRepository.save(article));
         }
 
-        return results;
+        return new SiteResult(results, skipped);
     }
 
-    private List<ScrapedArticle> fetchHtml(SourceSite site, Topic topic) throws Exception {
+    private SiteResult fetchHtml(SourceSite site, Topic topic) throws Exception {
         String url = site.getUrl();
         if (scrapedArticleRepository.existsBySourceUrlAndSourceSiteId(url, site.getId())) {
-            return List.of();
+            return new SiteResult(List.of(), 1);
         }
 
         Document doc = Jsoup.connect(url)
@@ -133,7 +136,7 @@ public class ContentFetcherServiceImpl implements ContentFetcherService {
         String content = (mainEl != null ? mainEl : doc.body()).text();
 
         ScrapedArticle article = buildArticle(site, topic, title, content, url);
-        return List.of(scrapedArticleRepository.save(article));
+        return new SiteResult(List.of(scrapedArticleRepository.save(article)), 0);
     }
 
     @Override
@@ -153,4 +156,6 @@ public class ContentFetcherServiceImpl implements ContentFetcherService {
         article.setApprovalStatus(topic.isRequireApproval() ? ApprovalStatus.PENDING : ApprovalStatus.APPROVED);
         return article;
     }
+
+    private record SiteResult(List<ScrapedArticle> articles, int skipped) {}
 }

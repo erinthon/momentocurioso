@@ -8,6 +8,8 @@ type ApprovalStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 interface ScrapedArticle {
   id: number;
   sourceSiteId: number;
+  sourceSiteUrl: string;
+  sourceSiteType: string;
   title: string;
   content: string;
   sourceUrl: string;
@@ -84,12 +86,27 @@ interface PageResponse<T> {
     .articles-table tr:last-child td { border-bottom: none; }
     .articles-table tr:hover td { background: var(--bg-2); }
 
-    .col-title { width: 38%; }
-    .col-topic { width: 14%; }
+    .col-title { width: 28%; }
+    .col-source { width: 18%; }
+    .col-topic { width: 10%; }
     .col-status { width: 10%; }
-    .col-date { width: 12%; }
-    .col-used { width: 8%; }
+    .col-date { width: 10%; }
+    .col-used { width: 6%; }
     .col-actions { width: 18%; text-align: right; }
+    .source-cell { display: flex; flex-direction: column; gap: 3px; }
+    .source-type-chip {
+      display: inline-block; font-family: var(--fu); font-size: 9px; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase; padding: 1px 6px;
+      border-radius: 3px; width: fit-content;
+      &.type-rss { background: rgba(10,124,56,.12); color: var(--green); }
+      &.type-html { background: var(--bg-2); color: var(--text-4); border: 1px solid var(--border); }
+    }
+    .source-url-link {
+      font-family: var(--fu); font-size: 10px; color: var(--text-4); letter-spacing: .03em;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px;
+      text-decoration: none; display: block;
+      &:hover { color: var(--green); }
+    }
 
     .article-title {
       font-family: var(--fd); font-weight: 700; font-size: 13px;
@@ -192,7 +209,7 @@ interface PageResponse<T> {
     @media (max-width: 900px) {
       .admin-header { flex-direction: column; align-items: flex-start; }
       .content { padding: 20px 1rem 60px; }
-      .col-topic, .col-date, .col-used { display: none; }
+      .col-topic, .col-date, .col-used, .col-source { display: none; }
       .col-title { width: 60%; }
       .col-actions { width: 30%; }
     }
@@ -246,6 +263,7 @@ interface PageResponse<T> {
             <thead>
               <tr>
                 <th class="col-title">Título</th>
+                <th class="col-source">Fonte</th>
                 <th class="col-topic">Tópico</th>
                 <th class="col-status">Status</th>
                 <th class="col-date">Coletado em</th>
@@ -258,6 +276,16 @@ interface PageResponse<T> {
                 <td>
                   <div class="article-title" (click)="openPreview(a)">{{ a.title }}</div>
                   <div class="article-url" [title]="a.sourceUrl">{{ a.sourceUrl }}</div>
+                </td>
+                <td>
+                  <div class="source-cell">
+                    <span class="source-type-chip" [class.type-rss]="a.sourceSiteType === 'RSS'" [class.type-html]="a.sourceSiteType === 'HTML'">
+                      {{ a.sourceSiteType }}
+                    </span>
+                    <a class="source-url-link" [href]="a.sourceSiteUrl" target="_blank" rel="noopener" [title]="a.sourceSiteUrl">
+                      {{ a.sourceSiteUrl }}
+                    </a>
+                  </div>
                 </td>
                 <td>
                   <span class="topic-label">{{ a.topicSlug }}</span>

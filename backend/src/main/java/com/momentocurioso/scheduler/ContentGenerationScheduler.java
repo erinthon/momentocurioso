@@ -10,6 +10,7 @@ import com.momentocurioso.repository.TopicRepository;
 import com.momentocurioso.service.AiWriterService;
 import com.momentocurioso.service.ContentFetcherService;
 import com.momentocurioso.service.ContentGenerationJobService;
+import com.momentocurioso.service.FetchResult;
 import com.momentocurioso.service.PostService;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
@@ -64,13 +65,14 @@ public class ContentGenerationScheduler {
         jobService.markRunning(job);
 
         int articlesFound = 0;
+        int articlesSkipped = 0;
         try {
-            List<ScrapedArticle> newArticles = contentFetcherService.fetchAndSave(topic);
+            FetchResult fetch = contentFetcherService.fetchAndSave(topic);
+            List<ScrapedArticle> newArticles = fetch.articles();
             articlesFound = newArticles.size();
+            articlesSkipped = fetch.skippedCount();
 
             if (topic.isRequireApproval()) {
-                // Auto-scheduler never calls AI for approval-required topics.
-                // Manual trigger processes pre-approved articles if available.
                 if (triggerSource == TriggerSource.MANUAL) {
                     List<ScrapedArticle> approvedToProcess = contentFetcherService.findApprovedUnused(topic);
                     if (!approvedToProcess.isEmpty()) {
@@ -84,20 +86,20 @@ public class ContentGenerationScheduler {
                         log.info("Content generated for requireApproval topic '{}' — post id={} approvedArticles={}",
                                 topic.getSlug(), post.getId(), approvedToProcess.size());
                         return jobService.markDone(job, post,
-                                articlesFound + approvedToProcess.size(), approvedToProcess.size(), summary);
+                                articlesFound + approvedToProcess.size(), approvedToProcess.size(), articlesSkipped, summary);
                     }
                 }
                 String summary = articlesFound > 0
                         ? articlesFound + " artigo(s) aguardando aprovação"
                         : "Nenhum artigo novo encontrado";
                 log.info("Skipping AI for requireApproval topic '{}' — {}", topic.getSlug(), summary);
-                return jobService.markDone(job, null, articlesFound, 0, summary);
+                return jobService.markDone(job, null, articlesFound, 0, articlesSkipped, summary);
             }
 
             // requireApproval=false: standard flow
             if (newArticles.isEmpty()) {
                 log.info("No new articles for topic '{}' — skipping generation", topic.getSlug());
-                return jobService.markDone(job, null, 0, 0);
+                return jobService.markDone(job, null, 0, 0, articlesSkipped);
             }
 
             AiGeneratedContent content = aiWriterService.generate(topic, newArticles);
@@ -105,11 +107,11 @@ public class ContentGenerationScheduler {
             Post post = postService.saveDraft(topic, content);
             log.info("Content generated for topic '{}' — post id={} articles={} status={}",
                     topic.getSlug(), post.getId(), newArticles.size(), post.getStatus());
-            return jobService.markDone(job, post, newArticles.size(), newArticles.size());
+            return jobService.markDone(job, post, newArticles.size(), newArticles.size(), articlesSkipped);
 
         } catch (Exception e) {
             log.error("Content generation failed for topic '{}': {}", topic.getSlug(), e.getMessage(), e);
-            return jobService.markFailed(job, e.getMessage(), articlesFound);
+            return jobService.markFailed(job, e.getMessage(), articlesFound, articlesSkipped);
         }
     }
 }

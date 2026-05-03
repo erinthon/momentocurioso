@@ -44,6 +44,8 @@ public class ContentGenerationJob {
 
     private Integer articlesUsed;
 
+    private Integer articlesSkipped;
+
     @Column(columnDefinition = "TEXT")
     private String summary;
 }

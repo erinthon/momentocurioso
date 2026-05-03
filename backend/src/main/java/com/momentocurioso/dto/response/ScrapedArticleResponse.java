@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 public record ScrapedArticleResponse(
         Long id,
         Long sourceSiteId,
+        String sourceSiteUrl,
+        String sourceSiteType,
         String title,
         String content,
         String sourceUrl,
@@ -21,6 +23,8 @@ public record ScrapedArticleResponse(
         return new ScrapedArticleResponse(
                 article.getId(),
                 article.getSourceSite().getId(),
+                article.getSourceSite().getUrl(),
+                article.getSourceSite().getType().name(),
                 article.getTitle(),
                 article.getContent(),
                 article.getSourceUrl(),

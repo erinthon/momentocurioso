@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ContentFetcherService {
 
-    List<ScrapedArticle> fetchAndSave(Topic topic);
+    FetchResult fetchAndSave(Topic topic);
 
     List<ScrapedArticle> findApprovedUnused(Topic topic);
 

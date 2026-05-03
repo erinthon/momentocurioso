@@ -17,6 +17,7 @@ public record JobStatusResponse(
         Long postId,
         Integer articlesFound,
         Integer articlesUsed,
+        Integer articlesSkipped,
         String summary
 ) {
     public static JobStatusResponse from(ContentGenerationJob job) {
@@ -31,6 +32,7 @@ public record JobStatusResponse(
                 job.getPost() != null ? job.getPost().getId() : null,
                 job.getArticlesFound(),
                 job.getArticlesUsed(),
+                job.getArticlesSkipped(),
                 job.getSummary()
         );
     }

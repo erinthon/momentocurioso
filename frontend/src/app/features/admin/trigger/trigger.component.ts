@@ -25,6 +25,7 @@ interface JobResult {
   postId: number | null;
   articlesFound: number | null;
   articlesUsed: number | null;
+  articlesSkipped: number | null;
   summary: string | null;
 }
 
@@ -297,6 +298,10 @@ interface JobResult {
               <label>Artigos usados</label>
               <span>{{ result.articlesUsed }}</span>
             </div>
+            <div class="result-field" *ngIf="result.articlesSkipped && result.articlesSkipped > 0">
+              <label>Ignorados (duplicatas)</label>
+              <span style="color: var(--amber)">{{ result.articlesSkipped }}</span>
+            </div>
           </div>
           <div class="result-summary" *ngIf="result.summary">{{ result.summary }}</div>
           <div class="result-error" *ngIf="result.errorMessage">
@@ -358,6 +363,7 @@ export class AdminTriggerComponent implements OnInit {
           postId: null,
           articlesFound: null,
           articlesUsed: null,
+          articlesSkipped: null,
           summary: null
         };
         this.running = false;

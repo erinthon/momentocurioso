@@ -18,6 +18,7 @@ interface Job {
   postId: number | null;
   articlesFound: number | null;
   articlesUsed: number | null;
+  articlesSkipped: number | null;
   summary: string | null;
 }
 
@@ -142,6 +143,7 @@ interface PageResponse<T> {
       color: var(--text-4); letter-spacing: .06em; background: var(--bg-2);
       border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px;
     }
+    .art-chip-skipped { color: var(--amber); border-color: rgba(217,119,6,.3); background: rgba(217,119,6,.08); }
     .art-sep { font-size: 9px; color: var(--text-4); }
 
     .job-error {
@@ -268,6 +270,10 @@ interface PageResponse<T> {
                   <span class="art-chip">{{ j.articlesFound }} encontrado(s)</span>
                   <span class="art-sep">·</span>
                   <span class="art-chip">{{ j.articlesUsed }} usado(s)</span>
+                  <ng-container *ngIf="j.articlesSkipped && j.articlesSkipped > 0">
+                    <span class="art-sep">·</span>
+                    <span class="art-chip art-chip-skipped">{{ j.articlesSkipped }} ignorado(s)</span>
+                  </ng-container>
                 </div>
                 <div class="job-error" *ngIf="j.errorMessage" [title]="j.errorMessage">
                   {{ j.errorMessage }}
