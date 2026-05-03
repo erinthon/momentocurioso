@@ -31,5 +31,10 @@ export const ADMIN_ROUTES: Routes = [
     loadComponent: () =>
       import('./scraped-articles/scraped-articles.component').then(m => m.AdminScrapedArticlesComponent)
   },
+  {
+    path: 'ai-writer',
+    loadComponent: () =>
+      import('./ai-writer/ai-writer.component').then(m => m.AdminAiWriterComponent)
+  },
   { path: '', redirectTo: 'topics', pathMatch: 'full' }
 ];

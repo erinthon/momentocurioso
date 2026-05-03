@@ -1,9 +1,11 @@
 package com.momentocurioso.controller;
 
+import com.momentocurioso.dto.request.QueueArticleRequest;
 import com.momentocurioso.dto.response.PageResponse;
 import com.momentocurioso.dto.response.ScrapedArticleResponse;
 import com.momentocurioso.entity.ApprovalStatus;
 import com.momentocurioso.service.ScrapedArticleService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +24,10 @@ public class AdminScrapedArticleController {
     @GetMapping
     public ResponseEntity<PageResponse<ScrapedArticleResponse>> listAll(
             @RequestParam(required = false) Long topicId,
+            @RequestParam(required = false) Long sourceSiteId,
             @RequestParam(required = false) ApprovalStatus status,
             @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(service.listAll(topicId, status, pageable));
+        return ResponseEntity.ok(service.listAll(topicId, sourceSiteId, status, pageable));
     }
 
     @GetMapping("/{id}")
@@ -40,5 +43,12 @@ public class AdminScrapedArticleController {
     @PatchMapping("/{id}/reject")
     public ResponseEntity<ScrapedArticleResponse> reject(@PathVariable Long id) {
         return ResponseEntity.ok(service.reject(id));
+    }
+
+    @PatchMapping("/{id}/queue")
+    public ResponseEntity<ScrapedArticleResponse> queue(
+            @PathVariable Long id,
+            @RequestBody @Valid QueueArticleRequest req) {
+        return ResponseEntity.ok(service.queueForAi(id, req.aiProviderId()));
     }
 }

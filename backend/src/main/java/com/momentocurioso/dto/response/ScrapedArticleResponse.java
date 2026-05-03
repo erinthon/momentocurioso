@@ -17,7 +17,10 @@ public record ScrapedArticleResponse(
         boolean used,
         ApprovalStatus approvalStatus,
         String topicName,
-        String topicSlug
+        String topicSlug,
+        Long topicId,
+        Long queuedProviderId,
+        String queuedProviderName
 ) {
     public static ScrapedArticleResponse from(ScrapedArticle article) {
         return new ScrapedArticleResponse(
@@ -32,7 +35,10 @@ public record ScrapedArticleResponse(
                 article.isUsed(),
                 article.getApprovalStatus(),
                 article.getSourceSite().getTopic().getName(),
-                article.getSourceSite().getTopic().getSlug()
+                article.getSourceSite().getTopic().getSlug(),
+                article.getSourceSite().getTopic().getId(),
+                article.getQueuedProvider() != null ? article.getQueuedProvider().getId() : null,
+                article.getQueuedProvider() != null ? article.getQueuedProvider().getName() : null
         );
     }
 }

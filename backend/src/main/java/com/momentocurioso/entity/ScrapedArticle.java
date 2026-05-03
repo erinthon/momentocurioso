@@ -38,4 +38,8 @@ public class ScrapedArticle {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ApprovalStatus approvalStatus = ApprovalStatus.APPROVED;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "queued_provider_id")
+    private AiProvider queuedProvider;
 }

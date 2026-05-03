@@ -2,8 +2,10 @@ package com.momentocurioso.service.impl;
 
 import com.momentocurioso.dto.response.PageResponse;
 import com.momentocurioso.dto.response.ScrapedArticleResponse;
+import com.momentocurioso.entity.AiProvider;
 import com.momentocurioso.entity.ApprovalStatus;
 import com.momentocurioso.entity.ScrapedArticle;
+import com.momentocurioso.repository.AiProviderRepository;
 import com.momentocurioso.repository.ScrapedArticleRepository;
 import com.momentocurioso.service.ScrapedArticleService;
 import jakarta.persistence.EntityNotFoundException;
@@ -16,16 +18,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class ScrapedArticleServiceImpl implements ScrapedArticleService {
 
     private final ScrapedArticleRepository repository;
+    private final AiProviderRepository aiProviderRepository;
 
-    public ScrapedArticleServiceImpl(ScrapedArticleRepository repository) {
+    public ScrapedArticleServiceImpl(ScrapedArticleRepository repository, AiProviderRepository aiProviderRepository) {
         this.repository = repository;
+        this.aiProviderRepository = aiProviderRepository;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public PageResponse<ScrapedArticleResponse> listAll(Long topicId, ApprovalStatus status, Pageable pageable) {
+    public PageResponse<ScrapedArticleResponse> listAll(Long topicId, Long sourceSiteId, ApprovalStatus status, Pageable pageable) {
         Page<ScrapedArticle> page;
-        if (topicId != null && status != null) {
+        if (sourceSiteId != null && status != null) {
+            page = repository.findBySourceSite_IdAndApprovalStatus(sourceSiteId, status, pageable);
+        } else if (sourceSiteId != null) {
+            page = repository.findBySourceSite_Id(sourceSiteId, pageable);
+        } else if (topicId != null && status != null) {
             page = repository.findBySourceSite_TopicIdAndApprovalStatus(topicId, status, pageable);
         } else if (topicId != null) {
             page = repository.findBySourceSite_TopicId(topicId, pageable);
@@ -58,10 +66,26 @@ public class ScrapedArticleServiceImpl implements ScrapedArticleService {
     @Transactional
     public ScrapedArticleResponse reject(Long id) {
         ScrapedArticle article = findOrThrow(id);
-        if (article.getApprovalStatus() != ApprovalStatus.PENDING) {
-            throw new IllegalStateException("Apenas artigos PENDING podem ser rejeitados");
+        ApprovalStatus current = article.getApprovalStatus();
+        if (current != ApprovalStatus.PENDING && current != ApprovalStatus.QUEUED) {
+            throw new IllegalStateException("Apenas artigos PENDING ou QUEUED podem ser rejeitados");
         }
         article.setApprovalStatus(ApprovalStatus.REJECTED);
+        article.setQueuedProvider(null);
+        return ScrapedArticleResponse.from(repository.save(article));
+    }
+
+    @Override
+    @Transactional
+    public ScrapedArticleResponse queueForAi(Long id, Long aiProviderId) {
+        ScrapedArticle article = findOrThrow(id);
+        if (article.getApprovalStatus() == ApprovalStatus.REJECTED) {
+            throw new IllegalStateException("Artigos REJECTED não podem ser enviados para a fila");
+        }
+        AiProvider provider = aiProviderRepository.findById(aiProviderId)
+                .orElseThrow(() -> new EntityNotFoundException("AiProvider not found: " + aiProviderId));
+        article.setApprovalStatus(ApprovalStatus.QUEUED);
+        article.setQueuedProvider(provider);
         return ScrapedArticleResponse.from(repository.save(article));
     }
 

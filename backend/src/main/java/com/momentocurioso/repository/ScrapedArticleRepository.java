@@ -21,4 +21,10 @@ public interface ScrapedArticleRepository extends JpaRepository<ScrapedArticle, 
     Page<ScrapedArticle> findAllByApprovalStatus(ApprovalStatus status, Pageable pageable);
 
     List<ScrapedArticle> findBySourceSiteIdAndUsedFalseAndApprovalStatus(Long sourceSiteId, ApprovalStatus status);
+
+    Page<ScrapedArticle> findBySourceSite_Id(Long sourceSiteId, Pageable pageable);
+
+    Page<ScrapedArticle> findBySourceSite_IdAndApprovalStatus(Long sourceSiteId, ApprovalStatus status, Pageable pageable);
+
+    List<ScrapedArticle> findAllByIdIn(List<Long> ids);
 }

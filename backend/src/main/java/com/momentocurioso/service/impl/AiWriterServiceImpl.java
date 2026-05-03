@@ -34,8 +34,13 @@ public class AiWriterServiceImpl implements AiWriterService {
         if (active.isEmpty()) {
             return mockContent(topic);
         }
+        return generate(topic, articles, active.get());
+    }
+
+    @Override
+    public AiGeneratedContent generate(Topic topic, List<ScrapedArticle> articles, AiProvider provider) {
         String prompt = buildPrompt(topic, articles);
-        LlmStrategy strategy = strategyFactory.create(active.get());
+        LlmStrategy strategy = strategyFactory.create(provider);
         return strategy.generate(prompt);
     }
 
