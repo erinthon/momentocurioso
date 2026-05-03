@@ -12,4 +12,6 @@ public interface AiWriterService {
     AiGeneratedContent generate(Topic topic, List<ScrapedArticle> articles);
 
     AiGeneratedContent generate(Topic topic, List<ScrapedArticle> articles, AiProvider provider);
+
+    AiGeneratedContent generateMock(Topic topic);
 }

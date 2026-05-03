@@ -67,8 +67,11 @@ public class AiWriterQueueServiceImpl implements AiWriterQueueService {
         Topic topic = topicRepository.findById(req.topicId())
                 .orElseThrow(() -> new EntityNotFoundException("Topic not found: " + req.topicId()));
 
-        AiProvider provider = aiProviderRepository.findById(req.aiProviderId())
-                .orElseThrow(() -> new EntityNotFoundException("AiProvider not found: " + req.aiProviderId()));
+        AiProvider provider = null;
+        if (!req.mock()) {
+            provider = aiProviderRepository.findById(req.aiProviderId())
+                    .orElseThrow(() -> new EntityNotFoundException("AiProvider not found: " + req.aiProviderId()));
+        }
 
         List<ScrapedArticle> articles = scrapedArticleRepository.findAllByIdIn(req.articleIds());
         List<ScrapedArticle> queued = articles.stream()
@@ -83,7 +86,9 @@ public class AiWriterQueueServiceImpl implements AiWriterQueueService {
         jobService.markRunning(job);
 
         try {
-            AiGeneratedContent content = aiWriterService.generate(topic, queued, provider);
+            AiGeneratedContent content = req.mock()
+                    ? aiWriterService.generateMock(topic)
+                    : aiWriterService.generate(topic, queued, provider);
             Post post = postService.saveDraft(topic, content);
 
             contentFetcherService.markUsed(queued);

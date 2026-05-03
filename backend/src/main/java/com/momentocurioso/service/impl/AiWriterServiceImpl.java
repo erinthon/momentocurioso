@@ -44,6 +44,11 @@ public class AiWriterServiceImpl implements AiWriterService {
         return strategy.generate(prompt);
     }
 
+    @Override
+    public AiGeneratedContent generateMock(Topic topic) {
+        return mockContent(topic);
+    }
+
     private String buildPrompt(Topic topic, List<ScrapedArticle> articles) {
         String articlesSummary = articles.stream()
                 .limit(MAX_ARTICLES)

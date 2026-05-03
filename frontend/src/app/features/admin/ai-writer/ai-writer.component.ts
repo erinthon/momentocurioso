@@ -34,6 +34,7 @@ interface TopicGroup {
   selectedProviderId: number | null;
   generating: boolean;
   result: GenerationResult | null;
+  mockMode: boolean;
 }
 
 interface GenerationResult {
@@ -189,6 +190,14 @@ interface JobStatusResponse {
     }
     .result-error-msg { font-family: var(--fu); font-size: 11px; color: var(--coral); }
 
+    /* ── Mock toggle ── */
+    .mock-toggle { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+    .mock-label {
+      font-family: var(--fu); font-size: 10px; font-weight: 600;
+      letter-spacing: .12em; text-transform: uppercase; color: var(--text-3);
+    }
+    .mock-toggle input[type="checkbox"] { accent-color: #f59e0b; width: 14px; height: 14px; cursor: pointer; }
+
     /* ── Generating spinner ── */
     .generating-row {
       display: flex; align-items: center; gap: 12px; padding: 16px 20px;
@@ -246,15 +255,21 @@ interface JobStatusResponse {
           </div>
 
           <div class="provider-selector" *ngIf="!group.generating && !group.result">
-            <span class="provider-label">Provider:</span>
-            <select class="provider-select" [(ngModel)]="group.selectedProviderId" [ngModelOptions]="{standalone:true}">
-              <option *ngFor="let p of providers" [value]="p.id">
-                {{ p.name }} ({{ p.model }}){{ p.active ? ' ✓' : '' }}
-              </option>
-            </select>
+            <label class="mock-toggle">
+              <input type="checkbox" [(ngModel)]="group.mockMode" [ngModelOptions]="{standalone:true}">
+              <span class="mock-label">Modo mock (teste)</span>
+            </label>
+            <ng-container *ngIf="!group.mockMode">
+              <span class="provider-label">Provider:</span>
+              <select class="provider-select" [(ngModel)]="group.selectedProviderId" [ngModelOptions]="{standalone:true}">
+                <option *ngFor="let p of providers" [value]="p.id">
+                  {{ p.name }} ({{ p.model }}){{ p.active ? ' ✓' : '' }}
+                </option>
+              </select>
+            </ng-container>
             <button
               class="btn-generate"
-              [disabled]="!group.selectedProviderId"
+              [disabled]="!group.mockMode && !group.selectedProviderId"
               (click)="generate(group)">
               Gerar Post Rascunho
             </button>
@@ -262,7 +277,7 @@ interface JobStatusResponse {
 
           <div class="generating-row" *ngIf="group.generating">
             <span class="spin"></span>
-            Gerando post via IA...
+            {{ group.mockMode ? 'Gerando post mock...' : 'Gerando post via IA...' }}
           </div>
         </div>
 
@@ -327,15 +342,16 @@ export class AdminAiWriterComponent implements OnInit {
   }
 
   generate(group: TopicGroup): void {
-    if (!group.selectedProviderId) return;
+    if (!group.mockMode && !group.selectedProviderId) return;
     group.generating = true;
     group.result = null;
 
     const articleIds = group.articles.map(a => a.id);
     this.api.post<JobStatusResponse>('/admin/ai-writer/generate', {
       topicId: group.topicId,
-      aiProviderId: group.selectedProviderId,
-      articleIds
+      aiProviderId: group.mockMode ? null : group.selectedProviderId,
+      articleIds,
+      mock: group.mockMode
     }).subscribe({
       next: (job) => {
         group.generating = false;
@@ -381,7 +397,8 @@ export class AdminAiWriterComponent implements OnInit {
           articles: [],
           selectedProviderId: a.queuedProviderId ?? suggestedProvider,
           generating: false,
-          result: null
+          result: null,
+          mockMode: false
         });
       }
       map.get(a.topicId)!.articles.push(a);

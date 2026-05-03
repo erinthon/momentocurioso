@@ -106,6 +106,19 @@ class AiWriterServiceTest {
     }
 
     @Test
+    void generateMock_returnsMockContentWithTopicName() {
+        Topic topic = new Topic();
+        topic.setName("Tecnologia");
+        topic.setSlug("tecnologia");
+
+        AiGeneratedContent result = aiWriterService.generateMock(topic);
+
+        assertThat(result.title()).contains("[MOCK]").contains("Tecnologia");
+        assertThat(result.summary()).isNotBlank();
+        assertThat(result.content()).isNotBlank();
+    }
+
+    @Test
     void generate_whenStrategyThrows_exceptionPropagates() {
         AiProvider provider = new AiProvider();
         provider.setName("Claude Test");
