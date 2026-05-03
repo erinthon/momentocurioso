@@ -82,6 +82,7 @@ import { AuthService } from '../../core/services/auth.service';
         <a class="nav-link" routerLink="/admin/providers" routerLinkActive="active">Providers</a>
         <a class="nav-link" routerLink="/admin/scraped-articles" routerLinkActive="active">Artigos Raspados</a>
         <a class="nav-link" routerLink="/admin/ai-writer" routerLinkActive="active">IA Redatora</a>
+        <a class="nav-link" routerLink="/admin/prompt-templates" routerLinkActive="active">Prompts</a>
         <button class="theme-toggle" (click)="theme.toggle()">
           {{ theme.isDark() ? '☀ Claro' : '☾ Escuro' }}
         </button>

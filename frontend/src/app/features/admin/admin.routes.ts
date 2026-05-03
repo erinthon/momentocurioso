@@ -36,5 +36,10 @@ export const ADMIN_ROUTES: Routes = [
     loadComponent: () =>
       import('./ai-writer/ai-writer.component').then(m => m.AdminAiWriterComponent)
   },
+  {
+    path: 'prompt-templates',
+    loadComponent: () =>
+      import('./prompt-templates/prompt-templates.component').then(m => m.AdminPromptTemplatesComponent)
+  },
   { path: '', redirectTo: 'topics', pathMatch: 'full' }
 ];

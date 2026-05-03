@@ -5,6 +5,7 @@ import com.momentocurioso.entity.AiProvider;
 import com.momentocurioso.entity.ScrapedArticle;
 import com.momentocurioso.entity.Topic;
 import com.momentocurioso.repository.AiProviderRepository;
+import com.momentocurioso.repository.PromptTemplateRepository;
 import com.momentocurioso.service.AiWriterService;
 import com.momentocurioso.service.strategy.LlmStrategy;
 import com.momentocurioso.service.strategy.LlmStrategyFactory;
@@ -20,11 +21,24 @@ public class AiWriterServiceImpl implements AiWriterService {
     private static final int MAX_ARTICLES = 5;
     private static final int MAX_CONTENT_CHARS = 500;
 
+    private static final String FALLBACK_TEMPLATE =
+            "Você é um redator para o blog \"Momento Curioso\", que escreve sobre {{topic_name}}.\n\n" +
+            "Com base nos artigos abaixo, escreva um post de blog em português do Brasil.\n" +
+            "Retorne APENAS um objeto JSON válido (sem markdown, sem explicações) com os campos:\n" +
+            "- \"title\": título do post (string, máximo 100 caracteres)\n" +
+            "- \"summary\": resumo do post (string, máximo 300 caracteres)\n" +
+            "- \"content\": conteúdo completo em HTML (string, parágrafos em <p>, subtítulos em <h2>)\n\n" +
+            "Artigos:\n{{articles}}";
+
     private final AiProviderRepository aiProviderRepository;
+    private final PromptTemplateRepository promptTemplateRepository;
     private final LlmStrategyFactory strategyFactory;
 
-    public AiWriterServiceImpl(AiProviderRepository aiProviderRepository, LlmStrategyFactory strategyFactory) {
+    public AiWriterServiceImpl(AiProviderRepository aiProviderRepository,
+                               PromptTemplateRepository promptTemplateRepository,
+                               LlmStrategyFactory strategyFactory) {
         this.aiProviderRepository = aiProviderRepository;
+        this.promptTemplateRepository = promptTemplateRepository;
         this.strategyFactory = strategyFactory;
     }
 
@@ -57,18 +71,13 @@ public class AiWriterServiceImpl implements AiWriterService {
                         truncate(a.getContent(), MAX_CONTENT_CHARS)))
                 .collect(Collectors.joining("\n\n---\n\n"));
 
-        return """
-                Você é um redator para o blog "Momento Curioso", que escreve sobre %s.
+        String template = promptTemplateRepository.findFirstByIsDefaultTrue()
+                .map(com.momentocurioso.entity.PromptTemplate::getTemplate)
+                .orElse(FALLBACK_TEMPLATE);
 
-                Com base nos artigos abaixo, escreva um post de blog em português do Brasil.
-                Retorne APENAS um objeto JSON válido (sem markdown, sem explicações) com os campos:
-                - "title": título do post (string, máximo 100 caracteres)
-                - "summary": resumo do post (string, máximo 300 caracteres)
-                - "content": conteúdo completo em HTML (string, parágrafos em <p>, subtítulos em <h2>)
-
-                Artigos:
-                %s
-                """.formatted(topic.getName(), articlesSummary);
+        return template
+                .replace("{{topic_name}}", topic.getName())
+                .replace("{{articles}}", articlesSummary);
     }
 
     private AiGeneratedContent mockContent(Topic topic) {

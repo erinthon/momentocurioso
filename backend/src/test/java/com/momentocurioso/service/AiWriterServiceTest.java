@@ -3,9 +3,11 @@ package com.momentocurioso.service;
 import com.momentocurioso.dto.AiGeneratedContent;
 import com.momentocurioso.entity.AiProvider;
 import com.momentocurioso.entity.AiProviderType;
+import com.momentocurioso.entity.PromptTemplate;
 import com.momentocurioso.entity.ScrapedArticle;
 import com.momentocurioso.entity.Topic;
 import com.momentocurioso.repository.AiProviderRepository;
+import com.momentocurioso.repository.PromptTemplateRepository;
 import com.momentocurioso.service.impl.AiWriterServiceImpl;
 import com.momentocurioso.service.strategy.LlmStrategy;
 import com.momentocurioso.service.strategy.LlmStrategyFactory;
@@ -32,6 +34,9 @@ class AiWriterServiceTest {
     private AiProviderRepository aiProviderRepository;
 
     @Mock
+    private PromptTemplateRepository promptTemplateRepository;
+
+    @Mock
     private LlmStrategyFactory strategyFactory;
 
     @Mock
@@ -41,7 +46,7 @@ class AiWriterServiceTest {
 
     @BeforeEach
     void setUp() {
-        aiWriterService = new AiWriterServiceImpl(aiProviderRepository, strategyFactory);
+        aiWriterService = new AiWriterServiceImpl(aiProviderRepository, promptTemplateRepository, strategyFactory);
     }
 
     // ── BUG-009: Testes sem @SpringBootTest — rodam sem MySQL ─────────────────
@@ -81,14 +86,18 @@ class AiWriterServiceTest {
     }
 
     @Test
-    void generate_withActiveProvider_delegatesToStrategy() {
+    void generate_withActiveProvider_usesDefaultTemplate() {
         AiProvider provider = new AiProvider();
         provider.setName("Claude Test");
         provider.setType(AiProviderType.CLAUDE);
         provider.setModel("claude-sonnet-4-6");
         provider.setApiKey("test-api-key");
 
+        PromptTemplate pt = new PromptTemplate();
+        pt.setTemplate("Escreva sobre {{topic_name}}. Artigos: {{articles}}");
+
         when(aiProviderRepository.findFirstByActiveTrue()).thenReturn(Optional.of(provider));
+        when(promptTemplateRepository.findFirstByIsDefaultTrue()).thenReturn(Optional.of(pt));
         when(strategyFactory.create(provider)).thenReturn(llmStrategy);
         when(llmStrategy.generate(anyString())).thenReturn(
                 new AiGeneratedContent("Título gerado", "Resumo gerado", "<p>Conteúdo gerado</p>")
@@ -101,6 +110,31 @@ class AiWriterServiceTest {
         AiGeneratedContent result = aiWriterService.generate(topic, List.of());
 
         verify(strategyFactory).create(provider);
+        verify(llmStrategy).generate(any());
+        assertThat(result.title()).isEqualTo("Título gerado");
+    }
+
+    @Test
+    void generate_withActiveProvider_fallsBackToHardcodedTemplate() {
+        AiProvider provider = new AiProvider();
+        provider.setName("Claude Test");
+        provider.setType(AiProviderType.CLAUDE);
+        provider.setModel("claude-sonnet-4-6");
+        provider.setApiKey("test-api-key");
+
+        when(aiProviderRepository.findFirstByActiveTrue()).thenReturn(Optional.of(provider));
+        when(promptTemplateRepository.findFirstByIsDefaultTrue()).thenReturn(Optional.empty());
+        when(strategyFactory.create(provider)).thenReturn(llmStrategy);
+        when(llmStrategy.generate(anyString())).thenReturn(
+                new AiGeneratedContent("Título gerado", "Resumo gerado", "<p>Conteúdo gerado</p>")
+        );
+
+        Topic topic = new Topic();
+        topic.setName("Tech");
+        topic.setSlug("tech");
+
+        AiGeneratedContent result = aiWriterService.generate(topic, List.of());
+
         verify(llmStrategy).generate(any());
         assertThat(result.title()).isEqualTo("Título gerado");
     }
@@ -127,6 +161,7 @@ class AiWriterServiceTest {
         provider.setApiKey("test-api-key");
 
         when(aiProviderRepository.findFirstByActiveTrue()).thenReturn(Optional.of(provider));
+        when(promptTemplateRepository.findFirstByIsDefaultTrue()).thenReturn(Optional.empty());
         when(strategyFactory.create(provider)).thenReturn(llmStrategy);
         when(llmStrategy.generate(anyString())).thenThrow(new RuntimeException("API error"));
 
