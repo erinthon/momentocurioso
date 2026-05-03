@@ -42,15 +42,18 @@ public class ContentFetcherServiceImpl implements ContentFetcherService {
     @Override
     public List<ScrapedArticle> fetchAndSave(Topic topic) {
         List<SourceSite> sites = sourceSiteRepository.findByTopicIdAndActiveTrue(topic.getId());
+        List<ScrapedArticle> newlySaved = new ArrayList<>();
         List<String> fetchErrors = new ArrayList<>();
 
         for (SourceSite site : sites) {
             try {
+                List<ScrapedArticle> scraped;
                 if (site.getType() == SourceType.RSS) {
-                    fetchRss(site, topic);
+                    scraped = fetchRss(site, topic);
                 } else {
-                    fetchHtml(site, topic);
+                    scraped = fetchHtml(site, topic);
                 }
+                newlySaved.addAll(scraped);
             } catch (Exception e) {
                 String msg = "Fonte id=%d (%s): %s".formatted(site.getId(), site.getUrl(), e.getMessage());
                 fetchErrors.add(msg);
@@ -58,8 +61,16 @@ public class ContentFetcherServiceImpl implements ContentFetcherService {
             }
         }
 
-        // Return all unprocessed articles: newly fetched + previously scraped but not yet used
-        // (covers re-runs after failed jobs where markUsed was never called)
+        if (topic.isRequireApproval()) {
+            // Return only newly scraped articles. Previously saved PENDING articles
+            // await user approval and must not be re-surfaced here on each run.
+            if (newlySaved.isEmpty() && !fetchErrors.isEmpty()) {
+                throw new RuntimeException("Falha ao buscar artigos das fontes: " + String.join("; ", fetchErrors));
+            }
+            return newlySaved;
+        }
+
+        // Auto-publish topics: return all unused articles (new + leftover from failed runs)
         List<ScrapedArticle> unprocessed = sites.stream()
                 .flatMap(s -> scrapedArticleRepository.findBySourceSiteIdAndUsedFalse(s.getId()).stream())
                 .collect(Collectors.toList());
@@ -73,6 +84,16 @@ public class ContentFetcherServiceImpl implements ContentFetcherService {
         }
 
         return unprocessed;
+    }
+
+    @Override
+    public List<ScrapedArticle> findApprovedUnused(Topic topic) {
+        List<SourceSite> sites = sourceSiteRepository.findByTopicIdAndActiveTrue(topic.getId());
+        return sites.stream()
+                .flatMap(s -> scrapedArticleRepository
+                        .findBySourceSiteIdAndUsedFalseAndApprovalStatus(s.getId(), ApprovalStatus.APPROVED)
+                        .stream())
+                .collect(Collectors.toList());
     }
 
     private List<ScrapedArticle> fetchRss(SourceSite site, Topic topic) throws Exception {
