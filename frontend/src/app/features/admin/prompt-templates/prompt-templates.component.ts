@@ -279,7 +279,7 @@ import { PromptTemplate, PromptTemplateService } from '../../../core/services/pr
             <label class="modal-label">Template</label>
             <textarea class="modal-textarea"
                       [(ngModel)]="form.template"
-                      placeholder="Escreva o prompt aqui usando {{topic_name}} e {{articles}}…">
+                      [placeholder]="placeholderText">
             </textarea>
           </div>
 
@@ -287,11 +287,11 @@ import { PromptTemplate, PromptTemplateService } from '../../../core/services/pr
             <p class="vars-title">Variáveis disponíveis</p>
             <div class="vars-list">
               <div class="var-item">
-                <span class="var-chip">&#123;&#123;topic_name&#125;&#125;</span>
+                <span class="var-chip">{{ varTopicName }}</span>
                 <span class="var-desc">Nome do tópico</span>
               </div>
               <div class="var-item">
-                <span class="var-chip">&#123;&#123;articles&#125;&#125;</span>
+                <span class="var-chip">{{ varArticles }}</span>
                 <span class="var-desc">Artigos raspados formatados</span>
               </div>
             </div>
@@ -313,6 +313,10 @@ import { PromptTemplate, PromptTemplateService } from '../../../core/services/pr
 })
 export class AdminPromptTemplatesComponent implements OnInit {
   private svc = inject(PromptTemplateService);
+
+  readonly varTopicName = '{{topic_name}}';
+  readonly varArticles = '{{articles}}';
+  readonly placeholderText = 'Escreva o prompt aqui usando {{topic_name}} e {{articles}}…';
 
   templates: PromptTemplate[] = [];
   loading = true;
