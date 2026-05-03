@@ -7,5 +7,6 @@ public record CreateTopicRequest(
         @NotBlank String name,
         @NotBlank @Pattern(regexp = "^[a-z0-9-]+$", message = "slug must be lowercase letters, numbers and hyphens only") String slug,
         String description,
-        boolean autoPublish
+        boolean autoPublish,
+        boolean requireApproval
 ) {}

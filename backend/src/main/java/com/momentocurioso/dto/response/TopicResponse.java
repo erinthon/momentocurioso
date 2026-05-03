@@ -8,7 +8,8 @@ public record TopicResponse(
         String slug,
         String description,
         boolean autoPublish,
-        boolean active
+        boolean active,
+        boolean requireApproval
 ) {
     public static TopicResponse from(Topic topic) {
         return new TopicResponse(
@@ -17,7 +18,8 @@ public record TopicResponse(
                 topic.getSlug(),
                 topic.getDescription(),
                 topic.isAutoPublish(),
-                topic.isActive()
+                topic.isActive(),
+                topic.isRequireApproval()
         );
     }
 }

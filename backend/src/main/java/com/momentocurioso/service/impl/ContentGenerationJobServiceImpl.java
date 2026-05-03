@@ -57,6 +57,17 @@ public class ContentGenerationJobServiceImpl implements ContentGenerationJobServ
     }
 
     @Override
+    public ContentGenerationJob markDone(ContentGenerationJob job, Post post, int articlesFound, int articlesUsed, String summary) {
+        job.setStatus(JobStatus.DONE);
+        job.setFinishedAt(LocalDateTime.now());
+        job.setPost(post);
+        job.setArticlesFound(articlesFound);
+        job.setArticlesUsed(articlesUsed);
+        job.setSummary(summary);
+        return jobRepository.save(job);
+    }
+
+    @Override
     public ContentGenerationJob markFailed(ContentGenerationJob job, String errorMessage, int articlesFound) {
         job.setStatus(JobStatus.FAILED);
         job.setFinishedAt(LocalDateTime.now());

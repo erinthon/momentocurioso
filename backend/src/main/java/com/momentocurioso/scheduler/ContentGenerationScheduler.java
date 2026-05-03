@@ -1,6 +1,7 @@
 package com.momentocurioso.scheduler;
 
 import com.momentocurioso.dto.AiGeneratedContent;
+import com.momentocurioso.entity.ApprovalStatus;
 import com.momentocurioso.entity.ContentGenerationJob;
 import com.momentocurioso.entity.Post;
 import com.momentocurioso.entity.ScrapedArticle;
@@ -68,17 +69,27 @@ public class ContentGenerationScheduler {
             List<ScrapedArticle> articles = contentFetcherService.fetchAndSave(topic);
             articlesFound = articles.size();
 
-            if (articles.isEmpty()) {
-                log.info("No new articles for topic '{}' — skipping generation", topic.getSlug());
-                return jobService.markDone(job, null, 0, 0);
+            List<ScrapedArticle> approved = articles.stream()
+                    .filter(a -> a.getApprovalStatus() == ApprovalStatus.APPROVED)
+                    .toList();
+            long pendingCount = articles.stream()
+                    .filter(a -> a.getApprovalStatus() == ApprovalStatus.PENDING)
+                    .count();
+
+            if (approved.isEmpty()) {
+                String summary = pendingCount > 0
+                        ? pendingCount + " artigo(s) aguardando aprovação"
+                        : "Nenhum artigo novo encontrado";
+                log.info("No approved articles for topic '{}' — {}", topic.getSlug(), summary);
+                return jobService.markDone(job, null, articlesFound, 0, summary);
             }
 
-            AiGeneratedContent content = aiWriterService.generate(topic, articles);
-            contentFetcherService.markUsed(articles);
+            AiGeneratedContent content = aiWriterService.generate(topic, approved);
+            contentFetcherService.markUsed(approved);
             Post post = postService.saveDraft(topic, content);
             log.info("Content generated for topic '{}' — post id={} articles={} status={}",
-                    topic.getSlug(), post.getId(), articles.size(), post.getStatus());
-            return jobService.markDone(job, post, articles.size(), articles.size());
+                    topic.getSlug(), post.getId(), approved.size(), post.getStatus());
+            return jobService.markDone(job, post, articlesFound, approved.size());
 
         } catch (Exception e) {
             log.error("Content generation failed for topic '{}': {}", topic.getSlug(), e.getMessage(), e);

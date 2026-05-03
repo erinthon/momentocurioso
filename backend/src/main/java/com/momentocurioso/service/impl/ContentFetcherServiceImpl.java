@@ -1,5 +1,6 @@
 package com.momentocurioso.service.impl;
 
+import com.momentocurioso.entity.ApprovalStatus;
 import com.momentocurioso.entity.ScrapedArticle;
 import com.momentocurioso.entity.SourceSite;
 import com.momentocurioso.entity.SourceType;
@@ -46,9 +47,9 @@ public class ContentFetcherServiceImpl implements ContentFetcherService {
         for (SourceSite site : sites) {
             try {
                 if (site.getType() == SourceType.RSS) {
-                    fetchRss(site);
+                    fetchRss(site, topic);
                 } else {
-                    fetchHtml(site);
+                    fetchHtml(site, topic);
                 }
             } catch (Exception e) {
                 String msg = "Fonte id=%d (%s): %s".formatted(site.getId(), site.getUrl(), e.getMessage());
@@ -74,7 +75,7 @@ public class ContentFetcherServiceImpl implements ContentFetcherService {
         return unprocessed;
     }
 
-    private List<ScrapedArticle> fetchRss(SourceSite site) throws Exception {
+    private List<ScrapedArticle> fetchRss(SourceSite site, Topic topic) throws Exception {
         List<ScrapedArticle> results = new ArrayList<>();
         SyndFeedInput input = new SyndFeedInput();
         SyndFeed feed = input.build(new XmlReader(new URL(site.getUrl())));
@@ -88,14 +89,14 @@ public class ContentFetcherServiceImpl implements ContentFetcherService {
             String title = entry.getTitle();
             String content = entry.getDescription() != null ? entry.getDescription().getValue() : "";
 
-            ScrapedArticle article = buildArticle(site, title, content, url);
+            ScrapedArticle article = buildArticle(site, topic, title, content, url);
             results.add(scrapedArticleRepository.save(article));
         }
 
         return results;
     }
 
-    private List<ScrapedArticle> fetchHtml(SourceSite site) throws Exception {
+    private List<ScrapedArticle> fetchHtml(SourceSite site, Topic topic) throws Exception {
         String url = site.getUrl();
         if (scrapedArticleRepository.existsBySourceUrlAndSourceSiteId(url, site.getId())) {
             return List.of();
@@ -110,7 +111,7 @@ public class ContentFetcherServiceImpl implements ContentFetcherService {
         Element mainEl = doc.selectFirst("article, main, [role=main], .content, .post-content, #content, #main");
         String content = (mainEl != null ? mainEl : doc.body()).text();
 
-        ScrapedArticle article = buildArticle(site, title, content, url);
+        ScrapedArticle article = buildArticle(site, topic, title, content, url);
         return List.of(scrapedArticleRepository.save(article));
     }
 
@@ -120,7 +121,7 @@ public class ContentFetcherServiceImpl implements ContentFetcherService {
         scrapedArticleRepository.saveAll(articles);
     }
 
-    private ScrapedArticle buildArticle(SourceSite site, String title, String content, String url) {
+    private ScrapedArticle buildArticle(SourceSite site, Topic topic, String title, String content, String url) {
         ScrapedArticle article = new ScrapedArticle();
         article.setSourceSite(site);
         article.setTitle(title != null ? title : "");
@@ -128,6 +129,7 @@ public class ContentFetcherServiceImpl implements ContentFetcherService {
         article.setSourceUrl(url);
         article.setScrapedAt(LocalDateTime.now());
         article.setUsed(false);
+        article.setApprovalStatus(topic.isRequireApproval() ? ApprovalStatus.PENDING : ApprovalStatus.APPROVED);
         return article;
     }
 }

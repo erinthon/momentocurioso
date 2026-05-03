@@ -5,5 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 public record UpdateTopicRequest(
         @NotBlank String name,
         String description,
-        boolean autoPublish
+        boolean autoPublish,
+        boolean requireApproval
 ) {}

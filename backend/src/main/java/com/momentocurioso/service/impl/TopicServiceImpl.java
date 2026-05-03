@@ -34,6 +34,7 @@ public class TopicServiceImpl implements TopicService {
         topic.setSlug(request.slug());
         topic.setDescription(request.description());
         topic.setAutoPublish(request.autoPublish());
+        topic.setRequireApproval(request.requireApproval());
         return TopicResponse.from(topicRepository.save(topic));
     }
 
@@ -69,6 +70,7 @@ public class TopicServiceImpl implements TopicService {
         topic.setName(request.name());
         topic.setDescription(request.description());
         topic.setAutoPublish(request.autoPublish());
+        topic.setRequireApproval(request.requireApproval());
         return TopicResponse.from(topicRepository.save(topic));
     }
 

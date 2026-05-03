@@ -26,5 +26,10 @@ export const ADMIN_ROUTES: Routes = [
     loadComponent: () =>
       import('./providers/providers.component').then(m => m.AdminProvidersComponent)
   },
+  {
+    path: 'scraped-articles',
+    loadComponent: () =>
+      import('./scraped-articles/scraped-articles.component').then(m => m.AdminScrapedArticlesComponent)
+  },
   { path: '', redirectTo: 'topics', pathMatch: 'full' }
 ];

@@ -28,4 +28,7 @@ public class Topic {
 
     @Column(nullable = false)
     private boolean active = true;
+
+    @Column(nullable = false)
+    private boolean requireApproval = false;
 }

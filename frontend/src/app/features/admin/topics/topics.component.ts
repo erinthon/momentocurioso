@@ -11,6 +11,7 @@ interface Topic {
   description: string;
   autoPublish: boolean;
   active: boolean;
+  requireApproval: boolean;
 }
 
 interface Source {
@@ -302,6 +303,12 @@ interface Source {
               Auto-publicar posts gerados
             </label>
           </div>
+          <div class="form-row">
+            <label class="form-check">
+              <input type="checkbox" [(ngModel)]="newTopic.requireApproval"/>
+              Exigir aprovação manual antes da IA
+            </label>
+          </div>
           <div class="form-actions">
             <button class="btn-submit" (click)="createTopic()" [disabled]="savingTopic">
               {{ savingTopic ? 'Salvando...' : 'Criar Tópico' }}
@@ -348,6 +355,7 @@ interface Source {
                   {{ t.active ? 'Ativo' : 'Inativo' }}
                 </span>
                 <span class="tag tag-amber" *ngIf="t.autoPublish">Auto-publish</span>
+                <span class="tag tag-ghost" *ngIf="t.requireApproval">Aprovação manual</span>
               </div>
             </ng-container>
 
@@ -365,6 +373,12 @@ interface Source {
                 <label class="inline-form-check">
                   <input type="checkbox" [(ngModel)]="editTopicForm.autoPublish"/>
                   Auto-publicar posts gerados
+                </label>
+              </div>
+              <div class="inline-form-row">
+                <label class="inline-form-check">
+                  <input type="checkbox" [(ngModel)]="editTopicForm.requireApproval"/>
+                  Exigir aprovação manual antes da IA
                 </label>
               </div>
               <div class="inline-form-actions">
@@ -490,12 +504,12 @@ export class AdminTopicsComponent implements OnInit {
   topicError = '';
   sourceError = '';
 
-  newTopic = { name: '', slug: '', description: '', autoPublish: false };
+  newTopic = { name: '', slug: '', description: '', autoPublish: false, requireApproval: false };
   newSource = { url: '', type: 'RSS' as 'RSS' | 'HTML' };
 
   // Edit topic state
   editingTopicId: number | null = null;
-  editTopicForm = { name: '', description: '', autoPublish: false };
+  editTopicForm = { name: '', description: '', autoPublish: false, requireApproval: false };
   savingEditTopic = false;
   editTopicError = '';
 
@@ -522,7 +536,7 @@ export class AdminTopicsComponent implements OnInit {
   toggleCreateTopic(): void {
     this.showCreateTopic = !this.showCreateTopic;
     this.topicError = '';
-    this.newTopic = { name: '', slug: '', description: '', autoPublish: false };
+    this.newTopic = { name: '', slug: '', description: '', autoPublish: false, requireApproval: false };
     if (this.showCreateTopic) this.editingTopicId = null;
   }
 
@@ -557,7 +571,7 @@ export class AdminTopicsComponent implements OnInit {
         this.topics.push(topic);
         this.savingTopic = false;
         this.showCreateTopic = false;
-        this.newTopic = { name: '', slug: '', description: '', autoPublish: false };
+        this.newTopic = { name: '', slug: '', description: '', autoPublish: false, requireApproval: false };
       },
       error: (err) => {
         this.savingTopic = false;
@@ -569,7 +583,7 @@ export class AdminTopicsComponent implements OnInit {
   startEditTopic(topic: Topic): void {
     this.showCreateTopic = false;
     this.editingTopicId = topic.id;
-    this.editTopicForm = { name: topic.name, description: topic.description ?? '', autoPublish: topic.autoPublish };
+    this.editTopicForm = { name: topic.name, description: topic.description ?? '', autoPublish: topic.autoPublish, requireApproval: topic.requireApproval };
     this.editTopicError = '';
   }
 

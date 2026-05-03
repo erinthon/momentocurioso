@@ -34,4 +34,8 @@ public class ScrapedArticle {
 
     @Column(nullable = false)
     private boolean used = false;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ApprovalStatus approvalStatus = ApprovalStatus.APPROVED;
 }
