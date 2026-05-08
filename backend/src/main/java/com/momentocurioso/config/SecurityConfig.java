@@ -39,6 +39,7 @@ public class SecurityConfig {
                     "/topics",
                     "/posts",
                     "/posts/**",
+                    "/feed.xml",
                     "/v3/api-docs/**",
                     "/swagger-ui/**",
                     "/swagger-ui.html"

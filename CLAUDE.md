@@ -79,7 +79,8 @@ Core entities and their key relationships:
 
 - `Topic` — blog topic (has `active`, `autoPublish` flags; slug is unique)
 - `SourceSite` → `Topic` — a crawl source (HTML or RSS/Atom) linked to a topic
-- `ScrapedArticle` → `Topic` — raw article scraped from a source; has a `used` flag
+- `ScrapedArticle` → `SourceSite` — raw article scraped from a source; has a `used` flag and `approvalStatus`: `PENDING → APPROVED / REJECTED`; approved articles can be `QUEUED` (with a `queuedProvider`) for manual AI generation
+- `PromptTemplate` — configurable LLM prompt; only one can be `isDefault=true` at a time; uses `{{topic_name}}` and `{{articles}}` placeholders; `AiWriterServiceImpl` falls back to a hardcoded template if none is default
 - `Post` → `Topic` — generated blog post; status: `DRAFT → PUBLISHED / REJECTED`
 - `ContentGenerationJob` → `Topic`, optionally → `Post` — tracks a generation run
   - status lifecycle: `PENDING → RUNNING → DONE / FAILED`
@@ -100,6 +101,16 @@ Core entities and their key relationships:
 7. Articles are marked as `used`; the job is marked `DONE` or `FAILED`
 
 Manual trigger: `POST /api/admin/content/trigger` with `{ "topicId": N }`.
+
+## Scraped article approval & manual generation
+
+Scraped articles enter with `approvalStatus=PENDING`. Admin workflow:
+
+1. `PATCH /admin/scraped-articles/{id}/approve` or `/reject` — curate articles
+2. `PATCH /admin/scraped-articles/{id}/queue` with `{ "aiProviderId": N }` — queue approved articles for a specific provider
+3. `POST /admin/ai-writer/generate` with selected article IDs — triggers generation for the queued batch
+
+**Mock mode:** if no `AiProvider` is `active`, `AiWriterServiceImpl.generate()` silently returns placeholder content (title prefixed `[MOCK]`) instead of calling any LLM. This is intentional for local dev without API keys.
 
 ## LLM strategy pattern
 
@@ -131,6 +142,9 @@ src/app/
   /admin/jobs
   /admin/trigger
   /admin/providers
+  /admin/scraped-articles   → approve/reject/queue scraped articles
+  /admin/ai-writer          → manual AI generation queue
+  /admin/prompt-templates   → manage prompt templates
 ```
 
 **HTTP:** all API calls go through `ApiService` (`core/services/api.service.ts`), which wraps `HttpClient` with the base URL from `environment.apiUrl`. The `authInterceptor` automatically attaches the Bearer token from `localStorage` to every outgoing request.
