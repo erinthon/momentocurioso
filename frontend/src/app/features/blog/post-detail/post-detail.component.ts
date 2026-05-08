@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiService } from '../../../core/services/api.service';
+import { SeoService } from '../../../core/services/seo.service';
 import { BlogNavbarComponent } from '../../../shared/blog-navbar/blog-navbar.component';
 
 interface PostDetail {
@@ -358,6 +359,7 @@ interface PostDetail {
 export class PostDetailComponent implements OnInit, OnDestroy {
   private api = inject(ApiService);
   private route = inject(ActivatedRoute);
+  private seo = inject(SeoService);
 
   post: PostDetail | null = null;
   postContent = '';
@@ -381,6 +383,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
         this.postContent = post.content;
         this.readingTime = this.calcReadingTime(post.content);
         this.loading = false;
+        this.seo.setPost(post);
         setTimeout(() => this.revealElements(), 80);
       },
       error: () => {
@@ -392,6 +395,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     window.removeEventListener('scroll', this.scrollHandler);
+    this.seo.reset();
   }
 
   getTopicName(slug: string): string {

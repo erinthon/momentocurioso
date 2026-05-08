@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /blog/
+Allow: /feed.xml
+Disallow: /admin/
+
+Sitemap: https://momentocurioso.com.br/api/sitemap.xml

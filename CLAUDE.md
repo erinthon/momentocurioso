@@ -10,6 +10,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Running locally
 
+### Database (MySQL via Docker)
+```bash
+docker compose -f docker/docker-compose.yml up -d
+```
+Starts MySQL 8.4 on port 3306. Default credentials: user `mcuser` / password `mcpassword`, database `momentocurioso_dev`.
+
 ### Backend (from `backend/`)
 ```bash
 mvn clean compile        # first time or after adding new resource files
@@ -100,7 +106,11 @@ Core entities and their key relationships:
 6. `PostService.saveDraft()` persists the post; if `topic.autoPublish` is true the post is published immediately
 7. Articles are marked as `used`; the job is marked `DONE` or `FAILED`
 
+`AiWriterServiceImpl` caps input at `MAX_ARTICLES = 5` articles and `MAX_CONTENT_CHARS = 500` characters per article before building the prompt.
+
 Manual trigger: `POST /api/admin/content/trigger` with `{ "topicId": N }`.
+
+**Public RSS feed:** `GET /api/feed.xml?topicSlug=<slug>` — returns an RSS 2.0 feed of published posts. The `topicSlug` param is optional (omit for all topics). No auth required.
 
 ## Scraped article approval & manual generation
 
@@ -110,12 +120,14 @@ Scraped articles enter with `approvalStatus=PENDING`. Admin workflow:
 2. `PATCH /admin/scraped-articles/{id}/queue` with `{ "aiProviderId": N }` — queue approved articles for a specific provider
 3. `POST /admin/ai-writer/generate` with selected article IDs — triggers generation for the queued batch
 
+`AiWriterQueueService` manages the queue state for articles pending manual generation (separate from the scheduler flow).
+
 **Mock mode:** if no `AiProvider` is `active`, `AiWriterServiceImpl.generate()` silently returns placeholder content (title prefixed `[MOCK]`) instead of calling any LLM. This is intentional for local dev without API keys.
 
 ## LLM strategy pattern
 
 `LlmStrategy` interface with three implementations in `service/strategy/`:
-- `ClaudeStrategy` — Anthropic Claude API
+- `ClaudeStrategy` — Anthropic Claude API (default model: `claude-sonnet-4-6`, configured in `application-dev.yml` via `claude.model`)
 - `OpenAiStrategy` — OpenAI
 - `OpenAiCompatibleStrategy` — any OpenAI-compatible endpoint (set `baseUrl` on the `AiProvider`)
 
@@ -150,6 +162,12 @@ src/app/
 **HTTP:** all API calls go through `ApiService` (`core/services/api.service.ts`), which wraps `HttpClient` with the base URL from `environment.apiUrl`. The `authInterceptor` automatically attaches the Bearer token from `localStorage` to every outgoing request.
 
 **Environments:** `environment.ts` → `http://localhost:8080/api`; `environment.prod.ts` → `/api`.
+
+## Testing conventions
+
+- **Controller tests** (`test/controller/`) — use `@WebMvcTest(XController.class)` + `MockMvc`. Mock all service and security dependencies with `@MockBean`.
+- **Service tests** (`test/service/`) — use `@ExtendWith(MockitoExtension.class)` + `@InjectMocks` / `@Mock`. No Spring context.
+- Both layers use AssertJ (`assertThat`) and Mockito (`when`, `verify`).
 
 ## Adding a new feature (typical flow)
 

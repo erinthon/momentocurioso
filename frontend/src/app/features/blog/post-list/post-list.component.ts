@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { SeoService } from '../../../core/services/seo.service';
 
 interface PagedPosts {
   content: PostSummary[];
@@ -517,6 +518,7 @@ export class PostListComponent implements OnInit, AfterViewInit {
   private api = inject(ApiService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private seo = inject(SeoService);
 
   topics: Topic[] = [];
   posts: PostSummary[] = [];
@@ -575,6 +577,7 @@ export class PostListComponent implements OnInit, AfterViewInit {
       this.totalElements = posts.totalElements;
       this.hasMore = !posts.last;
       this.loading = false;
+      this.seo.setList(this.activeTopicSlug ? this.topicMap.get(this.activeTopicSlug) : undefined);
       setTimeout(() => this.revealCards(), 50);
     });
   }
