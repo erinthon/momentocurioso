@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { SeoService } from '../../../core/services/seo.service';
+import { InfiniteScrollDirective } from '../../../shared/infinite-scroll/infinite-scroll.directive';
 
 interface PagedPosts {
   content: PostSummary[];
@@ -33,7 +34,7 @@ interface Topic {
 @Component({
   selector: 'app-post-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, BlogNavbarComponent],
+  imports: [CommonModule, RouterLink, BlogNavbarComponent, InfiniteScrollDirective],
   styles: [`
     /* ── Hero ── */
     .hero {
@@ -355,28 +356,25 @@ interface Topic {
       justify-content: center;
       padding: 2.5rem 0 1rem;
     }
-    .btn-load-more {
-      padding: .65rem 2rem;
-      background: transparent;
-      border: 1.5px solid var(--green);
-      color: var(--green);
-      border-radius: var(--r);
-      font-family: var(--ff);
-      font-size: .9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background .18s, color .18s;
-      min-width: 140px;
+    .scroll-sentinel {
+      height: 1px;
+      visibility: hidden;
+    }
+    .feed-end {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: .5rem;
+      gap: 10px;
+      padding: 2.5rem 0 1rem;
     }
-    .btn-load-more:hover:not(:disabled) {
-      background: var(--green);
-      color: #fff;
+    .feed-end-label {
+      font-family: var(--fu);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--text-4);
     }
-    .btn-load-more:disabled { opacity: .5; cursor: default; }
   `],
   template: `
     <app-blog-navbar />
@@ -505,11 +503,17 @@ interface Topic {
         </div>
       </ng-container>
 
-      <div class="load-more-wrap" *ngIf="!loading && hasMore">
-        <button class="btn-load-more" (click)="loadMore()" [disabled]="loadingMore">
-          <span *ngIf="!loadingMore">Carregar mais</span>
-          <span *ngIf="loadingMore" class="pulse-bar"></span>
-        </button>
+      <div class="load-more-wrap" *ngIf="loadingMore">
+        <span class="pulse-bar"></span>
+      </div>
+      <div class="feed-end" *ngIf="!loading && !hasMore && posts.length > 0">
+        <span class="sep-short"></span>
+        <span class="feed-end-label">Fim do blog</span>
+      </div>
+      <div appInfiniteScroll
+           (scrolled)="loadMore()"
+           [disabled]="loadingMore || !hasMore"
+           class="scroll-sentinel">
       </div>
     </main>
   `
