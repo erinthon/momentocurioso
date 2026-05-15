@@ -1,0 +1,654 @@
+{
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\MomentoCuriosoApplication.java": {
+    "mtime": 1777034377.6964993,
+    "hash": "3ca776412d8db5924837f8d6e4e7cd3f"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\config\\CacheConfig.java": {
+    "mtime": 1777132993.6468344,
+    "hash": "2db0a9dd79999197eb007059464b7358"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\config\\SecurityConfig.java": {
+    "mtime": 1778243545.6445003,
+    "hash": "47828a71f72d6bca6cc27220b9a3c292"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\controller\\AdminAiProviderController.java": {
+    "mtime": 1777332926.4768379,
+    "hash": "59fc41e3f1ea9adf6e0912436d912100"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\controller\\AdminAiWriterController.java": {
+    "mtime": 1777804196.6674328,
+    "hash": "b243b4d3080e16813f9580cf4d23977a"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\controller\\AdminPostController.java": {
+    "mtime": 1777737334.9575999,
+    "hash": "1fd5efeb40b4fdd7242bc688bdc9432b"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\controller\\AdminPromptTemplateController.java": {
+    "mtime": 1777810208.044248,
+    "hash": "a749d3a0f96fd70293dbd44e197d4c12"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\controller\\AdminScrapedArticleController.java": {
+    "mtime": 1777804149.6802902,
+    "hash": "00ad9e9ca637c55414a3fe50ced926fb"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\controller\\AuthController.java": {
+    "mtime": 1776893532.9016707,
+    "hash": "4d961cce227f55c16bd72ec554ff56d5"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\controller\\PublicPostController.java": {
+    "mtime": 1777316139.0327933,
+    "hash": "5e99c40804edb01643404c38167d506b"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\controller\\RssFeedController.java": {
+    "mtime": 1778243558.9597654,
+    "hash": "338b368047b86af33b7a44e22f9e9b94"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\controller\\SourceSiteController.java": {
+    "mtime": 1777735485.135016,
+    "hash": "9a9dc8181ca891ebbddb33b1a04a0d55"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\controller\\TopicController.java": {
+    "mtime": 1777735482.3116996,
+    "hash": "d713471e1ba654d19f4fe56bac783004"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\dto\\AiGeneratedContent.java": {
+    "mtime": 1777031226.69967,
+    "hash": "3bc7fbddeb9ec05507ba0bc7ab3fd9a2"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\dto\\request\\CreateAiProviderRequest.java": {
+    "mtime": 1777332902.0962367,
+    "hash": "6ff2b0dabb397cb43ac99a697ee78034"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\dto\\request\\CreatePromptTemplateRequest.java": {
+    "mtime": 1777810182.0563326,
+    "hash": "368069b052242ea99e14e6700eaea847"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\dto\\request\\CreateSourceSiteRequest.java": {
+    "mtime": 1777289080.0824988,
+    "hash": "1f7e08368c30afdb290d565e1e88190a"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\dto\\request\\CreateTopicRequest.java": {
+    "mtime": 1777770180.1465876,
+    "hash": "b1eee57b36303af6419506be1465d976"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\dto\\request\\GenerateFromQueueRequest.java": {
+    "mtime": 1777809754.6526728,
+    "hash": "2f73c29c3a42f43f0500e04c7989fb64"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\dto\\request\\LoginRequest.java": {
+    "mtime": 1776893521.5060718,
+    "hash": "5d5b4d9c42058acaca385dccba2b0b17"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\dto\\request\\QueueArticleRequest.java": {
+    "mtime": 1777804114.8562584,
+    "hash": "d41160d85fcc1010e20833ad02e0b1da"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\dto\\request\\RegisterRequest.java": {
+    "mtime": 1777289845.5510013,
+    "hash": "f8852c4ee759cc9640efef3b4ce2d161"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\dto\\request\\TriggerJobRequest.java": {
+    "mtime": 1777034753.1249905,
+    "hash": "1e8a934f052351996f040111e2182b2b"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\dto\\request\\UpdatePostRequest.java": {
+    "mtime": 1777737298.0520055,
+    "hash": "25923510d22b62588ce68d1b2595a337"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\dto\\request\\UpdatePromptTemplateRequest.java": {
+    "mtime": 1777810184.7013204,
+    "hash": "e4365fbc92c86509dd554a1ab4599adf"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\dto\\request\\UpdateSourceSiteRequest.java": {
+    "mtime": 1777735459.7064817,
+    "hash": "373645e07415dfaa72e2165f8a3f8ed1"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\dto\\request\\UpdateTopicRequest.java": {
+    "mtime": 1777770185.6704788,
+    "hash": "0990ec1462c9104437fdf732e524c815"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\dto\\response\\AiProviderResponse.java": {
+    "mtime": 1777332909.2623186,
+    "hash": "a157caa41994d1b6e271ab067cc77451"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\dto\\response\\AuthResponse.java": {
+    "mtime": 1777238670.7587984,
+    "hash": "f97282bd0508ee39f37b8de01cc72314"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\dto\\response\\JobStatusResponse.java": {
+    "mtime": 1777772495.9189303,
+    "hash": "14f1fae857140c43b65b99dac9b25463"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\dto\\response\\PageResponse.java": {
+    "mtime": 1777316110.2550068,
+    "hash": "59fb425b55ecb86f56b09345659e1f16"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\dto\\response\\PostResponse.java": {
+    "mtime": 1777737295.5752423,
+    "hash": "ca311fa7b6d4d246c90429cbb2e575a4"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\dto\\response\\PostSummaryResponse.java": {
+    "mtime": 1777129656.6619565,
+    "hash": "260cf286b30336f297beb831ac51293f"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\dto\\response\\PromptTemplateResponse.java": {
+    "mtime": 1777810187.831415,
+    "hash": "8d4e38e7c7cf6441438062e27c834e75"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\dto\\response\\ScrapedArticleResponse.java": {
+    "mtime": 1777804114.0254846,
+    "hash": "77bead929489048e3ca59e4fa1b91714"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\dto\\response\\SourceSiteResponse.java": {
+    "mtime": 1777029726.6326923,
+    "hash": "05acfb6159fb6f4754389739ae1622dc"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\dto\\response\\TopicResponse.java": {
+    "mtime": 1777758407.5842257,
+    "hash": "de349164cb8acd5aee6502f53ebe4178"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\entity\\AiProvider.java": {
+    "mtime": 1777332907.0973625,
+    "hash": "7fe9a6df7733bb55f66d88c86602996a"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\entity\\AiProviderType.java": {
+    "mtime": 1777332900.7560754,
+    "hash": "0dd82b33761616e66efc0dc53717afd4"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\entity\\ApprovalStatus.java": {
+    "mtime": 1777804087.2658663,
+    "hash": "ef9590418b70baca78b09dcea5ba90a8"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\entity\\ContentGenerationJob.java": {
+    "mtime": 1777772491.8368592,
+    "hash": "04902b0cad7aa099b7c6a261999e64fe"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\entity\\JobStatus.java": {
+    "mtime": 1777034334.2994921,
+    "hash": "5f44db2c618e79e22f6065edcb1b1647"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\entity\\Post.java": {
+    "mtime": 1777034339.4265716,
+    "hash": "bf225d797786ad9f1bffbb4ccdaf257d"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\entity\\PostStatus.java": {
+    "mtime": 1777034333.5453265,
+    "hash": "7c42f49c3aaac84b362b63a144c9e6d3"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\entity\\PromptTemplate.java": {
+    "mtime": 1777810175.351058,
+    "hash": "06f89bfa1fccb9333b3ddd62f95c879a"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\entity\\ScrapedArticle.java": {
+    "mtime": 1777804104.0801773,
+    "hash": "6b648c148ee3a5f846905e2eceab1e1b"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\entity\\SourceSite.java": {
+    "mtime": 1777029726.5864527,
+    "hash": "2a4cff3623782e10cf527cbb4770326b"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\entity\\SourceType.java": {
+    "mtime": 1777029726.5724277,
+    "hash": "c42d26a2a990cff8ad306d321872f5bf"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\entity\\Topic.java": {
+    "mtime": 1777758283.1066556,
+    "hash": "9a30b10c01f1eaffa0dd51a65e344c83"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\entity\\TriggerSource.java": {
+    "mtime": 1777034334.845246,
+    "hash": "e819b48c86c4e8902faf06cf0d4d1e03"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\entity\\User.java": {
+    "mtime": 1776893521.4588623,
+    "hash": "0bd2414f9be9fb7780e050b5227779e8"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\exception\\GlobalExceptionHandler.java": {
+    "mtime": 1777289193.3799524,
+    "hash": "a87e8b3f68bd750578b088d75f1485fd"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\repository\\AiProviderRepository.java": {
+    "mtime": 1777332913.217028,
+    "hash": "ddddc7da2bf8cfaba0ed54c8a2a4f40f"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\repository\\ContentGenerationJobRepository.java": {
+    "mtime": 1777319885.9720633,
+    "hash": "7e097918d641e9ab18ae490d5ad232bc"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\repository\\PostRepository.java": {
+    "mtime": 1777290510.6978896,
+    "hash": "1125f11d19b2b77cb6486fbf5b5f8e6a"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\repository\\PromptTemplateRepository.java": {
+    "mtime": 1777810178.9915237,
+    "hash": "373eefa5b254767a9cf5c48fc852c75f"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\repository\\ScrapedArticleRepository.java": {
+    "mtime": 1777804121.5367537,
+    "hash": "f622de565b07fbd1d39c0b4b9f49ae55"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\repository\\SourceSiteRepository.java": {
+    "mtime": 1777030943.9579217,
+    "hash": "c3d661cdb3d7803fdaa19178af220b2c"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\repository\\TopicRepository.java": {
+    "mtime": 1776895797.3968954,
+    "hash": "41a6fb7c9179eb4769e9402c7fff9476"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\repository\\UserRepository.java": {
+    "mtime": 1776893521.4880116,
+    "hash": "4936d81572502b8b9dafdf4f3f116011"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\scheduler\\ContentGenerationScheduler.java": {
+    "mtime": 1777772578.6010542,
+    "hash": "6b21aa1c01f069c257e466cae9f440b3"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\security\\JwtAuthFilter.java": {
+    "mtime": 1776893524.6541855,
+    "hash": "024471b76ad731dec825f42290251e1e"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\security\\JwtUtil.java": {
+    "mtime": 1777238678.5694892,
+    "hash": "f6a3c43bd9e2fafb468d47852be76228"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\security\\RateLimitFilter.java": {
+    "mtime": 1777289749.6164029,
+    "hash": "038acd931c564e4e078c4c62f6691ab8"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\AiProviderService.java": {
+    "mtime": 1777332914.7495885,
+    "hash": "1431245298867e2c89d201c55906ddd5"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\AiWriterQueueService.java": {
+    "mtime": 1777804172.835886,
+    "hash": "ff025790635360bc0d2d6394286bf5df"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\AiWriterService.java": {
+    "mtime": 1777809184.894956,
+    "hash": "f92b130947cf85adc1063693c9c7b725"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\ContentFetcherService.java": {
+    "mtime": 1777772520.543172,
+    "hash": "a474a72a35232a3834930fb42722db09"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\ContentGenerationJobService.java": {
+    "mtime": 1777772523.23558,
+    "hash": "170d567060a5709726d5a9dc9a0ee040"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\FetchResult.java": {
+    "mtime": 1777772490.6364512,
+    "hash": "019ca8c5f0a8c404b758d6efa944d955"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\PostService.java": {
+    "mtime": 1777737305.5221841,
+    "hash": "eea318ef6f217d025c461165aa379798"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\PromptTemplateService.java": {
+    "mtime": 1777810191.2616153,
+    "hash": "1dc97c44830e4082e35a2b31c0eed0a8"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\RssFeedService.java": {
+    "mtime": 1778243544.4332924,
+    "hash": "3aa9ce24e3a86ee2578ef0107105f554"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\ScrapedArticleService.java": {
+    "mtime": 1777804126.2452025,
+    "hash": "4cdcf5af66677ea25f12af0a76bfefbb"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\SourceSiteService.java": {
+    "mtime": 1777735462.5284264,
+    "hash": "b612e88ec4b79220baafa854fee877a7"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\TopicService.java": {
+    "mtime": 1777736262.464578,
+    "hash": "2dff5962b0c27333afaf320ca9441980"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\UserService.java": {
+    "mtime": 1776893525.6517968,
+    "hash": "7d6ad67c678dc77218fc6f65a23cca49"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\impl\\AiProviderServiceImpl.java": {
+    "mtime": 1777332924.0120423,
+    "hash": "31d0ba8a30cd48aeb46dc77b4407aa5e"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\impl\\AiWriterQueueServiceImpl.java": {
+    "mtime": 1777809202.0178874,
+    "hash": "7f865a7ed31a2e9c596c699a02e70eeb"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\impl\\AiWriterServiceImpl.java": {
+    "mtime": 1777810226.291039,
+    "hash": "f2c566b79927b7b8ed2261a08256f3d4"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\impl\\ContentFetcherServiceImpl.java": {
+    "mtime": 1777772547.0159986,
+    "hash": "264befe76d5e0ea6c4f53a04b18e061d"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\impl\\ContentGenerationJobServiceImpl.java": {
+    "mtime": 1777772559.711104,
+    "hash": "89e583e9a577ad4ae27a1dd4bc6294e9"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\impl\\PostServiceImpl.java": {
+    "mtime": 1777737319.0002456,
+    "hash": "19ec955dce80b4f97e39925eb1cc7d50"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\impl\\PromptTemplateServiceImpl.java": {
+    "mtime": 1777810202.3312993,
+    "hash": "1da52f2d494507782286698d8c88913a"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\impl\\RssFeedServiceImpl.java": {
+    "mtime": 1778243610.0223918,
+    "hash": "c18020f0cf169596f7c3275bf80ae955"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\impl\\ScrapedArticleServiceImpl.java": {
+    "mtime": 1777804139.9131198,
+    "hash": "c2620ab72c2aef30e1510196210a0225"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\impl\\SourceSiteServiceImpl.java": {
+    "mtime": 1777735479.1297722,
+    "hash": "47d18c229439fedac7d8dd39ba6706b5"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\impl\\TopicServiceImpl.java": {
+    "mtime": 1777770198.8742273,
+    "hash": "84e29d7f09526bf45adbb5e945704b25"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\impl\\UserServiceImpl.java": {
+    "mtime": 1777238692.0188844,
+    "hash": "be20920e7193de2d436f0a185c7cb3d5"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\strategy\\ClaudeStrategy.java": {
+    "mtime": 1777734666.3636737,
+    "hash": "3ae160836c398f5ad04a580eb4cf5296"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\strategy\\LlmStrategy.java": {
+    "mtime": 1777734658.7874696,
+    "hash": "99f24e55670e2da3a6b829cc28d5b01c"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\strategy\\LlmStrategyFactory.java": {
+    "mtime": 1777734661.3124142,
+    "hash": "9f802eddfa6c9248c3b3c5835c604209"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\strategy\\OpenAiCompatibleStrategy.java": {
+    "mtime": 1777734672.1260736,
+    "hash": "354b2445c1025567b93c1b4b785f2f93"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\java\\com\\momentocurioso\\service\\strategy\\OpenAiStrategy.java": {
+    "mtime": 1777734670.3797362,
+    "hash": "1eafcaea653864a4baa4b29c6f6c364d"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\test\\java\\com\\momentocurioso\\MomentoCuriosoApplicationTests.java": {
+    "mtime": 1776877591.2832465,
+    "hash": "7feca28c95f27d550c95aeef1e3acd46"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\test\\java\\com\\momentocurioso\\config\\CorsConfigTest.java": {
+    "mtime": 1777313745.2909224,
+    "hash": "5ffa28bd2601c3bdb08dd946db81342e"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\test\\java\\com\\momentocurioso\\controller\\AdminAiWriterControllerTest.java": {
+    "mtime": 1777809304.6651158,
+    "hash": "70192bdefa0cf468f157c6211a55d95f"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\test\\java\\com\\momentocurioso\\controller\\AdminPostControllerTest.java": {
+    "mtime": 1777737346.8628116,
+    "hash": "4b28f734da215eaadb68f4a1131fdfc5"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\test\\java\\com\\momentocurioso\\controller\\AdminPromptTemplateControllerTest.java": {
+    "mtime": 1777810281.0159109,
+    "hash": "93ae003053050fbf96a863bbb1612f26"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\test\\java\\com\\momentocurioso\\controller\\AuthControllerTest.java": {
+    "mtime": 1777314821.2813592,
+    "hash": "310bb36c65619db9d0ce7d7406e49ca9"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\test\\java\\com\\momentocurioso\\controller\\PublicPostControllerTest.java": {
+    "mtime": 1777320144.2323234,
+    "hash": "b007f93833d049b6e4fc9091123ef6d2"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\test\\java\\com\\momentocurioso\\controller\\SourceSiteControllerTest.java": {
+    "mtime": 1777313844.854588,
+    "hash": "02d3ac6da83ffb37c2b195d3653a51b4"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\test\\java\\com\\momentocurioso\\scheduler\\ContentGenerationSchedulerTest.java": {
+    "mtime": 1777313326.0746858,
+    "hash": "2d9fde228e9f93bb7f533d17b0cb1c88"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\test\\java\\com\\momentocurioso\\security\\JwtUtilTest.java": {
+    "mtime": 1777313288.0967746,
+    "hash": "948c0aa6e683776fad52a555586aff53"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\test\\java\\com\\momentocurioso\\security\\RateLimitFilterTest.java": {
+    "mtime": 1777297727.3472035,
+    "hash": "6d37729beb696427f2ca2e711554d307"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\test\\java\\com\\momentocurioso\\service\\AiWriterQueueServiceImplTest.java": {
+    "mtime": 1777809292.9849775,
+    "hash": "f5bfecd8b134b076f0f46510285f5c8c"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\test\\java\\com\\momentocurioso\\service\\AiWriterServiceTest.java": {
+    "mtime": 1777810251.2709174,
+    "hash": "fdca68ccaed54a36738604faabef657f"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\test\\java\\com\\momentocurioso\\service\\ContentFetcherServiceImplTest.java": {
+    "mtime": 1777313371.0827794,
+    "hash": "deb719ac726ba7adc0cd63c85e5d9fe1"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\test\\java\\com\\momentocurioso\\service\\PostServiceImplTest.java": {
+    "mtime": 1777737569.0390787,
+    "hash": "e25ad2a5e8528dd1a157b932be1143e8"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\test\\java\\com\\momentocurioso\\service\\PromptTemplateServiceTest.java": {
+    "mtime": 1777810267.3796859,
+    "hash": "e28629e5d1a963339c94c2e0ec612b99"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\test\\java\\com\\momentocurioso\\service\\strategy\\ClaudeStrategyTest.java": {
+    "mtime": 1777734737.8825235,
+    "hash": "ebab8965ac3cf4659ff658d093635bde"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\main.ts": {
+    "mtime": 1776877608.4904938,
+    "hash": "1289536d6d8f94242a4ffc598d094633"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\app.config.ts": {
+    "mtime": 1776877697.2834191,
+    "hash": "2317b92e5f29b1801eca3f5261a6bbec"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\app.routes.ts": {
+    "mtime": 1777239026.880631,
+    "hash": "bc0c476a860bafc66e21a0cd418cfd72"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\app.spec.ts": {
+    "mtime": 1777288829.6050968,
+    "hash": "bb43ce3169f0faa113e7e4c56d497f2a"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\app.ts": {
+    "mtime": 1777218205.3297648,
+    "hash": "2ce2030d7b8ba5a8142f921e59b0a130"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\core\\guards\\admin.guard.ts": {
+    "mtime": 1777239018.4132955,
+    "hash": "06c1e680bb7ae022e6509288c862105c"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\core\\guards\\auth.guard.ts": {
+    "mtime": 1776877681.9147065,
+    "hash": "9d2d66653913328d9d907a605b6fc50d"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\core\\interceptors\\auth.interceptor.ts": {
+    "mtime": 1777239038.6771798,
+    "hash": "c9baefcceba25dcc4c89982cc816a6a6"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\core\\services\\api.service.ts": {
+    "mtime": 1777060154.4027529,
+    "hash": "47835a82a74a9d56629dbf0787d0cb2f"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\core\\services\\auth.service.ts": {
+    "mtime": 1777239449.7942295,
+    "hash": "b0e965a368493e91774882ffde8f3ef9"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\core\\services\\prompt-template.service.ts": {
+    "mtime": 1777810580.2027469,
+    "hash": "abb85583cf2b0b906524cfe0331a65e1"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\core\\services\\theme.service.ts": {
+    "mtime": 1777218170.0258176,
+    "hash": "63907a4a9cd1a2d4a24f5185f106c586"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\features\\admin\\admin.routes.ts": {
+    "mtime": 1777810636.9198139,
+    "hash": "60297229c338dda27d244914b56a80a6"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\features\\admin\\ai-writer\\ai-writer.component.ts": {
+    "mtime": 1777822582.589667,
+    "hash": "205971a10abc2a0468ad80be10d9fc4d"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\features\\admin\\jobs\\jobs.component.ts": {
+    "mtime": 1777772806.2366896,
+    "hash": "f380f60a1698ed07ddf9ecbd3484230f"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\features\\admin\\posts\\posts.component.ts": {
+    "mtime": 1777737428.2295847,
+    "hash": "77a2a9d6b100b1d5a2872b87658c6cee"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\features\\admin\\prompt-templates\\prompt-templates.component.ts": {
+    "mtime": 1777821879.302147,
+    "hash": "df6634132c9f577947ad0d731997f974"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\features\\admin\\prompt-templates\\prompt-templates.routes.ts": {
+    "mtime": 1777810632.551105,
+    "hash": "43284e0e41978192acac54cc73ba2687"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\features\\admin\\providers\\providers.component.ts": {
+    "mtime": 1777735238.7683525,
+    "hash": "5bb431fc1212b68e1efc14928d783cbf"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\features\\admin\\scraped-articles\\scraped-articles.component.ts": {
+    "mtime": 1777804371.7491243,
+    "hash": "b909eae6339118f6fbdd8ad93ded8d5f"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\features\\admin\\topics\\topics.component.ts": {
+    "mtime": 1777770559.1243017,
+    "hash": "22f474aa31691907ebf901f6c9ef21fe"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\features\\admin\\trigger\\trigger.component.ts": {
+    "mtime": 1777772818.2938845,
+    "hash": "c16353449a66c45ee484a2474e7dc9a2"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\features\\auth\\auth.routes.ts": {
+    "mtime": 1776877704.3546112,
+    "hash": "dc1c8f1cbf5399bcfb5b8ff8aa3ff441"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\features\\auth\\login\\login.component.ts": {
+    "mtime": 1777239032.3058903,
+    "hash": "e9449addbaedc28b07b1971f6f84e77d"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\features\\auth\\register\\register.component.ts": {
+    "mtime": 1776893657.4798896,
+    "hash": "70620234b012eeb3aa0dcc31ebfcfe40"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\features\\blog\\blog.routes.ts": {
+    "mtime": 1777060158.2851367,
+    "hash": "6f792f9babba3aa9308f61fa18e5d624"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\features\\blog\\post-detail\\post-detail.component.spec.ts": {
+    "mtime": 1777313420.9985452,
+    "hash": "a09b351b8c4f71dabcf7fbec31d93280"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\features\\blog\\post-detail\\post-detail.component.ts": {
+    "mtime": 1777288535.1121202,
+    "hash": "348f0043be0be33a813d8334a69438b0"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\features\\blog\\post-list\\post-list.component.spec.ts": {
+    "mtime": 1777313417.981982,
+    "hash": "dbe4b0e54a3938b944f0630f5c0697b1"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\features\\blog\\post-list\\post-list.component.ts": {
+    "mtime": 1777290593.5792296,
+    "hash": "aaa70659268358fa6a2d649cb423e1e1"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\features\\home\\home.component.ts": {
+    "mtime": 1777035045.6324608,
+    "hash": "e4f23f87f39786b4f03e9e651680aa07"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\features\\home\\home.routes.ts": {
+    "mtime": 1776877706.777089,
+    "hash": "f8344ee40c26a5c2ebd546057b7abedf"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\shared\\admin-navbar\\admin-navbar.component.ts": {
+    "mtime": 1777810640.304326,
+    "hash": "a4a2da9266b255bb46c6aec2e211affe"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\shared\\blog-navbar\\blog-navbar.component.ts": {
+    "mtime": 1778243583.0430858,
+    "hash": "ce60108cddb3043e79b1e5d53e7a0f29"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\environments\\environment.prod.ts": {
+    "mtime": 1776877675.8126185,
+    "hash": "89917fee5d6b4529b579bb644362a144"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\environments\\environment.ts": {
+    "mtime": 1776877673.9790318,
+    "hash": "5ee30aa9b1a884f9f21abc07741b0024"
+  },
+  "C:\\dev\\momentocurioso\\scripts\\db-cleanup-content.sql": {
+    "mtime": 1777806096.8037677,
+    "hash": "ff16c32e3bb259228a4f82912630c29e"
+  },
+  "C:\\dev\\momentocurioso\\scripts\\db-cleanup.ps1": {
+    "mtime": 1777771965.4097717,
+    "hash": "17045bd62f0c4976967fff7de5616b0e"
+  },
+  "C:\\dev\\momentocurioso\\CLAUDE.md": {
+    "mtime": 1778242062.8465133,
+    "hash": "c38e57d19580cbd40fc565f09af64e15"
+  },
+  "C:\\dev\\momentocurioso\\README.md": {
+    "mtime": 1777291094.3616962,
+    "hash": "092f89a79c59ce928d656d3d56eb8d4c"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\resources\\application-dev.yml": {
+    "mtime": 1777288347.4831622,
+    "hash": "eda9f886f5971a66465c1c5b46cba47c"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\resources\\application-local.yml": {
+    "mtime": 1777288104.5885744,
+    "hash": "593222332ac38739758868d4da8726e4"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\resources\\application-prod.yml": {
+    "mtime": 1777288350.502921,
+    "hash": "c67d0cc491ba2a6485005da5d0c1a48c"
+  },
+  "C:\\dev\\momentocurioso\\backend\\src\\main\\resources\\application.yml": {
+    "mtime": 1776877565.395743,
+    "hash": "8726e079856b0560817b3fa06283c87c"
+  },
+  "C:\\dev\\momentocurioso\\brand-guide\\brand-guide-v3.html": {
+    "mtime": 1777217032.9482424,
+    "hash": "4eebf2480246628a5b76e8e612c29fcf"
+  },
+  "C:\\dev\\momentocurioso\\brand-guide\\identidade-visual.html": {
+    "mtime": 1777058962.4353566,
+    "hash": "5be9d1f9a8ab426b5a34f3fe26442ce8"
+  },
+  "C:\\dev\\momentocurioso\\brand-guide\\momento-curioso-brand-guide.md": {
+    "mtime": 1777059181.963321,
+    "hash": "9f35d236b8421ca4bf58363ad1a07681"
+  },
+  "C:\\dev\\momentocurioso\\docker\\docker-compose.yml": {
+    "mtime": 1776877720.2590284,
+    "hash": "08f48dc782eb8f97cd9203174d11d0f2"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\README.md": {
+    "mtime": 1776877608.485299,
+    "hash": "30cd0bc28b998b1bb31fb3b7d6af701d"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\index.html": {
+    "mtime": 1778243570.2731967,
+    "hash": "363fb817af4a67b695fcd88b29241451"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\src\\app\\app.html": {
+    "mtime": 1777035016.974625,
+    "hash": "eb2ce819db0e019d9b8afee11e3b5828"
+  },
+  "C:\\dev\\momentocurioso\\frontend\\public\\favicon.svg": {
+    "mtime": 1777236111.1233935,
+    "hash": "d4f89eaac6216add4de5c79e422b9f23"
+  }
+}

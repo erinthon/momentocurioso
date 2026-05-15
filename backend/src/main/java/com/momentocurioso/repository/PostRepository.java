@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,4 +17,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAllByStatus(PostStatus status, Pageable pageable);
     Optional<Post> findBySlug(String slug);
     boolean existsBySlug(String slug);
+    long countByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+    long countByStatus(PostStatus status);
 }

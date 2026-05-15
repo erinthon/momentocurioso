@@ -75,6 +75,7 @@ import { AuthService } from '../../core/services/auth.service';
         </div>
       </a>
       <div class="nav-right">
+        <a class="nav-link" routerLink="/admin/dashboard" routerLinkActive="active">Dashboard</a>
         <a class="nav-link" routerLink="/admin/topics"  routerLinkActive="active">Tópicos</a>
         <a class="nav-link" routerLink="/admin/posts"   routerLinkActive="active">Posts</a>
         <a class="nav-link" routerLink="/admin/jobs"    routerLinkActive="active">Jobs</a>

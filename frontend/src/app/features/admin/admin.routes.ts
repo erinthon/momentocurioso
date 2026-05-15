@@ -2,6 +2,11 @@ import { Routes } from '@angular/router';
 
 export const ADMIN_ROUTES: Routes = [
   {
+    path: 'dashboard',
+    loadComponent: () =>
+      import('./dashboard/dashboard.component').then(m => m.AdminDashboardComponent)
+  },
+  {
     path: 'topics',
     loadComponent: () =>
       import('./topics/topics.component').then(m => m.AdminTopicsComponent)
@@ -41,5 +46,5 @@ export const ADMIN_ROUTES: Routes = [
     loadComponent: () =>
       import('./prompt-templates/prompt-templates.component').then(m => m.AdminPromptTemplatesComponent)
   },
-  { path: '', redirectTo: 'topics', pathMatch: 'full' }
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
 ];

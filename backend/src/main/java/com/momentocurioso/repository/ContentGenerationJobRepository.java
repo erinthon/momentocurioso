@@ -6,7 +6,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface ContentGenerationJobRepository extends JpaRepository<ContentGenerationJob, Long> {
     Page<ContentGenerationJob> findAllByOrderByStartedAtDesc(Pageable pageable);
     Page<ContentGenerationJob> findAllByStatusOrderByStartedAtDesc(JobStatus status, Pageable pageable);
+    Optional<ContentGenerationJob> findFirstByOrderByStartedAtDesc();
 }
