@@ -7,7 +7,10 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "scraped_articles")
+@Table(name = "scraped_articles", indexes = {
+        @Index(name = "idx_articles_approval_status", columnList = "approval_status"),
+        @Index(name = "idx_articles_source_used", columnList = "source_site_id, used")
+})
 @Getter
 @Setter
 public class ScrapedArticle {

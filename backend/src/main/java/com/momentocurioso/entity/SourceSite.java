@@ -5,7 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "source_sites")
+@Table(name = "source_sites", indexes = {
+        @Index(name = "idx_sources_topic_active", columnList = "topic_id, active")
+})
 @Getter
 @Setter
 public class SourceSite {
