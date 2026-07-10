@@ -1,11 +1,14 @@
 package com.momentocurioso.service;
 
 import com.momentocurioso.dto.AiGeneratedContent;
+import com.momentocurioso.dto.request.CreatePostRequest;
 import com.momentocurioso.entity.Post;
 import com.momentocurioso.entity.PostStatus;
 import com.momentocurioso.entity.Topic;
 import com.momentocurioso.repository.PostRepository;
+import com.momentocurioso.repository.TopicRepository;
 import com.momentocurioso.service.impl.PostServiceImpl;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,6 +29,9 @@ class PostServiceImplTest {
     @Mock
     private PostRepository postRepository;
 
+    @Mock
+    private TopicRepository topicRepository;
+
     @InjectMocks
     private PostServiceImpl postService;
 
@@ -44,6 +50,69 @@ class PostServiceImplTest {
         post.setStatus(status);
         post.setTopic(topic);
         return post;
+    }
+
+    // ── create: criação direta de post via API ──────────────────────────────
+
+    @Test
+    void create_withPublishTrue_savesPublishedWithSlugFromTitle() {
+        Topic topic = new Topic();
+        topic.setId(1L);
+        topic.setSlug("tecnologia");
+        when(topicRepository.findBySlug("tecnologia")).thenReturn(Optional.of(topic));
+        when(postRepository.existsBySlug(any())).thenReturn(false);
+        when(postRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        var response = postService.create(new CreatePostRequest(
+                "Por que o céu é azul?", "Resumo", "<p>Conteúdo</p>", "tecnologia", true));
+
+        assertThat(response.status()).isEqualTo(PostStatus.PUBLISHED);
+        assertThat(response.publishedAt()).isNotNull();
+        assertThat(response.slug()).isEqualTo("por-que-o-ceu-e-azul");
+    }
+
+    @Test
+    void create_withPublishFalse_savesDraftWithoutPublishedAt() {
+        Topic topic = new Topic();
+        topic.setId(1L);
+        topic.setSlug("tecnologia");
+        when(topicRepository.findBySlug("tecnologia")).thenReturn(Optional.of(topic));
+        when(postRepository.existsBySlug(any())).thenReturn(false);
+        when(postRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        var response = postService.create(new CreatePostRequest(
+                "Título", "Resumo", "<p>Conteúdo</p>", "tecnologia", false));
+
+        assertThat(response.status()).isEqualTo(PostStatus.DRAFT);
+        assertThat(response.publishedAt()).isNull();
+    }
+
+    @Test
+    void create_whenTopicNotFound_throwsEntityNotFoundException() {
+        when(topicRepository.findBySlug("inexistente")).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> postService.create(new CreatePostRequest(
+                "Título", "Resumo", "<p>Conteúdo</p>", "inexistente", true)))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessageContaining("inexistente");
+
+        verify(postRepository, never()).save(any());
+    }
+
+    @Test
+    void create_whenSlugExists_appendsNumericSuffix() {
+        Topic topic = new Topic();
+        topic.setId(1L);
+        topic.setSlug("tecnologia");
+        when(topicRepository.findBySlug("tecnologia")).thenReturn(Optional.of(topic));
+        when(postRepository.existsBySlug("titulo")).thenReturn(true);
+        when(postRepository.existsBySlug("titulo-1")).thenReturn(false);
+        when(postRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        var response = postService.create(new CreatePostRequest(
+                "Título", "Resumo", "<p>Conteúdo</p>", "tecnologia", true));
+
+        assertThat(response.slug()).isEqualTo("titulo-1");
     }
 
     // ── BUG-002: approve/reject devem bloquear posts que não são DRAFT ──────

@@ -1,6 +1,7 @@
 package com.momentocurioso.service;
 
 import com.momentocurioso.dto.AiGeneratedContent;
+import com.momentocurioso.dto.request.CreatePostRequest;
 import com.momentocurioso.dto.request.UpdatePostRequest;
 import com.momentocurioso.dto.response.PageResponse;
 import com.momentocurioso.dto.response.PostResponse;
@@ -13,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 public interface PostService {
 
     Post saveDraft(Topic topic, AiGeneratedContent content);
+
+    PostResponse create(CreatePostRequest request);
 
     PageResponse<PostSummaryResponse> listPublished(String topicSlug, Pageable pageable);
 

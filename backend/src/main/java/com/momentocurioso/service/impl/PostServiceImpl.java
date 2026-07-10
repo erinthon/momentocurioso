@@ -1,6 +1,7 @@
 package com.momentocurioso.service.impl;
 
 import com.momentocurioso.dto.AiGeneratedContent;
+import com.momentocurioso.dto.request.CreatePostRequest;
 import com.momentocurioso.dto.request.UpdatePostRequest;
 import com.momentocurioso.dto.response.PageResponse;
 import com.momentocurioso.dto.response.PostResponse;
@@ -9,6 +10,7 @@ import com.momentocurioso.entity.Post;
 import com.momentocurioso.entity.PostStatus;
 import com.momentocurioso.entity.Topic;
 import com.momentocurioso.repository.PostRepository;
+import com.momentocurioso.repository.TopicRepository;
 import com.momentocurioso.service.PostService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.cache.annotation.CacheEvict;
@@ -27,9 +29,11 @@ import java.util.UUID;
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
+    private final TopicRepository topicRepository;
 
-    public PostServiceImpl(PostRepository postRepository) {
+    public PostServiceImpl(PostRepository postRepository, TopicRepository topicRepository) {
         this.postRepository = postRepository;
+        this.topicRepository = topicRepository;
     }
 
     @Override
@@ -54,6 +58,34 @@ public class PostServiceImpl implements PostService {
         } catch (DataIntegrityViolationException e) {
             post.setSlug(post.getSlug() + "-" + UUID.randomUUID().toString().substring(0, 8));
             return postRepository.save(post);
+        }
+    }
+
+    @Override
+    @CacheEvict(value = "posts", allEntries = true)
+    public PostResponse create(CreatePostRequest request) {
+        Topic topic = topicRepository.findBySlug(request.topicSlug())
+                .orElseThrow(() -> new EntityNotFoundException("Topic not found: " + request.topicSlug()));
+
+        Post post = new Post();
+        post.setTopic(topic);
+        post.setTitle(request.title());
+        post.setSlug(generateUniqueSlug(request.title()));
+        post.setSummary(request.summary());
+        post.setContent(request.content());
+
+        if (request.publish()) {
+            post.setStatus(PostStatus.PUBLISHED);
+            post.setPublishedAt(LocalDateTime.now());
+        } else {
+            post.setStatus(PostStatus.DRAFT);
+        }
+
+        try {
+            return PostResponse.from(postRepository.save(post));
+        } catch (DataIntegrityViolationException e) {
+            post.setSlug(post.getSlug() + "-" + UUID.randomUUID().toString().substring(0, 8));
+            return PostResponse.from(postRepository.save(post));
         }
     }
 

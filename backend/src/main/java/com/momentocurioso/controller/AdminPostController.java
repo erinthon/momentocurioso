@@ -1,5 +1,6 @@
 package com.momentocurioso.controller;
 
+import com.momentocurioso.dto.request.CreatePostRequest;
 import com.momentocurioso.dto.request.TriggerJobRequest;
 import com.momentocurioso.dto.request.UpdatePostRequest;
 import com.momentocurioso.dto.response.JobStatusResponse;
@@ -17,6 +18,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +36,12 @@ public class AdminPostController {
         this.postService = postService;
         this.jobService = jobService;
         this.scheduler = scheduler;
+    }
+
+    @PostMapping("/posts")
+    public ResponseEntity<PostResponse> createPost(@Valid @RequestBody CreatePostRequest request) {
+        PostResponse post = postService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(post);
     }
 
     @GetMapping("/posts")
