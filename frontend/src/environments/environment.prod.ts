@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
   apiUrl: '/api',
-  siteUrl: 'https://momentocurioso.com.br'
+  siteUrl: 'https://momentocurioso.ia.br'
 };

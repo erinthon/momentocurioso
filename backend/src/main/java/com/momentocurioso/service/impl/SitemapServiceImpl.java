@@ -14,7 +14,7 @@ public class SitemapServiceImpl implements SitemapService {
 
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    @Value("${app.site-url:https://momentocurioso.com.br}")
+    @Value("${app.site-url:https://momentocurioso.ia.br}")
     private String siteUrl;
 
     private final PostRepository postRepository;
