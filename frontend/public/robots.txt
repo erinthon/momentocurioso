@@ -3,4 +3,4 @@ Allow: /blog/
 Allow: /feed.xml
 Disallow: /admin/
 
-Sitemap: https://momentocurioso.com.br/api/sitemap.xml
+Sitemap: https://momentocurioso.ia.br/api/sitemap.xml
