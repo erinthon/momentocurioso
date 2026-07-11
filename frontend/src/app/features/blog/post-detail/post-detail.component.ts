@@ -52,7 +52,7 @@ interface PostDetail {
     }
     .hero-inner {
       position: relative;
-      max-width: 780px;
+      max-width: 680px;
       margin: 0 auto;
     }
     .hero-breadcrumb {
@@ -138,7 +138,7 @@ interface PostDetail {
 
     /* ── Article body ── */
     .article-wrapper {
-      max-width: 780px;
+      max-width: 680px;
       margin: 0 auto;
       padding: 64px 2rem 100px;
     }
@@ -160,6 +160,35 @@ interface PostDetail {
       ::ng-deep h3 { font-size: 19px; letter-spacing: -.3px; }
 
       ::ng-deep p { margin: 0 0 1.5em; }
+
+      ::ng-deep img {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        margin: 2em auto;
+        border-radius: var(--r);
+        border: 1px solid var(--border);
+      }
+
+      ::ng-deep figure {
+        margin: 2em 0;
+        ::ng-deep img { margin: 0 auto; }
+      }
+      ::ng-deep figcaption {
+        margin-top: 10px;
+        font-family: var(--fu);
+        font-size: 12px;
+        color: var(--text-4);
+        text-align: center;
+      }
+
+      ::ng-deep iframe, ::ng-deep video {
+        display: block;
+        max-width: 100%;
+        margin: 2em auto;
+        border-radius: var(--r);
+      }
 
       ::ng-deep strong { color: var(--text); font-weight: 700; }
       ::ng-deep em { color: var(--text-3); font-style: italic; }
