@@ -196,6 +196,11 @@ interface PageResponse<T> {
     }
     .drawer-content {
       font-family: var(--fb); font-size: 15px; color: var(--text); line-height: 1.8;
+      ::ng-deep img {
+        display: block; max-width: 100%; height: auto;
+        margin: 1.5em auto; border-radius: var(--r);
+      }
+      ::ng-deep iframe, ::ng-deep video { display: block; max-width: 100%; margin: 1.5em auto; }
     }
     .btn-close {
       background: none; border: none; cursor: pointer; padding: 4px;
