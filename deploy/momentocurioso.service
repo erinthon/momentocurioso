@@ -1,0 +1,16 @@
+[Unit]
+Description=Momento Curioso backend (Spring Boot)
+After=network.target mysql.service
+Wants=mysql.service
+
+[Service]
+User=momento
+Group=momento
+EnvironmentFile=/etc/momentocurioso.env
+ExecStart=/usr/bin/java -Xms128m -Xmx384m -XX:MaxMetaspaceSize=128m -jar /opt/momentocurioso/app.jar
+SuccessExitStatus=143
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
