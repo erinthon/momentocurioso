@@ -24,7 +24,7 @@ public class RssFeedServiceImpl implements RssFeedService {
 
     private final PostRepository postRepository;
 
-    @Value("${app.base-url:http://localhost:4200}")
+    @Value("${app.site-url:http://localhost:4200}")
     private String baseUrl;
 
     public RssFeedServiceImpl(PostRepository postRepository) {
