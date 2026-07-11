@@ -2,6 +2,7 @@ package com.momentocurioso.service;
 
 import com.momentocurioso.dto.AiGeneratedContent;
 import com.momentocurioso.dto.request.CreatePostRequest;
+import com.momentocurioso.dto.request.UpdatePostRequest;
 import com.momentocurioso.entity.Post;
 import com.momentocurioso.entity.PostStatus;
 import com.momentocurioso.entity.Topic;
@@ -113,6 +114,48 @@ class PostServiceImplTest {
                 "Título", "Resumo", "<p>Conteúdo</p>", "tecnologia", true, null));
 
         assertThat(response.slug()).isEqualTo("titulo-1");
+    }
+
+    // ── update: slug editável (opcional; valida unicidade) ──────────────────
+
+    @Test
+    void update_withNewUniqueSlug_changesSlug() {
+        Post post = buildPost(1L, PostStatus.PUBLISHED);
+        when(postRepository.findById(1L)).thenReturn(Optional.of(post));
+        when(postRepository.existsBySlug("slug-novo")).thenReturn(false);
+        when(postRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        var response = postService.update(1L, new UpdatePostRequest(
+                "Título", "Resumo", "<p>Conteúdo</p>", null, "slug-novo"));
+
+        assertThat(response.slug()).isEqualTo("slug-novo");
+    }
+
+    @Test
+    void update_withDuplicateSlug_throwsIllegalArgumentException() {
+        Post post = buildPost(1L, PostStatus.PUBLISHED);
+        when(postRepository.findById(1L)).thenReturn(Optional.of(post));
+        when(postRepository.existsBySlug("slug-em-uso")).thenReturn(true);
+
+        assertThatThrownBy(() -> postService.update(1L, new UpdatePostRequest(
+                "Título", "Resumo", "<p>Conteúdo</p>", null, "slug-em-uso")))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("slug-em-uso");
+
+        verify(postRepository, never()).save(any());
+    }
+
+    @Test
+    void update_withoutSlug_keepsExistingSlug() {
+        Post post = buildPost(1L, PostStatus.PUBLISHED);
+        when(postRepository.findById(1L)).thenReturn(Optional.of(post));
+        when(postRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        var response = postService.update(1L, new UpdatePostRequest(
+                "Título", "Resumo", "<p>Conteúdo</p>", null, null));
+
+        assertThat(response.slug()).isEqualTo("titulo-de-teste");
+        verify(postRepository, never()).existsBySlug(any());
     }
 
     // ── BUG-002: approve/reject devem bloquear posts que não são DRAFT ──────

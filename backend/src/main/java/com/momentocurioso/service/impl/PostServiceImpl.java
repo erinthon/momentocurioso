@@ -178,6 +178,12 @@ public class PostServiceImpl implements PostService {
         if (request.thumbnail() != null) {
             post.setThumbnail(request.thumbnail());
         }
+        if (request.slug() != null && !request.slug().equals(post.getSlug())) {
+            if (postRepository.existsBySlug(request.slug())) {
+                throw new IllegalArgumentException("Slug already in use: " + request.slug());
+            }
+            post.setSlug(request.slug());
+        }
         return PostResponse.from(postRepository.save(post));
     }
 
