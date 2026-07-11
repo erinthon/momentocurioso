@@ -7,5 +7,6 @@ public record CreatePostRequest(
         @NotBlank String summary,
         @NotBlank String content,
         @NotBlank String topicSlug,
-        boolean publish
+        boolean publish,
+        String thumbnail
 ) {}

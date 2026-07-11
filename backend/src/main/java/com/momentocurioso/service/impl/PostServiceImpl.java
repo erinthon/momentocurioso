@@ -73,6 +73,7 @@ public class PostServiceImpl implements PostService {
         post.setSlug(generateUniqueSlug(request.title()));
         post.setSummary(request.summary());
         post.setContent(request.content());
+        post.setThumbnail(request.thumbnail());
 
         if (request.publish()) {
             post.setStatus(PostStatus.PUBLISHED);
@@ -174,6 +175,9 @@ public class PostServiceImpl implements PostService {
         post.setTitle(request.title());
         post.setSummary(request.summary());
         post.setContent(request.content());
+        if (request.thumbnail() != null) {
+            post.setThumbnail(request.thumbnail());
+        }
         return PostResponse.from(postRepository.save(post));
     }
 

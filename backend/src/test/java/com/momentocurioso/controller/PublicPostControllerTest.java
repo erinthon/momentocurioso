@@ -45,7 +45,7 @@ class PublicPostControllerTest {
 
     private PostSummaryResponse buildSummary(int i) {
         return new PostSummaryResponse(
-                (long) i, "Título " + i, "titulo-" + i, "Resumo " + i,
+                (long) i, "Título " + i, "titulo-" + i, "Resumo " + i, null,
                 "tecnologia", PostStatus.PUBLISHED, LocalDateTime.now(), LocalDateTime.now());
     }
 

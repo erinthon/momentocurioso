@@ -22,6 +22,7 @@ interface PostSummary {
   summary: string;
   topicSlug: string;
   publishedAt: string;
+  thumbnail?: string;
 }
 
 interface Topic {
@@ -445,7 +446,9 @@ interface Topic {
       <ng-container *ngIf="!loading && posts.length > 0">
         <a class="featured-card rv d1" [routerLink]="['/blog/posts', posts[0].slug]">
           <div class="featured-thumb">
-            <svg class="featured-thumb-icon" width="56" height="56" viewBox="0 0 120 120" fill="none">
+            <img *ngIf="posts[0].thumbnail" [src]="posts[0].thumbnail"
+                 style="width:100%;height:100%;object-fit:cover" alt=""/>
+            <svg *ngIf="!posts[0].thumbnail" class="featured-thumb-icon" width="56" height="56" viewBox="0 0 120 120" fill="none">
               <circle cx="54" cy="50" r="36" stroke="var(--green)" stroke-width="5.5"/>
               <ellipse cx="44" cy="40" rx="10" ry="13" fill="var(--green)" transform="rotate(-15 44 40)"/>
               <ellipse cx="62" cy="37" rx="8" ry="10" fill="var(--green)" transform="rotate(10 62 37)"/>
@@ -478,7 +481,9 @@ interface Topic {
             [class.d3]="i % 3 === 2"
             [routerLink]="['/blog/posts', p.slug]">
             <div class="card-thumb">
-              <svg class="card-thumb-icon" width="32" height="32" viewBox="0 0 120 120" fill="none">
+              <img *ngIf="p.thumbnail" [src]="p.thumbnail"
+                   style="width:100%;height:100%;object-fit:cover" alt=""/>
+              <svg *ngIf="!p.thumbnail" class="card-thumb-icon" width="32" height="32" viewBox="0 0 120 120" fill="none">
                 <circle cx="54" cy="50" r="36" stroke="var(--green)" stroke-width="6"/>
                 <ellipse cx="44" cy="40" rx="10" ry="13" fill="var(--green)" transform="rotate(-15 44 40)"/>
                 <ellipse cx="62" cy="37" rx="8" ry="10" fill="var(--green)" transform="rotate(10 62 37)"/>
