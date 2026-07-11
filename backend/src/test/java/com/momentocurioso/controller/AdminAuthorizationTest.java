@@ -6,6 +6,7 @@ import com.momentocurioso.security.JwtAuthFilter;
 import com.momentocurioso.security.JwtUtil;
 import com.momentocurioso.service.ContentGenerationJobService;
 import com.momentocurioso.service.PostService;
+import com.momentocurioso.service.TopicService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -19,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -26,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * (diferente dos demais controller tests, que desligam os filtros).
  * Cobre a issue #4: WRITER restrito a /admin/posts/**.
  */
-@WebMvcTest(AdminPostController.class)
+@WebMvcTest({AdminPostController.class, TopicController.class})
 @Import({SecurityConfig.class, JwtAuthFilter.class})
 @TestPropertySource(properties = "app.cors.allowed-origins=http://localhost:4200")
 class AdminAuthorizationTest {
@@ -36,6 +38,9 @@ class AdminAuthorizationTest {
 
     @MockBean
     private PostService postService;
+
+    @MockBean
+    private TopicService topicService;
 
     @MockBean
     private ContentGenerationJobService jobService;
@@ -71,6 +76,33 @@ class AdminAuthorizationTest {
                 .andExpect(status().isOk());
     }
 
+    // ── WRITER pode gerenciar tópicos (mas não as fontes de scraping) ──
+
+    @Test
+    @WithMockUser(roles = "WRITER")
+    void writerCanCreateTopic() throws Exception {
+        mockMvc.perform(post("/admin/topics")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"Ciencia\",\"slug\":\"ciencia\",\"autoPublish\":false,\"requireApproval\":true}"))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    @WithMockUser(roles = "WRITER")
+    void writerCanUpdateTopic() throws Exception {
+        mockMvc.perform(put("/admin/topics/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"Ciencia\",\"slug\":\"ciencia-espaco\",\"autoPublish\":false,\"requireApproval\":true}"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "WRITER")
+    void writerCannotManageTopicSources() throws Exception {
+        mockMvc.perform(get("/admin/topics/1/sources"))
+                .andExpect(status().isForbidden());
+    }
+
     // ── WRITER é barrado no restante do /admin ──
 
     @Test
@@ -92,7 +124,9 @@ class AdminAuthorizationTest {
     @Test
     @WithMockUser(roles = "WRITER")
     void writerCannotReachOtherAdminResources() throws Exception {
-        mockMvc.perform(get("/admin/topics"))
+        mockMvc.perform(get("/admin/ai-providers"))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(get("/admin/prompt-templates"))
                 .andExpect(status().isForbidden());
     }
 

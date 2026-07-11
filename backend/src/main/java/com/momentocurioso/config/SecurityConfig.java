@@ -46,7 +46,10 @@ public class SecurityConfig {
                     "/swagger-ui/**",
                     "/swagger-ui.html"
                 ).permitAll()
-                .requestMatchers("/admin/posts/**").hasAnyRole("ADMIN", "WRITER")
+                // fontes de scraping ficam fora do escopo de conteúdo do WRITER,
+                // apesar de viverem sob /admin/topics/
+                .requestMatchers("/admin/topics/*/sources").hasRole("ADMIN")
+                .requestMatchers("/admin/posts/**", "/admin/topics/**").hasAnyRole("ADMIN", "WRITER")
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )

@@ -71,6 +71,12 @@ public class TopicServiceImpl implements TopicService {
         topic.setDescription(request.description());
         topic.setAutoPublish(request.autoPublish());
         topic.setRequireApproval(request.requireApproval());
+        if (request.slug() != null && !request.slug().equals(topic.getSlug())) {
+            if (topicRepository.existsBySlug(request.slug())) {
+                throw new IllegalArgumentException("Slug already in use: " + request.slug());
+            }
+            topic.setSlug(request.slug());
+        }
         return TopicResponse.from(topicRepository.save(topic));
     }
 
