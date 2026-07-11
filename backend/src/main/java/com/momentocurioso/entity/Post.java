@@ -35,6 +35,9 @@ public class Post {
     @Column(columnDefinition = "TEXT")
     private String summary;
 
+    @Column(columnDefinition = "LONGTEXT")
+    private String thumbnail;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PostStatus status = PostStatus.DRAFT;

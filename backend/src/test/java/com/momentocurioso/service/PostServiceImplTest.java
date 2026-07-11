@@ -64,7 +64,7 @@ class PostServiceImplTest {
         when(postRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         var response = postService.create(new CreatePostRequest(
-                "Por que o céu é azul?", "Resumo", "<p>Conteúdo</p>", "tecnologia", true));
+                "Por que o céu é azul?", "Resumo", "<p>Conteúdo</p>", "tecnologia", true, null));
 
         assertThat(response.status()).isEqualTo(PostStatus.PUBLISHED);
         assertThat(response.publishedAt()).isNotNull();
@@ -81,7 +81,7 @@ class PostServiceImplTest {
         when(postRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         var response = postService.create(new CreatePostRequest(
-                "Título", "Resumo", "<p>Conteúdo</p>", "tecnologia", false));
+                "Título", "Resumo", "<p>Conteúdo</p>", "tecnologia", false, null));
 
         assertThat(response.status()).isEqualTo(PostStatus.DRAFT);
         assertThat(response.publishedAt()).isNull();
@@ -92,7 +92,7 @@ class PostServiceImplTest {
         when(topicRepository.findBySlug("inexistente")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> postService.create(new CreatePostRequest(
-                "Título", "Resumo", "<p>Conteúdo</p>", "inexistente", true)))
+                "Título", "Resumo", "<p>Conteúdo</p>", "inexistente", true, null)))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("inexistente");
 
@@ -110,7 +110,7 @@ class PostServiceImplTest {
         when(postRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         var response = postService.create(new CreatePostRequest(
-                "Título", "Resumo", "<p>Conteúdo</p>", "tecnologia", true));
+                "Título", "Resumo", "<p>Conteúdo</p>", "tecnologia", true, null));
 
         assertThat(response.slug()).isEqualTo("titulo-1");
     }

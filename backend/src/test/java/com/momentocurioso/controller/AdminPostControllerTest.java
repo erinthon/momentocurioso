@@ -119,7 +119,7 @@ class AdminPostControllerTest {
     @Test
     void approvePost_whenStatusIsDraft_returns200() throws Exception {
         PostResponse response = new PostResponse(
-                1L, "Título", "titulo", "Resumo", "<p>Conteúdo</p>", "tecnologia",
+                1L, "Título", "titulo", "Resumo", "<p>Conteúdo</p>", null, "tecnologia",
                 com.momentocurioso.entity.PostStatus.PUBLISHED, LocalDateTime.now(), LocalDateTime.now());
         when(postService.approve(1L)).thenReturn(response);
 
