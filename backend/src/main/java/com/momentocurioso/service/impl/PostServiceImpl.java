@@ -91,7 +91,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    @Cacheable(value = "posts", key = "'list:' + #topicSlug + ':p' + #pageable.pageNumber")
+    @Cacheable(value = "posts", key = "'list:' + #topicSlug + ':p' + #pageable.pageNumber + ':s' + #pageable.pageSize")
     public PageResponse<PostSummaryResponse> listPublished(String topicSlug, Pageable pageable) {
         PageRequest pageRequest = PageRequest.of(
                 pageable.getPageNumber(), pageable.getPageSize(),
