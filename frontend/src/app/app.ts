@@ -3,10 +3,11 @@ import { RouterOutlet } from '@angular/router';
 import { ThemeService } from './core/services/theme.service';
 import { AnalyticsService } from './core/services/analytics.service';
 import { AdsenseService } from './core/services/adsense.service';
+import { CookieConsentComponent } from './shared/cookie-consent/cookie-consent.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, CookieConsentComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
