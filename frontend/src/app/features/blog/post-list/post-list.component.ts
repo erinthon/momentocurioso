@@ -14,6 +14,7 @@ interface PagedPosts {
 }
 import { ApiService } from '../../../core/services/api.service';
 import { BlogNavbarComponent } from '../../../shared/blog-navbar/blog-navbar.component';
+import { LogoMarkComponent } from '../../../shared/logo-mark/logo-mark.component';
 
 interface PostSummary {
   id: number;
@@ -35,7 +36,7 @@ interface Topic {
 @Component({
   selector: 'app-post-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, BlogNavbarComponent, InfiniteScrollDirective],
+  imports: [CommonModule, RouterLink, BlogNavbarComponent, InfiniteScrollDirective, LogoMarkComponent],
   styles: [`
     /* ── Hero ── */
     .hero {
@@ -99,6 +100,7 @@ interface Topic {
       color: var(--green);
     }
     .hero-globe {
+      --logo-size: 110px;
       flex-shrink: 0;
       pointer-events: none;
       margin-bottom: 4px;
@@ -112,7 +114,7 @@ interface Topic {
     }
     @media (max-width: 600px) {
       .hero-lockup { gap: 12px; }
-      .hero-globe svg { width: 72px; height: 72px; }
+      .hero-globe { --logo-size: 72px; }
     }
 
     /* ── Filter bar ── */
@@ -196,7 +198,7 @@ interface Topic {
       align-items: center;
       justify-content: center;
     }
-    .featured-thumb-icon { opacity: .35; }
+    .featured-thumb-icon { --logo-size: 64px; opacity: .35; }
     .featured-content {
       padding: 32px 36px;
       display: flex;
@@ -292,7 +294,7 @@ interface Topic {
       justify-content: center;
       flex-shrink: 0;
     }
-    .card-thumb-icon { opacity: .3; }
+    .card-thumb-icon { --logo-size: 38px; opacity: .3; }
     .card-body {
       padding: 22px;
       display: flex;
@@ -391,15 +393,7 @@ interface Topic {
             Mate a sua<br/><em>curiosidade.</em>
           </h1>
           <div class="hero-globe">
-            <svg width="110" height="110" viewBox="0 0 120 120" fill="none">
-              <circle cx="54" cy="50" r="36" stroke="var(--green)" stroke-width="5.5"/>
-              <ellipse cx="44" cy="40" rx="10" ry="13" fill="var(--green)" transform="rotate(-15 44 40)"/>
-              <ellipse cx="62" cy="37" rx="8" ry="10" fill="var(--green)" transform="rotate(10 62 37)"/>
-              <ellipse cx="35" cy="56" rx="7" ry="9" fill="var(--green)" transform="rotate(-5 35 56)"/>
-              <ellipse cx="64" cy="55" rx="6" ry="7" fill="var(--green)" transform="rotate(5 64 55)"/>
-              <line x1="54" y1="86" x2="54" y2="103" stroke="var(--green)" stroke-width="5.5" stroke-linecap="round"/>
-              <line x1="38" y1="103" x2="70" y2="103" stroke="var(--green)" stroke-width="5.5" stroke-linecap="round"/>
-            </svg>
+            <app-logo-mark />
           </div>
         </div>
         <p class="hero-sub">
@@ -448,17 +442,7 @@ interface Topic {
           <div class="featured-thumb">
             <img *ngIf="posts[0].thumbnail" [src]="posts[0].thumbnail"
                  style="width:100%;height:100%;object-fit:cover" alt=""/>
-            <svg *ngIf="!posts[0].thumbnail" class="featured-thumb-icon" width="56" height="56" viewBox="0 0 120 120" fill="none">
-              <circle cx="54" cy="50" r="36" stroke="var(--green)" stroke-width="5.5"/>
-              <ellipse cx="44" cy="40" rx="10" ry="13" fill="var(--green)" transform="rotate(-15 44 40)"/>
-              <ellipse cx="62" cy="37" rx="8" ry="10" fill="var(--green)" transform="rotate(10 62 37)"/>
-              <ellipse cx="35" cy="56" rx="7" ry="9" fill="var(--green)" transform="rotate(-5 35 56)"/>
-              <ellipse cx="64" cy="55" rx="6" ry="7" fill="var(--green)" transform="rotate(5 64 55)"/>
-              <path d="M18 50 Q54 64 90 50" stroke="var(--bg)" stroke-width="2.5" fill="none"/>
-              <path d="M38 85 Q54 93 70 85" stroke="var(--green)" stroke-width="5.5" fill="none" stroke-linecap="round"/>
-              <line x1="54" y1="86" x2="54" y2="103" stroke="var(--green)" stroke-width="5.5" stroke-linecap="round"/>
-              <line x1="38" y1="103" x2="70" y2="103" stroke="var(--green)" stroke-width="5.5" stroke-linecap="round"/>
-            </svg>
+            <app-logo-mark *ngIf="!posts[0].thumbnail" class="featured-thumb-icon" />
           </div>
           <div class="featured-content">
             <span class="featured-label">Destaque</span>
@@ -483,17 +467,7 @@ interface Topic {
             <div class="card-thumb">
               <img *ngIf="p.thumbnail" [src]="p.thumbnail"
                    style="width:100%;height:100%;object-fit:cover" alt=""/>
-              <svg *ngIf="!p.thumbnail" class="card-thumb-icon" width="32" height="32" viewBox="0 0 120 120" fill="none">
-                <circle cx="54" cy="50" r="36" stroke="var(--green)" stroke-width="6"/>
-                <ellipse cx="44" cy="40" rx="10" ry="13" fill="var(--green)" transform="rotate(-15 44 40)"/>
-                <ellipse cx="62" cy="37" rx="8" ry="10" fill="var(--green)" transform="rotate(10 62 37)"/>
-                <ellipse cx="35" cy="56" rx="7" ry="9" fill="var(--green)" transform="rotate(-5 35 56)"/>
-                <ellipse cx="64" cy="55" rx="6" ry="7" fill="var(--green)" transform="rotate(5 64 55)"/>
-                <path d="M18 50 Q54 64 90 50" stroke="var(--bg)" stroke-width="2.5" fill="none"/>
-                <path d="M38 85 Q54 93 70 85" stroke="var(--green)" stroke-width="5.5" fill="none" stroke-linecap="round"/>
-                <line x1="54" y1="86" x2="54" y2="103" stroke="var(--green)" stroke-width="5.5" stroke-linecap="round"/>
-                <line x1="38" y1="103" x2="70" y2="103" stroke="var(--green)" stroke-width="5.5" stroke-linecap="round"/>
-              </svg>
+              <app-logo-mark *ngIf="!p.thumbnail" class="card-thumb-icon" />
             </div>
             <div class="card-body">
               <span class="tag tag-pale">{{ getTopicName(p.topicSlug) }}</span>
