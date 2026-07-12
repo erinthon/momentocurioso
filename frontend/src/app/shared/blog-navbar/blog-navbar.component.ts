@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ThemeService } from '../../core/services/theme.service';
+import { LogoMarkComponent } from '../logo-mark/logo-mark.component';
 
 @Component({
   selector: 'app-blog-navbar',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, LogoMarkComponent],
   styles: [`
     :host { display: block; }
 
@@ -54,17 +55,7 @@ import { ThemeService } from '../../core/services/theme.service';
   template: `
     <nav class="navbar">
       <a class="logo" routerLink="/blog/posts">
-        <svg width="34" height="34" viewBox="0 0 120 120" fill="none">
-          <circle cx="54" cy="50" r="36" stroke="var(--green)" stroke-width="5.5"/>
-          <ellipse cx="44" cy="40" rx="10" ry="13" fill="var(--green)" transform="rotate(-15 44 40)"/>
-          <ellipse cx="62" cy="37" rx="8"  ry="10" fill="var(--green)" transform="rotate(10 62 37)"/>
-          <ellipse cx="35" cy="56" rx="7"  ry="9"  fill="var(--green)" transform="rotate(-5 35 56)"/>
-          <ellipse cx="64" cy="55" rx="6"  ry="7"  fill="var(--green)" transform="rotate(5 64 55)"/>
-          <path d="M18 50 Q54 64 90 50" stroke="var(--bg)" stroke-width="2.5" fill="none"/>
-          <path d="M38 85 Q54 93 70 85" stroke="var(--green)" stroke-width="5.5" fill="none" stroke-linecap="round"/>
-          <line x1="54" y1="86" x2="54" y2="103" stroke="var(--green)" stroke-width="5.5" stroke-linecap="round"/>
-          <line x1="38" y1="103" x2="70" y2="103" stroke="var(--green)" stroke-width="5.5" stroke-linecap="round"/>
-        </svg>
+        <app-logo-mark />
         <div class="wordmark">
           <span class="wordmark-top">Momento</span>
           <span class="wordmark-main">Curioso</span>
