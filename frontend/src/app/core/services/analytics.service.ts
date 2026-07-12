@@ -1,7 +1,8 @@
-import { Injectable, inject } from '@angular/core';
+import { effect, inject, Injectable, Injector } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { ConsentService } from './consent.service';
 
 declare global {
   interface Window {
@@ -16,13 +17,28 @@ const PRIVATE_PREFIXES = ['/admin', '/home', '/auth'];
 @Injectable({ providedIn: 'root' })
 export class AnalyticsService {
   private router = inject(Router);
+  private consent = inject(ConsentService);
+  private injector = inject(Injector);
+  private loaded = false;
 
   init(): void {
     const id = environment.googleAnalyticsId;
     if (!id) {
       return;
     }
+    effect(() => {
+      if (this.consent.status() === 'granted' && !this.loaded) {
+        this.loaded = true;
+        this.start(id);
+      }
+    }, { injector: this.injector });
+  }
+
+  private start(id: string): void {
     this.loadGtag(id);
+    // O consentimento pode chegar depois da navegação inicial —
+    // registra a página atual e segue acompanhando o router
+    this.trackPageView(this.router.url);
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe(event => this.trackPageView(event.urlAfterRedirects));
