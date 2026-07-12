@@ -863,6 +863,22 @@ a:focus-visible, button:focus-visible {
       <code class="tk">backdrop-filter: blur(20px)</code> e borda inferior de 1 px.
     </p>
 
+    <h3>Rodapé e redes sociais</h3>
+    <div class="panel">
+      <ul class="spec-list" style="margin-top: 0;">
+        <li>O rodapé fecha as páginas públicas: marca à esquerda (símbolo 30 px + "Momento Curioso"),
+          ícones no centro, assinatura à direita. Abaixo de 700 px empilha em coluna, centralizado.</li>
+        <li>Ícones em círculo de <code class="tk">34 px</code> com borda de 1 px: <code class="tk">--text-3</code>
+          em repouso, <code class="tk">--green</code> (traço e borda) no hover. Cor via
+          <code class="tk">currentColor</code> — nunca a cor da marca de cada rede.</li>
+        <li>Na navbar os mesmos ícones aparecem compactos (<code class="tk">32 px</code>, sem borda) e
+          <strong>somem abaixo de 700 px</strong>, onde só o RSS permanece.</li>
+        <li>A ordem e quais redes aparecem são dados, não código: vêm de
+          <code class="tk">GET /api/social-links</code> e se editam em <code class="tk">/admin/social-links</code>.
+          O RSS é fixo — é o feed, não uma rede.</li>
+      </ul>
+    </div>
+
     <h3>Cards</h3>
     <div style="display: flex; flex-direction: column; gap: 20px; margin-top: 14px;">
       <a class="featured-card" href="#componentes" aria-label="Exemplo de card destaque">

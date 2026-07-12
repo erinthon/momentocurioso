@@ -1,7 +1,7 @@
 package com.momentocurioso.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.momentocurioso.dto.request.RegisterRequest;
+import com.momentocurioso.dto.request.LoginRequest;
 import com.momentocurioso.dto.response.AuthResponse;
 import com.momentocurioso.security.JwtAuthFilter;
 import com.momentocurioso.service.UserService;
@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AuthController.class)
@@ -34,61 +35,26 @@ class AuthControllerTest {
     @MockBean
     private JwtAuthFilter jwtAuthFilter;
 
-    private String body(String email, String password) throws Exception {
-        return objectMapper.writeValueAsString(new RegisterRequest(email, password));
+    @Test
+    void login_withValidCredentials_returnsToken() throws Exception {
+        when(userService.login(any(LoginRequest.class)))
+                .thenReturn(new AuthResponse("mocked-jwt-token", "ADMIN"));
+
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                new LoginRequest("admin@example.com", "Senha123"))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").value("mocked-jwt-token"))
+                .andExpect(jsonPath("$.role").value("ADMIN"));
     }
 
-    // ── BUG-008: Validação de complexidade de senha no registro ───────────────
-
+    /** Não existe cadastro público: contas só nascem em /admin/users. */
     @Test
-    void register_withPasswordShorterThan8_returns400() throws Exception {
-        // "Ab1" satisfaz maiúscula + minúscula + dígito, mas tem apenas 3 chars
+    void register_endpointNoLongerExists() throws Exception {
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(body("user@example.com", "Ab1")))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void register_withPasswordNoUppercase_returns400() throws Exception {
-        mockMvc.perform(post("/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body("user@example.com", "abcdefg1")))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void register_withPasswordNoLowercase_returns400() throws Exception {
-        mockMvc.perform(post("/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body("user@example.com", "ABCDEFG1")))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void register_withPasswordNoDigit_returns400() throws Exception {
-        mockMvc.perform(post("/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body("user@example.com", "Abcdefgh")))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void register_withValidPassword_returns200() throws Exception {
-        when(userService.register(any(RegisterRequest.class)))
-                .thenReturn(new AuthResponse("mocked-jwt-token", "USER"));
-
-        mockMvc.perform(post("/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body("user@example.com", "Senha123")))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void register_withInvalidEmail_returns400() throws Exception {
-        mockMvc.perform(post("/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body("nao-e-email", "Senha123")))
-                .andExpect(status().isBadRequest());
+                        .content("{\"email\":\"user@example.com\",\"password\":\"Senha123\"}"))
+                .andExpect(status().isNotFound());
     }
 }

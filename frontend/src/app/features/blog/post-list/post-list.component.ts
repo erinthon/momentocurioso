@@ -15,6 +15,7 @@ interface PagedPosts {
 import { ApiService } from '../../../core/services/api.service';
 import { BlogNavbarComponent } from '../../../shared/blog-navbar/blog-navbar.component';
 import { LogoMarkComponent } from '../../../shared/logo-mark/logo-mark.component';
+import { BlogFooterComponent } from '../../../shared/blog-footer/blog-footer.component';
 
 interface PostSummary {
   id: number;
@@ -36,7 +37,7 @@ interface Topic {
 @Component({
   selector: 'app-post-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, BlogNavbarComponent, InfiniteScrollDirective, LogoMarkComponent],
+  imports: [CommonModule, RouterLink, BlogNavbarComponent, InfiniteScrollDirective, LogoMarkComponent, BlogFooterComponent],
   styles: [`
     /* ── Hero ── */
     .hero {
@@ -495,6 +496,8 @@ interface Topic {
            class="scroll-sentinel">
       </div>
     </main>
+
+    <app-blog-footer />
   `
 })
 export class PostListComponent implements OnInit, AfterViewInit {

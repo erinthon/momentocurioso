@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiService } from '../../../core/services/api.service';
 import { SeoService } from '../../../core/services/seo.service';
 import { BlogNavbarComponent } from '../../../shared/blog-navbar/blog-navbar.component';
+import { BlogFooterComponent } from '../../../shared/blog-footer/blog-footer.component';
 
 interface PostDetail {
   id: number;
@@ -18,7 +19,7 @@ interface PostDetail {
 @Component({
   selector: 'app-post-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, BlogNavbarComponent],
+  imports: [CommonModule, RouterLink, BlogNavbarComponent, BlogFooterComponent],
   styles: [`
     /* ── Reading progress bar ── */
     .progress-bar {
@@ -382,6 +383,8 @@ interface PostDetail {
           <span class="footer-label">Momento Curioso · IA Editorial</span>
         </footer>
       </div>
+
+      <app-blog-footer />
     </ng-container>
   `
 })

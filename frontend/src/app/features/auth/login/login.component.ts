@@ -1,13 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule],
   template: `
     <div class="auth-container">
       <h2>Login</h2>
@@ -25,7 +25,6 @@ import { AuthService } from '../../../core/services/auth.service';
           {{ loading ? 'Entrando...' : 'Entrar' }}
         </button>
       </form>
-      <p><a routerLink="/auth/register">Criar conta</a></p>
     </div>
   `
 })

@@ -1,7 +1,6 @@
 package com.momentocurioso.controller;
 
 import com.momentocurioso.dto.request.LoginRequest;
-import com.momentocurioso.dto.request.RegisterRequest;
 import com.momentocurioso.dto.response.AuthResponse;
 import com.momentocurioso.service.UserService;
 import jakarta.validation.Valid;
@@ -11,6 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Só login. Contas são criadas pelo painel admin ({@code /admin/users}) —
+ * não existe cadastro público.
+ */
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -19,11 +22,6 @@ public class AuthController {
 
     public AuthController(UserService userService) {
         this.userService = userService;
-    }
-
-    @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(userService.register(request));
     }
 
     @PostMapping("/login")
