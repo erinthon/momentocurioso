@@ -1,2 +1,1 @@
-# Preencher com o publisher ID após criar a conta AdSense, ex.:
-# google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+google.com, pub-2804795678255361, DIRECT, f08c47fec0942fa0
