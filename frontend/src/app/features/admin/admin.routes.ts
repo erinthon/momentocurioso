@@ -46,5 +46,15 @@ export const ADMIN_ROUTES: Routes = [
     loadComponent: () =>
       import('./prompt-templates/prompt-templates.component').then(m => m.AdminPromptTemplatesComponent)
   },
+  {
+    path: 'social-links',
+    loadComponent: () =>
+      import('./social-links/social-links.component').then(m => m.AdminSocialLinksComponent)
+  },
+  {
+    path: 'users',
+    loadComponent: () =>
+      import('./users/users.component').then(m => m.AdminUsersComponent)
+  },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
 ];

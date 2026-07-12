@@ -92,6 +92,8 @@ import { LogoMarkComponent } from '../logo-mark/logo-mark.component';
         </a>
         <a class="nav-link" routerLink="/admin/ai-writer" routerLinkActive="active">IA Redatora</a>
         <a class="nav-link" routerLink="/admin/prompt-templates" routerLinkActive="active">Prompts</a>
+        <a class="nav-link" routerLink="/admin/social-links" routerLinkActive="active">Redes</a>
+        <a class="nav-link" routerLink="/admin/users" routerLinkActive="active">Usuários</a>
         <button class="theme-toggle" (click)="theme.toggle()">
           {{ theme.isDark() ? '☀ Claro' : '☾ Escuro' }}
         </button>

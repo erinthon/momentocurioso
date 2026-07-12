@@ -26,6 +26,10 @@ public class CacheConfig {
             new CaffeineCache("topics", Caffeine.newBuilder()
                 .expireAfterWrite(10, TimeUnit.MINUTES)
                 .maximumSize(50)
+                .build()),
+            new CaffeineCache("socialLinks", Caffeine.newBuilder()
+                .expireAfterWrite(10, TimeUnit.MINUTES)
+                .maximumSize(10)
                 .build())
         ));
         return manager;
