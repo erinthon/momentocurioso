@@ -5,6 +5,7 @@ import { of } from 'rxjs';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { PostListComponent } from './post-list.component';
+import { SocialLinkService } from '../../../core/services/social-link.service';
 
 const BASE_URL = 'http://localhost:8080/api';
 
@@ -38,6 +39,8 @@ describe('PostListComponent — BUG-011: forkJoin resiliente', () => {
           provide: ActivatedRoute,
           useValue: { queryParamMap: of(convertToParamMap({})) },
         },
+        // Navbar e footer trazem o app-social-links junto; ele não é objeto deste spec
+        { provide: SocialLinkService, useValue: { getActive: () => of([]) } },
       ],
       schemas: [NO_ERRORS_SCHEMA],
     }).compileComponents();
