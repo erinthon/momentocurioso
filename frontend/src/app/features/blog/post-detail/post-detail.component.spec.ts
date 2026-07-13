@@ -3,8 +3,10 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { ActivatedRoute, provideRouter } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { of } from 'rxjs';
 
 import { PostDetailComponent } from './post-detail.component';
+import { SocialLinkService } from '../../../core/services/social-link.service';
 
 const BASE_URL = 'http://localhost:8080/api';
 
@@ -37,6 +39,8 @@ describe('PostDetailComponent — BUG-014: XSS via bypassSecurityTrustHtml', () 
             },
           },
         },
+        // Navbar e footer trazem o app-social-links junto; ele não é objeto deste spec
+        { provide: SocialLinkService, useValue: { getActive: () => of([]) } },
       ],
       schemas: [NO_ERRORS_SCHEMA],
     }).compileComponents();
