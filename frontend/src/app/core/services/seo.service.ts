@@ -33,6 +33,17 @@ export class SeoService {
     this.setCanonical(`${this.siteUrl}/blog/posts`);
   }
 
+  setPage(page: { title: string; description: string; path: string }): void {
+    const url = `${this.siteUrl}${page.path}`;
+    this.title.setTitle(`${page.title} – ${this.siteName}`);
+    this.meta.updateTag({ name: 'description', content: page.description });
+    this.meta.updateTag({ property: 'og:title', content: page.title });
+    this.meta.updateTag({ property: 'og:description', content: page.description });
+    this.meta.updateTag({ property: 'og:url', content: url });
+    this.meta.updateTag({ property: 'og:type', content: 'website' });
+    this.setCanonical(url);
+  }
+
   reset(): void {
     this.title.setTitle(this.siteName);
     this.meta.updateTag({ name: 'description', content: this.defaultDescription });

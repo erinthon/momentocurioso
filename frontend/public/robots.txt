@@ -1,6 +1,8 @@
 User-agent: *
 Allow: /blog/
 Allow: /feed.xml
+Allow: /privacidade
+Allow: /termos
 Disallow: /admin/
 
 Sitemap: https://momentocurioso.ia.br/api/sitemap.xml

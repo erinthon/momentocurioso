@@ -43,6 +43,9 @@ public class SitemapServiceImpl implements SitemapService {
             xml.append(url(siteUrl + "/blog/posts/" + post.getSlug(), lastmod, "weekly", "0.6"));
         });
 
+        xml.append(url(siteUrl + "/privacidade", null, "yearly", "0.3"));
+        xml.append(url(siteUrl + "/termos", null, "yearly", "0.3"));
+
         xml.append("</urlset>");
         return xml.toString();
     }
@@ -53,6 +56,8 @@ public class SitemapServiceImpl implements SitemapService {
                 User-agent: *
                 Allow: /blog/
                 Allow: /feed.xml
+                Allow: /privacidade
+                Allow: /termos
                 Disallow: /admin/
 
                 Sitemap: %s/api/sitemap.xml
