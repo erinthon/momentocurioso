@@ -9,6 +9,10 @@ export class ConsentService {
   private readonly state = signal<ConsentStatus>(this.readStored());
   readonly status = this.state.asReadonly();
 
+  // Permite que o rodapé e a página de privacidade tragam o banner de volta
+  private readonly reopenState = signal(false);
+  readonly reopened = this.reopenState.asReadonly();
+
   grant(): void {
     this.persist('granted');
   }
@@ -23,8 +27,13 @@ export class ConsentService {
     }
   }
 
+  reopen(): void {
+    this.reopenState.set(true);
+  }
+
   private persist(status: ConsentStatus): void {
     localStorage.setItem(STORAGE_KEY, status);
+    this.reopenState.set(false);
     this.state.set(status);
   }
 

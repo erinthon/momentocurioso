@@ -1,12 +1,16 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter } from 'rxjs';
 import { ConsentService } from '../../core/services/consent.service';
+
+// Páginas públicas: é onde o tracking acontece e onde o visitante decide sobre ele
+const PUBLIC_PREFIXES = ['/blog', '/privacidade', '/termos'];
 
 @Component({
   selector: 'app-cookie-consent',
   standalone: true,
+  imports: [RouterLink],
   styles: [`
     .cookie-banner {
       position: fixed;
@@ -37,6 +41,14 @@ import { ConsentService } from '../../core/services/consent.service';
       display: flex;
       gap: 10px;
       flex-shrink: 0;
+    }
+
+    .cookie-link {
+      color: var(--green);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(10,124,56,.25);
+      transition: border-color var(--t);
+      &:hover { border-color: var(--green); }
     }
 
     .cookie-chip {
@@ -70,7 +82,8 @@ import { ConsentService } from '../../core/services/consent.service';
       <div class="cookie-banner" role="dialog" aria-live="polite" aria-label="Consentimento de cookies">
         <p class="cookie-text">
           🍪 Usamos cookies para medir a audiência (Google Analytics) e exibir anúncios
-          (Google AdSense). O site funciona normalmente se você recusar.
+          (Google AdSense). O site funciona normalmente se você recusar. Detalhes na
+          <a class="cookie-link" routerLink="/privacidade">Política de Privacidade</a>.
         </p>
         <div class="cookie-actions">
           <button class="btn btn-ghost" (click)="reject()">Recusar</button>
@@ -89,16 +102,15 @@ export class CookieConsentComponent {
   private router = inject(Router);
 
   private readonly currentUrl = signal(this.router.url);
-  private readonly reopened = signal(false);
 
-  // Banner e chip só nas páginas públicas do blog — é onde o tracking acontece
-  private readonly onPublicPage = computed(() => this.currentUrl().startsWith('/blog'));
+  private readonly onPublicPage = computed(() =>
+    PUBLIC_PREFIXES.some(prefix => this.currentUrl().startsWith(prefix)));
 
   readonly showBanner = computed(() =>
-    this.onPublicPage() && (this.consent.status() === 'pending' || this.reopened()));
+    this.onPublicPage() && (this.consent.status() === 'pending' || this.consent.reopened()));
 
   readonly showChip = computed(() =>
-    this.onPublicPage() && this.consent.status() !== 'pending' && !this.reopened());
+    this.onPublicPage() && this.consent.status() !== 'pending' && !this.consent.reopened());
 
   constructor() {
     this.router.events
@@ -110,16 +122,14 @@ export class CookieConsentComponent {
   }
 
   accept(): void {
-    this.reopened.set(false);
     this.consent.grant();
   }
 
   reject(): void {
-    this.reopened.set(false);
     this.consent.deny();
   }
 
   reopen(): void {
-    this.reopened.set(true);
+    this.consent.reopen();
   }
 }
