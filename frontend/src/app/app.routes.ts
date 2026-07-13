@@ -16,6 +16,17 @@ export const routes: Routes = [
     path: 'blog',
     loadChildren: () => import('./features/blog/blog.routes').then(m => m.BLOG_ROUTES)
   },
+  // URLs legadas divulgadas no X antes da correcao do script; os tweets ja
+  // publicados nao podem ser editados, entao o redirect precisa ficar.
+  {
+    path: 'posts/:slug',
+    redirectTo: 'blog/posts/:slug'
+  },
+  {
+    path: 'posts',
+    redirectTo: 'blog/posts',
+    pathMatch: 'full'
+  },
   {
     path: '',
     loadChildren: () => import('./features/legal/legal.routes').then(m => m.LEGAL_ROUTES)
