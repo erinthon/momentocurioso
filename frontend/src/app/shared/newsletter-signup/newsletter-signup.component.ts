@@ -26,6 +26,19 @@ interface NewsletterMessage {
       font-family: var(--fd); font-size: 220px; font-weight: 800;
       color: rgba(255,255,255,.06); pointer-events: none;
     }
+    :host-context([data-theme="dark"]) .newsletter {
+      background: var(--bg-2); color: var(--text);
+      border: 1px solid var(--border-2); border-left: 4px solid var(--green);
+    }
+    :host-context([data-theme="dark"]) .description { color: var(--text-2); }
+    :host-context([data-theme="dark"]) input[type="text"],
+    :host-context([data-theme="dark"]) input[type="email"] {
+      background: var(--bg-1); color: var(--text); border-color: var(--border-2);
+    }
+    :host-context([data-theme="dark"]) input::placeholder { color: var(--text-3); }
+    :host-context([data-theme="dark"]) button { background: var(--green); color: var(--bg); }
+    :host-context([data-theme="dark"]) .consent { color: var(--text-2); }
+    :host-context([data-theme="dark"]) .consent a { color: var(--green-2); }
     .eyebrow { font-family: var(--fu); font-size: 10px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; opacity: .72; }
     h2 { margin: 8px 0 10px; font-family: var(--fd); font-size: clamp(25px, 3vw, 36px); letter-spacing: -.7px; line-height: 1.1; }
     .description { margin: 0; max-width: 520px; font-family: var(--fb); font-size: 14px; line-height: 1.65; color: rgba(255,255,255,.82); }
