@@ -8,7 +8,7 @@ import { environment } from '../../../environments/environment';
 export class ApiService {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly baseUrl = isPlatformServer(this.platformId)
-    ? `${environment.siteUrl}/api`
+    ? environment.serverApiUrl
     : environment.apiUrl;
 
   constructor(private http: HttpClient) {}
