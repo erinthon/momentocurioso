@@ -404,8 +404,6 @@ interface Topic {
       </div>
     </header>
 
-    <app-newsletter-signup title="Receba uma curiosidade toda semana" />
-
     <div class="filter-bar">
       <div class="filter-inner">
         <button
@@ -499,6 +497,8 @@ interface Topic {
            class="scroll-sentinel">
       </div>
     </main>
+
+    <app-newsletter-signup title="Receba uma curiosidade toda semana" />
 
     <app-blog-footer />
   `
