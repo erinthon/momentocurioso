@@ -19,8 +19,9 @@ As páginas de artigo são atualizadas em tempo real pelo Spring:
 - o Nginx encaminha `/blog/posts/<slug>` para `/api/post-pages/<slug>`;
 - o Spring lê `index.csr.html`, injeta HTML sanitizado, canonical, Open Graph,
   Twitter Card e JSON-LD;
-- `/api/posts/<slug>/thumbnail` converte a thumbnail data URI do banco em uma
-  resposta `image/jpeg`, `image/png` ou `image/webp` cacheável;
+- `/api/posts/<slug>/social-thumbnail` converte a thumbnail do banco em JPEG
+  1200×630, com corte central 1,91:1 e cache, para Open Graph e Twitter Card;
+- `/api/posts/<slug>/thumbnail` preserva a imagem original usada na listagem;
 - URLs legadas `/posts/<slug>` recebem redirect HTTP 301 para a rota canônica.
 
 Assim, um post novo ganha HTML rastreável e preview social imediatamente, sem
@@ -82,7 +83,7 @@ curl -s https://momentocurioso.ia.br/blog/posts/<slug> \
   | grep -E '<title>|rel="canonical"|property="og:|twitter:card|server-post-snapshot'
 
 # thumbnail social é uma imagem HTTP real
-curl -sI https://momentocurioso.ia.br/api/posts/<slug>/thumbnail \
+curl -sI https://momentocurioso.ia.br/api/posts/<slug>/social-thumbnail \
   | grep -Ei 'content-type|cache-control'
 
 # páginas estáticas têm conteúdo sem executar JavaScript

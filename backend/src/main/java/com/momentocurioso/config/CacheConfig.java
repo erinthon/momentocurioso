@@ -30,6 +30,10 @@ public class CacheConfig {
             new CaffeineCache("socialLinks", Caffeine.newBuilder()
                 .expireAfterWrite(10, TimeUnit.MINUTES)
                 .maximumSize(10)
+                .build()),
+            new CaffeineCache("socialThumbnails", Caffeine.newBuilder()
+                .expireAfterWrite(6, TimeUnit.HOURS)
+                .maximumSize(50)
                 .build())
         ));
         return manager;

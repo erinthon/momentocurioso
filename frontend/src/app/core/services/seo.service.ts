@@ -25,7 +25,7 @@ export class SeoService {
   setPost(post: PostSeoData): void {
     const url = `${this.siteUrl}/blog/posts/${post.slug}`;
     const imageUrl = post.thumbnail
-      ? `${this.siteUrl}/api/posts/${encodeURIComponent(post.slug)}/thumbnail`
+      ? `${this.siteUrl}/api/posts/${encodeURIComponent(post.slug)}/social-thumbnail`
       : null;
 
     this.setCommon(`${post.title} | ${this.siteName}`, post.summary, url, 'article');
@@ -105,6 +105,9 @@ export class SeoService {
   private setSocialImage(imageUrl: string | null, alt: string): void {
     if (!imageUrl) {
       this.meta.removeTag('property="og:image"');
+      this.meta.removeTag('property="og:image:type"');
+      this.meta.removeTag('property="og:image:width"');
+      this.meta.removeTag('property="og:image:height"');
       this.meta.removeTag('property="og:image:alt"');
       this.meta.removeTag('name="twitter:image"');
       this.meta.removeTag('name="twitter:image:alt"');
@@ -112,6 +115,9 @@ export class SeoService {
     }
 
     this.meta.updateTag({ property: 'og:image', content: imageUrl });
+    this.meta.updateTag({ property: 'og:image:type', content: 'image/jpeg' });
+    this.meta.updateTag({ property: 'og:image:width', content: '1200' });
+    this.meta.updateTag({ property: 'og:image:height', content: '630' });
     this.meta.updateTag({ property: 'og:image:alt', content: alt });
     this.meta.updateTag({ name: 'twitter:image', content: imageUrl });
     this.meta.updateTag({ name: 'twitter:image:alt', content: alt });

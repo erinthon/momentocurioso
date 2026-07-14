@@ -53,7 +53,7 @@ public class PostPageRendererImpl implements PostPageRenderer {
         String template = readTemplate();
         String url = siteUrl + "/blog/posts/" + post.slug();
         String imageUrl = thumbnailService.isSupported(post.thumbnail())
-                ? siteUrl + "/api/posts/" + post.slug() + "/thumbnail"
+                ? siteUrl + "/api/posts/" + post.slug() + "/social-thumbnail"
                 : null;
 
         template = TITLE.matcher(template).replaceFirst("");
@@ -87,10 +87,19 @@ public class PostPageRendererImpl implements PostPageRenderer {
                 """.formatted(post.publishedAt());
         String imageTags = imageUrl == null ? "" : """
                 <meta property="og:image" content="%s">
+                <meta property="og:image:type" content="image/jpeg">
+                <meta property="og:image:width" content="%d">
+                <meta property="og:image:height" content="%d">
                 <meta property="og:image:alt" content="%s">
                 <meta name="twitter:image" content="%s">
                 <meta name="twitter:image:alt" content="%s">
-                """.formatted(escapedImageUrl, title, escapedImageUrl, title);
+                """.formatted(
+                        escapedImageUrl,
+                        PostThumbnailService.SOCIAL_WIDTH,
+                        PostThumbnailService.SOCIAL_HEIGHT,
+                        title,
+                        escapedImageUrl,
+                        title);
 
         return """
                 <title>%s | Momento Curioso</title>
