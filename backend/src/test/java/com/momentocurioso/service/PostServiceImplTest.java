@@ -16,7 +16,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -114,6 +117,20 @@ class PostServiceImplTest {
                 "Título", "Resumo", "<p>Conteúdo</p>", "tecnologia", true, null));
 
         assertThat(response.slug()).isEqualTo("titulo-1");
+    }
+
+    @Test
+    void listPublished_replacesThumbnailDataUriWithPublicUrl() {
+        Post post = buildPost(1L, PostStatus.PUBLISHED);
+        post.setThumbnail("data:image/jpeg;base64,AQID");
+        when(postRepository.findAllByStatus(eq(PostStatus.PUBLISHED), any()))
+                .thenReturn(new PageImpl<>(List.of(post)));
+
+        var response = postService.listPublished(null, PageRequest.of(0, 12));
+
+        assertThat(response.content()).singleElement()
+                .extracting(item -> item.thumbnail())
+                .isEqualTo("/api/posts/titulo-de-teste/thumbnail");
     }
 
     // ── update: slug editável (opcional; valida unicidade) ──────────────────

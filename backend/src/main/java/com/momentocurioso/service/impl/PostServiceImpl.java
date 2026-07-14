@@ -6,6 +6,7 @@ import com.momentocurioso.dto.request.UpdatePostRequest;
 import com.momentocurioso.dto.response.PageResponse;
 import com.momentocurioso.dto.response.PostResponse;
 import com.momentocurioso.dto.response.PostSummaryResponse;
+import com.momentocurioso.dto.response.PublicPostSummaryResponse;
 import com.momentocurioso.entity.Post;
 import com.momentocurioso.entity.PostStatus;
 import com.momentocurioso.entity.Topic;
@@ -92,14 +93,14 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Cacheable(value = "posts", key = "'list:' + #topicSlug + ':p' + #pageable.pageNumber + ':s' + #pageable.pageSize")
-    public PageResponse<PostSummaryResponse> listPublished(String topicSlug, Pageable pageable) {
+    public PageResponse<PublicPostSummaryResponse> listPublished(String topicSlug, Pageable pageable) {
         PageRequest pageRequest = PageRequest.of(
                 pageable.getPageNumber(), pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt"));
         var posts = topicSlug != null && !topicSlug.isBlank()
                 ? postRepository.findByTopicSlugAndStatus(topicSlug, PostStatus.PUBLISHED, pageRequest)
                 : postRepository.findAllByStatus(PostStatus.PUBLISHED, pageRequest);
-        return PageResponse.from(posts.map(PostSummaryResponse::from));
+        return PageResponse.from(posts.map(PublicPostSummaryResponse::from));
     }
 
     @Override

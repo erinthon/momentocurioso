@@ -3,11 +3,12 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
+import { BrowserStorageService } from '../services/browser-storage.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const authService = inject(AuthService);
-  const token = localStorage.getItem('token');
+  const token = inject(BrowserStorageService).getItem('token');
   if (token) {
     req = req.clone({
       setHeaders: { Authorization: `Bearer ${token}` }

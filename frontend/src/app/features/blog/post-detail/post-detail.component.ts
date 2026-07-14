@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, PLATFORM_ID, inject } from '@angular/core';
+import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiService } from '../../../core/services/api.service';
 import { SeoService } from '../../../core/services/seo.service';
@@ -12,6 +12,7 @@ interface PostDetail {
   slug: string;
   summary: string;
   content: string;
+  thumbnail?: string;
   topicSlug: string;
   publishedAt: string;
 }
@@ -392,6 +393,8 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   private api = inject(ApiService);
   private route = inject(ActivatedRoute);
   private seo = inject(SeoService);
+  private document = inject(DOCUMENT);
+  private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   post: PostDetail | null = null;
   postContent = '';
@@ -416,17 +419,23 @@ export class PostDetailComponent implements OnInit, OnDestroy {
         this.readingTime = this.calcReadingTime(post.content);
         this.loading = false;
         this.seo.setPost(post);
-        setTimeout(() => this.revealElements(), 80);
+        if (this.isBrowser) {
+          setTimeout(() => this.revealElements(), 80);
+        }
       },
       error: () => {
         this.loading = false;
       }
     });
-    window.addEventListener('scroll', this.scrollHandler, { passive: true });
+    if (this.isBrowser) {
+      this.document.defaultView?.addEventListener('scroll', this.scrollHandler, { passive: true });
+    }
   }
 
   ngOnDestroy(): void {
-    window.removeEventListener('scroll', this.scrollHandler);
+    if (this.isBrowser) {
+      this.document.defaultView?.removeEventListener('scroll', this.scrollHandler);
+    }
     this.seo.reset();
   }
 
@@ -440,8 +449,8 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   }
 
   private updateProgress(): void {
-    const doc = document.documentElement;
-    const scrolled = doc.scrollTop || document.body.scrollTop;
+    const doc = this.document.documentElement;
+    const scrolled = doc.scrollTop || this.document.body.scrollTop;
     const total = doc.scrollHeight - doc.clientHeight;
     this.readingProgress = total > 0 ? Math.round((scrolled / total) * 100) : 0;
   }
@@ -453,6 +462,6 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   }
 
   private revealElements(): void {
-    document.querySelectorAll('.rv').forEach(el => el.classList.add('in'));
+    this.document.querySelectorAll('.rv').forEach(el => el.classList.add('in'));
   }
 }

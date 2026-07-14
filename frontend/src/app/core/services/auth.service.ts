@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { ApiService } from './api.service';
+import { BrowserStorageService } from './browser-storage.service';
 
 export interface AuthResponse {
   token: string;
@@ -9,20 +10,23 @@ export interface AuthResponse {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  constructor(private api: ApiService) {}
+  constructor(
+    private api: ApiService,
+    private storage: BrowserStorageService
+  ) {}
 
   login(email: string, password: string): Observable<AuthResponse> {
     return this.api.post<AuthResponse>('/auth/login', { email, password }).pipe(
-      tap(res => localStorage.setItem('token', res.token))
+      tap(res => this.storage.setItem('token', res.token))
     );
   }
 
   logout(): void {
-    localStorage.removeItem('token');
+    this.storage.removeItem('token');
   }
 
   isAuthenticated(): boolean {
-    return !!localStorage.getItem('token');
+    return !!this.storage.getItem('token');
   }
 
   getRole(): string {
@@ -35,7 +39,7 @@ export class AuthService {
   }
 
   private claim(name: 'role' | 'sub'): string {
-    const token = localStorage.getItem('token');
+    const token = this.storage.getItem('token');
     if (!token) return '';
     try {
       const base64url = token.split('.')[1];
