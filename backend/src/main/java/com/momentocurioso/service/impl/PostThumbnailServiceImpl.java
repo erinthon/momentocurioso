@@ -44,7 +44,7 @@ public class PostThumbnailServiceImpl implements PostThumbnailService {
     @Cacheable(
             value = "socialThumbnails",
             key = "#slug + ':' + (#dataUri == null ? 0 : #dataUri.hashCode())",
-            unless = "#result.isEmpty()")
+            unless = "#result == null")
     public Optional<PostThumbnail> createSocial(String slug, String dataUri) {
         return decode(dataUri).flatMap(this::resizeForSocial);
     }
