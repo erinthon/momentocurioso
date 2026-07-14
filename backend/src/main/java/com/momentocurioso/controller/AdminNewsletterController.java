@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,6 +45,11 @@ public class AdminNewsletterController {
     public ResponseEntity<NewsletterIssueResponse> updateIssue(
             @PathVariable Long id, @Valid @RequestBody SaveNewsletterIssueRequest request) {
         return ResponseEntity.ok(issueService.update(id, request));
+    }
+
+    @GetMapping(value = "/issues/{id}/preview", produces = MediaType.TEXT_HTML_VALUE)
+    public ResponseEntity<String> previewIssue(@PathVariable Long id) {
+        return ResponseEntity.ok(issueService.preview(id));
     }
 
     @PostMapping("/issues/{id}/send")

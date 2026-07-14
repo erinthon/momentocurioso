@@ -59,6 +59,15 @@ class NewsletterIssueServiceImplTest {
     }
 
     @Test
+    void previewUsesEmailRenderer() {
+        NewsletterIssue issue = issue();
+        when(issueRepository.findById(3L)).thenReturn(Optional.of(issue));
+        when(emailService.renderIssuePreview(issue)).thenReturn("<html>prévia</html>");
+
+        assertThat(service.preview(3L)).isEqualTo("<html>prévia</html>");
+    }
+
+    @Test
     void sendContinuesAfterIndividualFailure() {
         NewsletterIssue issue = issue();
         NewsletterSubscriber first = subscriber(1L);

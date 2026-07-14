@@ -59,9 +59,18 @@ public class NewsletterEmailServiceImpl implements NewsletterEmailService {
 
     @Override
     public void sendIssue(NewsletterIssue issue, NewsletterSubscriber subscriber) {
-        String postUrl = siteUrl + "/blog/posts/" + issue.getMainPost().getSlug();
         String unsubscribeUrl = siteUrl + "/newsletter/unsubscribe?token="
                 + tokenService.createUnsubscribeToken(subscriber.getId());
+        send(subscriber.getEmail(), issue.getSubject(), renderIssue(issue, unsubscribeUrl));
+    }
+
+    @Override
+    public String renderIssuePreview(NewsletterIssue issue) {
+        return renderIssue(issue, siteUrl + "/newsletter/unsubscribe");
+    }
+
+    private String renderIssue(NewsletterIssue issue, String unsubscribeUrl) {
+        String postUrl = siteUrl + "/blog/posts/" + issue.getMainPost().getSlug();
         String socialImageUrl = siteUrl + "/api/posts/" + issue.getMainPost().getSlug() + "/social-thumbnail";
 
         StringBuilder content = new StringBuilder();
@@ -85,7 +94,7 @@ public class NewsletterEmailServiceImpl implements NewsletterEmailService {
                 .append("<p style=\"color:#66756c;font-size:12px;text-align:center;margin-top:36px\">Você recebeu este e-mail porque se inscreveu no Momento Curioso. <a href=\"")
                 .append(unsubscribeUrl).append("\" style=\"color:#66756c\">Cancelar inscrição</a>.</p>");
 
-        send(subscriber.getEmail(), issue.getSubject(), emailLayout("Dose Semanal de Curiosidade", content.toString()));
+        return emailLayout("Dose Semanal de Curiosidade", content.toString());
     }
 
     private void appendLinkSection(StringBuilder content, String label, String title, String url) {

@@ -63,6 +63,12 @@ public class NewsletterIssueServiceImpl implements NewsletterIssueService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public String preview(Long id) {
+        return emailService.renderIssuePreview(getDraft(id));
+    }
+
+    @Override
     @Transactional
     public NewsletterSendResponse send(Long id) {
         NewsletterIssue issue = getDraft(id);

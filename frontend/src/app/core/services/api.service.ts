@@ -30,6 +30,10 @@ export class ApiService {
     });
   }
 
+  getText(path: string): Observable<string> {
+    return this.http.get(`${this.baseUrl}${path}`, { responseType: 'text' });
+  }
+
   post<T>(path: string, body: unknown): Observable<T> {
     return this.http.post<T>(`${this.baseUrl}${path}`, body);
   }

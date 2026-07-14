@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ApiService } from '../../../core/services/api.service';
 import { AdminNavbarComponent } from '../../../shared/admin-navbar/admin-navbar.component';
 
@@ -64,6 +65,15 @@ interface NewsletterIssueForm {
     .issue-actions { display: flex; gap: 7px; flex-wrap: wrap; justify-content: flex-end; }
     .badge { display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 20px; background: var(--bg-2); color: var(--text-3); font-family: var(--fu); font-size: 10px; }
     .badge.sent { background: var(--green-pale); color: var(--green); }
+    .preview-backdrop { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 24px; background: rgba(9, 25, 17, .72); }
+    .preview-dialog { width: min(900px, 100%); max-height: calc(100vh - 48px); overflow: hidden; border-radius: var(--rl); background: var(--bg-1); box-shadow: 0 24px 80px rgba(0, 0, 0, .35); }
+    .preview-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 22px; border-bottom: 1px solid var(--border); }
+    .preview-header h2 { font-size: 18px; }
+    .preview-inbox { padding: 14px 22px; border-bottom: 1px solid var(--border); background: var(--bg-2); font-family: var(--fu); }
+    .preview-inbox strong, .preview-inbox span { display: block; }
+    .preview-inbox strong { color: var(--text); font-size: 14px; }
+    .preview-inbox span { margin-top: 4px; color: var(--text-3); font-size: 12px; }
+    .preview-frame { display: block; width: 100%; height: min(70vh, 720px); border: 0; background: #f4f7f5; }
     .table { border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
     .row { display: grid; grid-template-columns: 1.4fr 2fr 120px 130px 80px; align-items: center; min-height: 48px; padding: 0 12px; border-bottom: 1px solid var(--border); }
     .row:last-child { border-bottom: 0; }
@@ -115,7 +125,7 @@ interface NewsletterIssueForm {
         <div class="list">
           <article class="issue" *ngFor="let issue of issues">
             <div><h3>{{ issue.subject }}<span class="badge" [class.sent]="issue.status === 'SENT'">{{ issue.status === 'SENT' ? 'Enviada' : 'Rascunho' }}</span></h3><div class="meta">Criada em {{ formatDate(issue.createdAt) }}<span *ngIf="issue.sentAt"> · {{ issue.sentCount }} enviados · {{ issue.failedCount }} falhas</span></div><div class="story">História principal: {{ issue.mainPostTitle }}</div></div>
-            <div class="issue-actions" *ngIf="issue.status === 'DRAFT'"><button class="btn" (click)="edit(issue)">Editar</button><button class="btn btn-danger" (click)="removeIssue(issue)">Excluir</button><button class="btn btn-primary" (click)="send(issue)" [disabled]="sendingId === issue.id">{{ sendingId === issue.id ? 'Enviando...' : 'Enviar agora' }}</button></div>
+            <div class="issue-actions" *ngIf="issue.status === 'DRAFT'"><button class="btn" (click)="openPreview(issue)" [disabled]="previewLoadingId === issue.id">{{ previewLoadingId === issue.id ? 'Carregando...' : 'Visualizar' }}</button><button class="btn" (click)="edit(issue)">Editar</button><button class="btn btn-danger" (click)="removeIssue(issue)">Excluir</button><button class="btn btn-primary" (click)="send(issue)" [disabled]="sendingId === issue.id">{{ sendingId === issue.id ? 'Enviando...' : 'Enviar agora' }}</button></div>
           </article>
           <div class="empty" *ngIf="!loading && issues.length === 0">Nenhuma edição criada.</div>
         </div>
@@ -130,16 +140,26 @@ interface NewsletterIssueForm {
         </div>
       </section>
     </main>
+
+    <div class="preview-backdrop" *ngIf="previewHtml" (click)="closePreview()">
+      <section class="preview-dialog" role="dialog" aria-modal="true" aria-labelledby="newsletter-preview-title" (click)="$event.stopPropagation()">
+        <header class="preview-header"><h2 id="newsletter-preview-title">Prévia da edição</h2><button class="btn" type="button" (click)="closePreview()">Fechar</button></header>
+        <div class="preview-inbox"><strong>{{ previewIssue?.subject }}</strong><span>{{ previewIssue?.preheader }}</span></div>
+        <iframe class="preview-frame" title="Corpo do e-mail" sandbox [srcdoc]="previewHtml"></iframe>
+      </section>
+    </div>
   `
 })
 export class AdminNewsletterComponent implements OnInit {
   private api = inject(ApiService);
+  private sanitizer = inject(DomSanitizer);
   tab: 'issues' | 'subscribers' = 'issues';
   issues: NewsletterIssue[] = [];
   subscribers: NewsletterSubscriber[] = [];
   posts: PostSummary[] = [];
   activeCount = 0; subscriberTotal = 0; loading = true; saving = false;
   sendingId: number | null = null; showForm = false; editingId: number | null = null;
+  previewLoadingId: number | null = null; previewIssue: NewsletterIssue | null = null; previewHtml: SafeHtml | null = null;
   error = ''; success = ''; form = this.emptyForm();
 
   ngOnInit(): void { this.loadAll(); }
@@ -171,6 +191,14 @@ export class AdminNewsletterComponent implements OnInit {
     this.sendingId = issue.id; this.clearMessages();
     this.api.post<{ sentCount: number; failedCount: number }>(`/admin/newsletter/issues/${issue.id}/send`, {}).subscribe({ next: result => { this.sendingId = null; this.success = `Envio concluído: ${result.sentCount} entregues e ${result.failedCount} falhas.`; this.loadIssues(); }, error: error => { this.sendingId = null; this.error = error?.error?.message ?? 'Não foi possível enviar a edição.'; } });
   }
+  openPreview(issue: NewsletterIssue): void {
+    this.previewLoadingId = issue.id; this.clearMessages();
+    this.api.getText(`/admin/newsletter/issues/${issue.id}/preview`).subscribe({
+      next: html => { this.previewIssue = issue; this.previewHtml = this.sanitizer.bypassSecurityTrustHtml(html); this.previewLoadingId = null; },
+      error: error => { this.previewLoadingId = null; this.error = error?.error?.message ?? 'Não foi possível gerar a prévia.'; }
+    });
+  }
+  closePreview(): void { this.previewHtml = null; this.previewIssue = null; }
   removeIssue(issue: NewsletterIssue): void {
     if (!confirm(`Excluir o rascunho “${issue.subject}”?`)) return;
     this.api.delete<void>(`/admin/newsletter/issues/${issue.id}`).subscribe({ next: () => this.loadIssues(), error: error => this.error = error?.error?.message ?? 'Não foi possível excluir.' });

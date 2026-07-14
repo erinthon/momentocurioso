@@ -10,6 +10,7 @@ public interface NewsletterIssueService {
     List<NewsletterIssueResponse> list();
     NewsletterIssueResponse create(SaveNewsletterIssueRequest request);
     NewsletterIssueResponse update(Long id, SaveNewsletterIssueRequest request);
+    String preview(Long id);
     NewsletterSendResponse send(Long id);
     void delete(Long id);
 }
