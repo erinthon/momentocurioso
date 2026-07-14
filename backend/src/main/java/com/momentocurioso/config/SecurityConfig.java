@@ -41,6 +41,7 @@ public class SecurityConfig {
                     "/posts/**",
                     "/post-pages/**",
                     "/social-links",
+                    "/newsletter/**",
                     "/feed.xml",
                     "/sitemap.xml",
                     "/robots.txt",
