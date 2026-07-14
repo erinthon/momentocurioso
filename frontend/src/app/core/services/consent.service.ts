@@ -1,4 +1,6 @@
-import { Injectable, signal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Injectable, inject, signal } from '@angular/core';
+import { BrowserStorageService } from './browser-storage.service';
 
 export type ConsentStatus = 'pending' | 'granted' | 'denied';
 
@@ -6,6 +8,8 @@ const STORAGE_KEY = 'mc-cookie-consent';
 
 @Injectable({ providedIn: 'root' })
 export class ConsentService {
+  private readonly document = inject(DOCUMENT);
+  private readonly storage = inject(BrowserStorageService);
   private readonly state = signal<ConsentStatus>(this.readStored());
   readonly status = this.state.asReadonly();
 
@@ -23,7 +27,7 @@ export class ConsentService {
     // Scripts de terceiros já injetados não têm unload — recarrega
     // para a revogação valer imediatamente
     if (wasGranted) {
-      document.location.reload();
+      this.document.defaultView?.location.reload();
     }
   }
 
@@ -32,13 +36,13 @@ export class ConsentService {
   }
 
   private persist(status: ConsentStatus): void {
-    localStorage.setItem(STORAGE_KEY, status);
+    this.storage.setItem(STORAGE_KEY, status);
     this.reopenState.set(false);
     this.state.set(status);
   }
 
   private readStored(): ConsentStatus {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = this.storage.getItem(STORAGE_KEY);
     return stored === 'granted' || stored === 'denied' ? stored : 'pending';
   }
 }

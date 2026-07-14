@@ -6,6 +6,7 @@ import com.momentocurioso.dto.request.UpdatePostRequest;
 import com.momentocurioso.dto.response.PageResponse;
 import com.momentocurioso.dto.response.PostResponse;
 import com.momentocurioso.dto.response.PostSummaryResponse;
+import com.momentocurioso.dto.response.PublicPostSummaryResponse;
 import com.momentocurioso.entity.Post;
 import com.momentocurioso.entity.PostStatus;
 import com.momentocurioso.entity.Topic;
@@ -17,7 +18,7 @@ public interface PostService {
 
     PostResponse create(CreatePostRequest request);
 
-    PageResponse<PostSummaryResponse> listPublished(String topicSlug, Pageable pageable);
+    PageResponse<PublicPostSummaryResponse> listPublished(String topicSlug, Pageable pageable);
 
     PageResponse<PostSummaryResponse> listAllAdmin(PostStatus status, Pageable pageable);
 

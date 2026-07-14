@@ -1,22 +1,33 @@
-import { Injectable } from '@angular/core';
+import { isPlatformServer } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private baseUrl = environment.apiUrl;
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly baseUrl = isPlatformServer(this.platformId)
+    ? `${environment.siteUrl}/api`
+    : environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
-  get<T>(path: string, params?: Record<string, string>): Observable<T> {
+  get<T>(
+    path: string,
+    params?: Record<string, string>,
+    options?: { transferCache?: boolean }
+  ): Observable<T> {
     let httpParams = new HttpParams();
     if (params) {
       Object.entries(params).forEach(([k, v]) => {
         if (v !== undefined && v !== null && v !== '') httpParams = httpParams.set(k, v);
       });
     }
-    return this.http.get<T>(`${this.baseUrl}${path}`, { params: httpParams });
+    return this.http.get<T>(`${this.baseUrl}${path}`, {
+      params: httpParams,
+      transferCache: options?.transferCache
+    });
   }
 
   post<T>(path: string, body: unknown): Observable<T> {

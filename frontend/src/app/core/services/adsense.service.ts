@@ -1,4 +1,5 @@
-import { effect, inject, Injectable, Injector } from '@angular/core';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { effect, inject, Injectable, Injector, PLATFORM_ID } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, take } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -9,11 +10,13 @@ export class AdsenseService {
   private router = inject(Router);
   private consent = inject(ConsentService);
   private injector = inject(Injector);
+  private document = inject(DOCUMENT);
+  private platformId = inject(PLATFORM_ID);
   private loaded = false;
 
   init(): void {
     const client = environment.adsenseClientId;
-    if (!client) {
+    if (!client || !isPlatformBrowser(this.platformId)) {
       return;
     }
     effect(() => {
@@ -41,10 +44,10 @@ export class AdsenseService {
   }
 
   private loadScript(client: string): void {
-    const script = document.createElement('script');
+    const script = this.document.createElement('script');
     script.async = true;
     script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${client}`;
     script.crossOrigin = 'anonymous';
-    document.head.appendChild(script);
+    this.document.head.appendChild(script);
   }
 }

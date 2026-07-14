@@ -1,5 +1,6 @@
-import { inject, Injectable } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { BrowserStorageService } from './browser-storage.service';
 
 type Theme = 'light' | 'dark';
 
@@ -7,9 +8,13 @@ type Theme = 'light' | 'dark';
 export class ThemeService {
   private readonly STORAGE_KEY = 'mc-theme';
   private readonly doc = inject(DOCUMENT);
+  private readonly storage = inject(BrowserStorageService);
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   constructor() {
-    this.apply(this.saved());
+    if (this.isBrowser) {
+      this.apply(this.saved());
+    }
   }
 
   toggle(): void {
@@ -17,7 +22,7 @@ export class ThemeService {
   }
 
   current(): Theme {
-    return (this.doc.documentElement.dataset['theme'] as Theme) ?? 'light';
+    return this.doc.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
   }
 
   isDark(): boolean {
@@ -25,11 +30,11 @@ export class ThemeService {
   }
 
   private apply(theme: Theme): void {
-    this.doc.documentElement.dataset['theme'] = theme;
-    localStorage.setItem(this.STORAGE_KEY, theme);
+    this.doc.documentElement.setAttribute('data-theme', theme);
+    this.storage.setItem(this.STORAGE_KEY, theme);
   }
 
   private saved(): Theme {
-    return localStorage.getItem(this.STORAGE_KEY) === 'dark' ? 'dark' : 'light';
+    return this.storage.getItem(this.STORAGE_KEY) === 'dark' ? 'dark' : 'light';
   }
 }

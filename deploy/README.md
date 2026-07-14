@@ -7,6 +7,25 @@ https://momentocurioso.ia.br — Nginx serve o build do Angular e faz proxy de
 Por ser uma instância de 1 GB de RAM, **os builds acontecem na máquina de
 desenvolvimento**, não no servidor (que só tem JRE 17, MySQL e Nginx).
 
+## Renderização pública
+
+Não há processo Node em produção. O build Angular usa SSG apenas na máquina de
+desenvolvimento e gera HTML estático para `/blog/posts`, `/privacidade` e
+`/termos`. O arquivo `index.csr.html` continua sendo o fallback das rotas SPA
+privadas.
+
+As páginas de artigo são atualizadas em tempo real pelo Spring:
+
+- o Nginx encaminha `/blog/posts/<slug>` para `/api/post-pages/<slug>`;
+- o Spring lê `index.csr.html`, injeta HTML sanitizado, canonical, Open Graph,
+  Twitter Card e JSON-LD;
+- `/api/posts/<slug>/thumbnail` converte a thumbnail data URI do banco em uma
+  resposta `image/jpeg`, `image/png` ou `image/webp` cacheável;
+- URLs legadas `/posts/<slug>` recebem redirect HTTP 301 para a rota canônica.
+
+Assim, um post novo ganha HTML rastreável e preview social imediatamente, sem
+rebuild diário e sem aumentar o consumo de RAM da EC2.
+
 ## Arquivos
 
 - `setup-server.sh` — script idempotente que instala/atualiza tudo no servidor
@@ -41,6 +60,35 @@ ssh -i ~/.ssh/momentocurioso-key.pem ubuntu@54.94.60.198 "sed -i 's/\r$//' ~/dep
 Obs.: o `scp` do `dist` sobrescreve arquivos, mas não remove órfãos em
 `~/deploy/dist` — se o build mudar muito, apague o diretório remoto antes.
 O `sed` remove CRLF caso os arquivos tenham sido editados no Windows.
+
+O build do frontend consulta a API pública de produção para prerenderizar a
+listagem. A resposta pública usa URLs de thumbnail, nunca base64, e o HTML
+gerado deve permanecer abaixo de 150 KB. Antes do upload, confira:
+
+```bash
+wc -c frontend/dist/frontend/browser/blog/posts/index.html
+grep -c 'data:image/.*;base64' frontend/dist/frontend/browser/blog/posts/index.html
+# esperado: tamanho < 150000 e contagem 0
+```
+
+## Verificação pós-deploy
+
+```bash
+# redirect legado é HTTP, não apenas Angular
+curl -sI https://momentocurioso.ia.br/posts/<slug>
+
+# HTML do artigo contém corpo, canonical e cards
+curl -s https://momentocurioso.ia.br/blog/posts/<slug> \
+  | grep -E '<title>|rel="canonical"|property="og:|twitter:card|server-post-snapshot'
+
+# thumbnail social é uma imagem HTTP real
+curl -sI https://momentocurioso.ia.br/api/posts/<slug>/thumbnail \
+  | grep -Ei 'content-type|cache-control'
+
+# páginas estáticas têm conteúdo sem executar JavaScript
+curl -s https://momentocurioso.ia.br/privacidade | grep -i 'LGPD'
+curl -s https://momentocurioso.ia.br/termos | grep -i 'Termos de Uso'
+```
 
 ## Acesso
 

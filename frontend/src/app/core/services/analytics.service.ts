@@ -1,4 +1,5 @@
-import { effect, inject, Injectable, Injector } from '@angular/core';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { effect, inject, Injectable, Injector, PLATFORM_ID } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -19,11 +20,13 @@ export class AnalyticsService {
   private router = inject(Router);
   private consent = inject(ConsentService);
   private injector = inject(Injector);
+  private document = inject(DOCUMENT);
+  private platformId = inject(PLATFORM_ID);
   private loaded = false;
 
   init(): void {
     const id = environment.googleAnalyticsId;
-    if (!id) {
+    if (!id || !isPlatformBrowser(this.platformId)) {
       return;
     }
     effect(() => {
@@ -45,10 +48,11 @@ export class AnalyticsService {
   }
 
   private loadGtag(id: string): void {
-    const script = document.createElement('script');
+    const window = this.document.defaultView as Window;
+    const script = this.document.createElement('script');
     script.async = true;
     script.src = `https://www.googletagmanager.com/gtag/js?id=${id}`;
-    document.head.appendChild(script);
+    this.document.head.appendChild(script);
 
     window.dataLayer = window.dataLayer || [];
     // gtag.js exige o objeto arguments no dataLayer — arrays comuns são ignorados
@@ -66,10 +70,11 @@ export class AnalyticsService {
     }
     // Adia para o componente da rota já ter atualizado o document.title
     setTimeout(() => {
+      const window = this.document.defaultView as Window;
       window.gtag('event', 'page_view', {
         page_path: url,
         page_location: window.location.href,
-        page_title: document.title
+        page_title: this.document.title
       });
     });
   }

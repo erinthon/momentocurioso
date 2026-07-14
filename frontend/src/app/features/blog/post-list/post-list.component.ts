@@ -1,5 +1,5 @@
-import { Component, OnInit, inject, AfterViewInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, AfterViewInit, PLATFORM_ID } from '@angular/core';
+import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -505,6 +505,8 @@ export class PostListComponent implements OnInit, AfterViewInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private seo = inject(SeoService);
+  private document = inject(DOCUMENT);
+  private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   topics: Topic[] = [];
   posts: PostSummary[] = [];
@@ -526,7 +528,9 @@ export class PostListComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.initRevealObserver();
+    if (this.isBrowser) {
+      this.initRevealObserver();
+    }
   }
 
   setFilter(slug: string | null): void {
@@ -554,17 +558,18 @@ export class PostListComponent implements OnInit, AfterViewInit {
 
     forkJoin({
       topics: this.api.get<Topic[]>('/topics').pipe(catchError(() => of([] as Topic[]))),
-      posts: this.api.get<PagedPosts>('/posts', params).pipe(catchError(() => of(emptyPage)))
+      posts: this.api.get<PagedPosts>('/posts', params, { transferCache: false })
+        .pipe(catchError(() => of(emptyPage)))
     }).subscribe(({ topics, posts }) => {
       this.topics = topics.filter(t => t.active);
       this.topicMap.clear();
       topics.forEach(t => this.topicMap.set(t.slug, t.name));
-      this.posts = posts.content;
+      this.posts = this.withThumbnailUrls(posts.content);
       this.totalElements = posts.totalElements;
       this.hasMore = !posts.last;
       this.loading = false;
       this.seo.setList(this.activeTopicSlug ? this.topicMap.get(this.activeTopicSlug) : undefined);
-      setTimeout(() => this.revealCards(), 50);
+      this.scheduleReveal();
     });
   }
 
@@ -575,31 +580,46 @@ export class PostListComponent implements OnInit, AfterViewInit {
     const params: Record<string, string> = { page: String(this.page), size: String(this.pageSize) };
     if (this.activeTopicSlug) params['topicSlug'] = this.activeTopicSlug;
 
-    this.api.get<PagedPosts>('/posts', params).pipe(catchError(() => of(null))).subscribe(paged => {
+    this.api.get<PagedPosts>('/posts', params, { transferCache: false })
+      .pipe(catchError(() => of(null))).subscribe(paged => {
       if (paged) {
-        this.posts = [...this.posts, ...paged.content];
+        this.posts = [...this.posts, ...this.withThumbnailUrls(paged.content)];
         this.hasMore = !paged.last;
       }
       this.loadingMore = false;
-      setTimeout(() => this.revealCards(), 50);
+      this.scheduleReveal();
     });
   }
 
+  private scheduleReveal(): void {
+    if (this.isBrowser) {
+      setTimeout(() => this.revealCards(), 50);
+    }
+  }
+
+  private withThumbnailUrls(posts: PostSummary[]): PostSummary[] {
+    return posts.map(post => ({
+      ...post,
+      thumbnail: post.thumbnail ? `/api/posts/${encodeURIComponent(post.slug)}/thumbnail` : undefined
+    }));
+  }
+
   private revealCards(): void {
-    document.querySelectorAll('.rv').forEach(el => el.classList.add('in'));
+    this.document.querySelectorAll('.rv').forEach(el => el.classList.add('in'));
   }
 
   private initRevealObserver(): void {
-    if (!('IntersectionObserver' in window)) {
-      document.querySelectorAll('.rv').forEach(el => el.classList.add('in'));
+    const window = this.document.defaultView;
+    if (!window?.IntersectionObserver) {
+      this.document.querySelectorAll('.rv').forEach(el => el.classList.add('in'));
       return;
     }
-    const observer = new IntersectionObserver(
+    const observer = new window.IntersectionObserver(
       entries => entries.forEach(e => {
         if (e.isIntersecting) { e.target.classList.add('in'); observer.unobserve(e.target); }
       }),
       { threshold: 0.1 }
     );
-    document.querySelectorAll('.rv').forEach(el => observer.observe(el));
+    this.document.querySelectorAll('.rv').forEach(el => observer.observe(el));
   }
 }

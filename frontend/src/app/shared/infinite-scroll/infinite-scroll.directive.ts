@@ -1,4 +1,5 @@
-import { Directive, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, AfterViewInit, Output, SimpleChanges, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Directive, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, AfterViewInit, Output, PLATFORM_ID, SimpleChanges, inject } from '@angular/core';
 
 @Directive({
   selector: '[appInfiniteScroll]',
@@ -10,9 +11,10 @@ export class InfiniteScrollDirective implements AfterViewInit, OnChanges, OnDest
 
   private observer?: IntersectionObserver;
   private el = inject(ElementRef);
+  private platformId = inject(PLATFORM_ID);
 
   ngAfterViewInit(): void {
-    if (!('IntersectionObserver' in window)) return;
+    if (!isPlatformBrowser(this.platformId) || !('IntersectionObserver' in window)) return;
     this.observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting && !this.disabled) this.scrolled.emit(); },
       { rootMargin: '200px', threshold: 0 }
