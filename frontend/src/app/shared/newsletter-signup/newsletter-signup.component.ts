@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, Input, inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, Input, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ApiService } from '../../core/services/api.service';
@@ -7,6 +7,8 @@ import { ApiService } from '../../core/services/api.service';
 interface NewsletterMessage {
   message: string;
 }
+
+const NEWSLETTER_SUBSCRIBED_KEY = 'mc_newsletter_subscribed';
 
 @Component({
   selector: 'app-newsletter-signup',
@@ -42,6 +44,9 @@ interface NewsletterMessage {
     .eyebrow { font-family: var(--fu); font-size: 10px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; opacity: .72; }
     h2 { margin: 8px 0 10px; font-family: var(--fd); font-size: clamp(25px, 3vw, 36px); letter-spacing: -.7px; line-height: 1.1; }
     .description { margin: 0; max-width: 520px; font-family: var(--fb); font-size: 14px; line-height: 1.65; color: rgba(255,255,255,.82); }
+    .signup-panel { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: stretch; gap: 12px; }
+    .toggle { width: 100%; }
+    .already-subscribed { margin: 0; font-family: var(--fu); font-size: 12px; line-height: 1.45; text-align: center; color: inherit; }
     .form { position: relative; z-index: 1; }
     .fields { display: grid; grid-template-columns: .8fr 1.2fr auto; gap: 8px; }
     input[type="text"], input[type="email"] {
@@ -78,27 +83,35 @@ interface NewsletterMessage {
         </p>
       </div>
 
-      <form class="form" (ngSubmit)="subscribe()">
-        <div class="honeypot" aria-hidden="true">
-          <label for="newsletter-website">Website</label>
-          <input id="newsletter-website" name="website" type="text" [(ngModel)]="website" tabindex="-1" autocomplete="off" />
-        </div>
-        <div class="fields">
-          <input name="name" type="text" maxlength="100" [(ngModel)]="name" placeholder="Seu nome (opcional)" autocomplete="name" />
-          <input name="email" type="email" maxlength="320" [(ngModel)]="email" placeholder="voce&#64;email.com" autocomplete="email" required />
-          <button type="submit" [disabled]="sending || !email || !consent">{{ sending ? 'Enviando...' : 'Quero receber' }}</button>
-        </div>
-        <label class="consent">
-          <input name="consent" type="checkbox" [(ngModel)]="consent" />
-          <span>Concordo em receber a newsletter do Momento Curioso. Posso cancelar quando quiser. Consulte a <a routerLink="/privacidade">Política de Privacidade</a>.</span>
-        </label>
-        <p class="message" [class.error]="hasError" *ngIf="message" role="status">{{ message }}</p>
-      </form>
+      <div class="signup-panel">
+        <button class="toggle" type="button" (click)="toggleForm()" [attr.aria-expanded]="isExpanded" aria-controls="newsletter-form">
+          {{ isExpanded ? 'Fechar formulário' : 'Newsletter' }}
+        </button>
+        <p class="already-subscribed" *ngIf="hasSubscribed" role="status">Você já enviou seu cadastro neste navegador. Não é necessário preencher novamente.</p>
+
+        <form id="newsletter-form" class="form" *ngIf="isExpanded" (ngSubmit)="subscribe()">
+          <div class="honeypot" aria-hidden="true">
+            <label for="newsletter-website">Website</label>
+            <input id="newsletter-website" name="website" type="text" [(ngModel)]="website" tabindex="-1" autocomplete="off" />
+          </div>
+          <div class="fields">
+            <input name="name" type="text" maxlength="100" [(ngModel)]="name" placeholder="Seu nome (opcional)" autocomplete="name" />
+            <input name="email" type="email" maxlength="320" [(ngModel)]="email" placeholder="voce&#64;email.com" autocomplete="email" required />
+            <button type="submit" [disabled]="sending || !email || !consent">{{ sending ? 'Enviando...' : 'Quero receber' }}</button>
+          </div>
+          <label class="consent">
+            <input name="consent" type="checkbox" [(ngModel)]="consent" />
+            <span>Concordo em receber a newsletter do Momento Curioso. Posso cancelar quando quiser. Consulte a <a routerLink="/privacidade">Política de Privacidade</a>.</span>
+          </label>
+          <p class="message" [class.error]="hasError" *ngIf="message" role="status">{{ message }}</p>
+        </form>
+      </div>
     </section>
   `
 })
-export class NewsletterSignupComponent {
+export class NewsletterSignupComponent implements OnInit {
   private api = inject(ApiService);
+  private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   @Input() title = 'A Dose Semanal de Curiosidade';
 
@@ -109,6 +122,14 @@ export class NewsletterSignupComponent {
   sending = false;
   hasError = false;
   message = '';
+  isExpanded = false;
+  hasSubscribed = false;
+
+  ngOnInit(): void {
+    this.hasSubscribed = this.isBrowser && localStorage.getItem(NEWSLETTER_SUBSCRIBED_KEY) === 'true';
+  }
+
+  toggleForm(): void { this.isExpanded = !this.isExpanded; }
 
   subscribe(): void {
     if (!this.email || !this.consent || this.sending) return;
@@ -124,6 +145,9 @@ export class NewsletterSignupComponent {
       next: response => {
         this.sending = false;
         this.message = response.message;
+        this.hasSubscribed = true;
+        this.isExpanded = false;
+        if (this.isBrowser) localStorage.setItem(NEWSLETTER_SUBSCRIBED_KEY, 'true');
         this.email = '';
         this.name = '';
         this.consent = false;

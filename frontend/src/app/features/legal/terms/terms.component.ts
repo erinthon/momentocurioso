@@ -8,7 +8,7 @@ import { LegalShellComponent } from '../legal-shell/legal-shell.component';
   standalone: true,
   imports: [RouterLink, LegalShellComponent],
   template: `
-    <app-legal-shell title="Termos de Uso" updatedAt="13 de julho de 2026">
+    <app-legal-shell title="Termos de Uso" updatedAt="14 de julho de 2026">
       <p>
         Ao acessar o <strong>Momento Curioso</strong> (momentocurioso.ia.br), você concorda com os termos
         abaixo. Se não concordar, por favor não utilize o site.
@@ -20,6 +20,14 @@ import { LegalShellComponent } from '../legal-shell/legal-shell.component';
         ciência, tecnologia, natureza, história e cultura. O acesso é <strong>gratuito</strong> e não exige
         cadastro. O site é sustentado por publicidade exibida pelo Google AdSense — os detalhes de como isso
         afeta os seus dados estão na <a routerLink="/privacidade">Política de Privacidade</a>.
+      </p>
+
+      <h2>Newsletter</h2>
+      <p>
+        A inscrição na newsletter é opcional e exige um endereço de e-mail válido e consentimento específico.
+        Você pode cancelar os envios a qualquer momento pelo link presente nos próprios e-mails. O site pode
+        guardar no seu navegador um marcador sem dados pessoais para avisar que uma solicitação já foi enviada.
+        Os detalhes estão na <a routerLink="/privacidade">Política de Privacidade</a>.
       </p>
 
       <h2>Conteúdo gerado por inteligência artificial</h2>

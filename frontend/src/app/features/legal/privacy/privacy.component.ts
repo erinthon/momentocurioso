@@ -80,8 +80,8 @@ import { LegalShellComponent } from '../legal-shell/legal-shell.component';
         revogado a qualquer momento pelo link existente nos próprios e-mails.
       </p>
       <p>
-        <strong>Não vendemos nem alugamos os seus dados.</strong> O compartilhamento se restringe ao Google,
-        nas funções descritas acima.
+        <strong>Não vendemos nem alugamos os seus dados.</strong> O compartilhamento se restringe ao Google e
+        ao provedor de entrega da newsletter, apenas nas funções descritas nesta política.
       </p>
 
       <h2>Como revogar o consentimento</h2>
@@ -107,9 +107,10 @@ import { LegalShellComponent } from '../legal-shell/legal-shell.component';
       <h2>O que guardamos no seu navegador</h2>
       <p>
         Além dos cookies do Google, o site grava no armazenamento local do navegador apenas a
-        <strong>sua decisão sobre os cookies</strong> (para não perguntar de novo a cada visita) e a
-        preferência de tema claro/escuro. Se você for administrador do site e fizer login, um token de
-        autenticação também fica guardado ali, só para manter a sessão.
+        <strong>sua decisão sobre os cookies</strong> (para não perguntar de novo a cada visita), a
+        preferência de tema claro/escuro e um marcador que indica que uma solicitação de newsletter já foi
+        enviada neste navegador. Esse marcador não contém o seu nome nem o seu e-mail. Se você for administrador
+        do site e fizer login, um token de autenticação também fica guardado ali, só para manter a sessão.
       </p>
 
       <h2>Transferência internacional</h2>
