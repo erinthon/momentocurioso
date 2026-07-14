@@ -94,6 +94,25 @@ class NewsletterIssueServiceImplTest {
     }
 
     @Test
+    void sendSkipsUnsubscribedSubscribers() {
+        NewsletterIssue issue = issue();
+        NewsletterSubscriber active = subscriber(1L);
+        NewsletterSubscriber unsubscribed = subscriber(2L);
+        unsubscribed.setStatus(NewsletterSubscriberStatus.UNSUBSCRIBED);
+        when(issueRepository.findById(3L)).thenReturn(Optional.of(issue));
+        when(emailService.isEnabled()).thenReturn(true);
+        when(subscriberRepository.findAllByStatusOrderByIdAsc(NewsletterSubscriberStatus.ACTIVE))
+                .thenReturn(List.of(active, unsubscribed));
+
+        var result = service.send(3L);
+
+        assertThat(result.sentCount()).isEqualTo(1);
+        assertThat(result.failedCount()).isZero();
+        verify(emailService).sendIssue(issue, active);
+        verify(emailService, never()).sendIssue(issue, unsubscribed);
+    }
+
+    @Test
     void sendRejectsAlreadySentIssue() {
         NewsletterIssue issue = issue();
         issue.setStatus(NewsletterIssueStatus.SENT);

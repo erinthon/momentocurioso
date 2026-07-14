@@ -85,6 +85,9 @@ public class NewsletterIssueServiceImpl implements NewsletterIssueService {
         int sent = 0;
         int failed = 0;
         for (NewsletterSubscriber subscriber : subscribers) {
+            if (subscriber.getStatus() != NewsletterSubscriberStatus.ACTIVE) {
+                continue;
+            }
             try {
                 emailService.sendIssue(issue, subscriber);
                 sent++;

@@ -10,6 +10,7 @@ interface PageResponse<T> { content: T[]; totalElements: number; }
 interface NewsletterSubscriber {
   id: number; email: string; name?: string;
   status: 'PENDING' | 'ACTIVE' | 'UNSUBSCRIBED'; subscribedAt: string;
+  confirmedAt?: string; unsubscribedAt?: string;
 }
 interface NewsletterIssue {
   id: number; subject: string; preheader: string; mainPostId: number; mainPostTitle: string;
@@ -75,10 +76,16 @@ interface NewsletterIssueForm {
     .preview-inbox span { margin-top: 4px; color: var(--text-3); font-size: 12px; }
     .preview-frame { display: block; width: 100%; height: min(70vh, 720px); border: 0; background: #f4f7f5; }
     .table { border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
-    .row { display: grid; grid-template-columns: 1.4fr 2fr 120px 130px 80px; align-items: center; min-height: 48px; padding: 0 12px; border-bottom: 1px solid var(--border); }
+    .row { display: grid; grid-template-columns: 1.2fr 1.8fr 180px 130px 120px 80px; align-items: center; min-height: 48px; padding: 0 12px; border-bottom: 1px solid var(--border); }
     .row:last-child { border-bottom: 0; }
     .head { background: var(--bg-2); min-height: 38px; font-family: var(--fu); font-size: 10px; font-weight: 700; color: var(--text-3); text-transform: uppercase; }
     .cell { padding: 8px; min-width: 0; overflow: hidden; text-overflow: ellipsis; font-family: var(--fu); font-size: 12px; color: var(--text-2); }
+    .status-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border-radius: 20px; font-weight: 700; white-space: nowrap; }
+    .status-chip::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+    .status-confirmed { background: var(--green-pale); color: var(--green); }
+    .status-pending { background: color-mix(in srgb, var(--amber) 15%, transparent); color: var(--amber); }
+    .status-unsubscribed { background: color-mix(in srgb, var(--coral) 12%, transparent); color: var(--coral); }
+    .awaiting { color: var(--text-4); font-style: italic; }
     .empty { padding: 44px; text-align: center; color: var(--text-3); font-family: var(--fu); font-size: 13px; }
     @media (max-width: 760px) {
       .page { padding: 1.5rem 1rem 4rem; } .grid { grid-template-columns: 1fr; } .full { grid-column: auto; }
@@ -134,8 +141,15 @@ interface NewsletterIssueForm {
       <section class="panel" *ngIf="tab === 'subscribers'">
         <div class="panel-header"><h2>Lista de inscritos</h2><span class="meta">{{ subscriberTotal }} registros</span></div>
         <div class="table">
-          <div class="row head"><span class="cell">Nome</span><span class="cell">E-mail</span><span class="cell">Status</span><span class="cell">Inscrição</span><span class="cell"></span></div>
-          <div class="row" *ngFor="let subscriber of subscribers"><span class="cell">{{ subscriber.name || '—' }}</span><span class="cell">{{ subscriber.email }}</span><span class="cell">{{ statusLabel(subscriber.status) }}</span><span class="cell">{{ formatDate(subscriber.subscribedAt) }}</span><span class="cell"><button class="btn btn-danger" (click)="removeSubscriber(subscriber)">Excluir</button></span></div>
+          <div class="row head"><span class="cell">Nome</span><span class="cell">E-mail</span><span class="cell">Confirmação</span><span class="cell">Confirmado em</span><span class="cell">Inscrição</span><span class="cell"></span></div>
+          <div class="row" *ngFor="let subscriber of subscribers">
+            <span class="cell">{{ subscriber.name || '—' }}</span>
+            <span class="cell" [title]="subscriber.email">{{ subscriber.email }}</span>
+            <span class="cell"><span class="status-chip" [ngClass]="statusClass(subscriber.status)">{{ statusLabel(subscriber.status) }}</span></span>
+            <span class="cell" [class.awaiting]="!subscriber.confirmedAt">{{ subscriber.confirmedAt ? formatDate(subscriber.confirmedAt) : 'Ainda não confirmou' }}</span>
+            <span class="cell">{{ formatDate(subscriber.subscribedAt) }}</span>
+            <span class="cell"><button class="btn btn-danger" (click)="removeSubscriber(subscriber)">Excluir</button></span>
+          </div>
           <div class="empty" *ngIf="subscribers.length === 0">Nenhum inscrito encontrado.</div>
         </div>
       </section>
@@ -209,7 +223,8 @@ export class AdminNewsletterComponent implements OnInit {
   }
   cancel(): void { this.showForm = false; this.editingId = null; }
   formatDate(value: string): string { return new Date(value).toLocaleDateString('pt-BR'); }
-  statusLabel(status: NewsletterSubscriber['status']): string { return { ACTIVE: 'Ativo', PENDING: 'Pendente', UNSUBSCRIBED: 'Cancelado' }[status]; }
+  statusLabel(status: NewsletterSubscriber['status']): string { return { ACTIVE: 'Confirmado', PENDING: 'Aguardando confirmação', UNSUBSCRIBED: 'Cancelado' }[status]; }
+  statusClass(status: NewsletterSubscriber['status']): string { return { ACTIVE: 'status-confirmed', PENDING: 'status-pending', UNSUBSCRIBED: 'status-unsubscribed' }[status]; }
   private refreshCount(): void { this.api.get<{ active: number }>('/admin/newsletter/subscribers/count').subscribe(response => this.activeCount = response.active); }
   private clearMessages(): void { this.error = ''; this.success = ''; }
   private emptyForm(): NewsletterIssueForm { return { subject: '', preheader: '', mainPostId: null, quickFactOne: '', quickFactTwo: '', quickFactThree: '', videoTitle: '', videoUrl: '', recommendationTitle: '', recommendationUrl: '', communityQuestion: '' }; }
