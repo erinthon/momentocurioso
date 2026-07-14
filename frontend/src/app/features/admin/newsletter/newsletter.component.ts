@@ -105,9 +105,9 @@ interface NewsletterIssueForm {
             <label>Curiosidade rápida 3<textarea name="fact3" maxlength="500" [(ngModel)]="form.quickFactThree" required></textarea></label>
             <label>Pergunta para a comunidade<textarea name="question" maxlength="500" [(ngModel)]="form.communityQuestion" required></textarea></label>
             <label>Título do vídeo<input name="videoTitle" maxlength="255" [(ngModel)]="form.videoTitle" /></label>
-            <label>URL HTTPS do vídeo<input name="videoUrl" type="url" [(ngModel)]="form.videoUrl" /></label>
+            <label>URL HTTPS do vídeo<input name="videoUrl" type="url" maxlength="2048" [(ngModel)]="form.videoUrl" /></label>
             <label>Livro ou produto contextual<input name="recommendationTitle" maxlength="255" [(ngModel)]="form.recommendationTitle" /></label>
-            <label>URL HTTPS da recomendação<input name="recommendationUrl" type="url" [(ngModel)]="form.recommendationUrl" /></label>
+            <label>URL HTTPS da recomendação<input name="recommendationUrl" type="url" maxlength="2048" [(ngModel)]="form.recommendationUrl" /></label>
           </div>
           <div class="form-actions"><button type="button" class="btn" (click)="cancel()">Cancelar</button><button class="btn btn-primary" type="submit" [disabled]="saving || !form.mainPostId">{{ saving ? 'Salvando...' : 'Salvar rascunho' }}</button></div>
         </form>

@@ -42,6 +42,23 @@ class NewsletterIssueServiceImplTest {
     }
 
     @Test
+    void createPreservesLongUrls() {
+        String longUrl = "https://example.com/" + "a".repeat(1000);
+        SaveNewsletterIssueRequest request = new SaveNewsletterIssueRequest(
+                "Assunto", "Prévia", 10L, "Fato 1", "Fato 2", "Fato 3",
+                "Vídeo", longUrl, "Livro", longUrl, "Qual é a sua resposta?");
+        when(postRepository.findById(10L)).thenReturn(Optional.of(post(PostStatus.PUBLISHED)));
+        when(issueRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        service.create(request);
+
+        var issueCaptor = org.mockito.ArgumentCaptor.forClass(NewsletterIssue.class);
+        verify(issueRepository).save(issueCaptor.capture());
+        assertThat(issueCaptor.getValue().getVideoUrl()).isEqualTo(longUrl);
+        assertThat(issueCaptor.getValue().getRecommendationUrl()).isEqualTo(longUrl);
+    }
+
+    @Test
     void sendContinuesAfterIndividualFailure() {
         NewsletterIssue issue = issue();
         NewsletterSubscriber first = subscriber(1L);

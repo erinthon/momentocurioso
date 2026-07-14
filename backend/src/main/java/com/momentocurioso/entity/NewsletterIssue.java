@@ -37,10 +37,12 @@ public class NewsletterIssue {
 
     private String videoTitle;
 
+    @Column(length = 2048)
     private String videoUrl;
 
     private String recommendationTitle;
 
+    @Column(length = 2048)
     private String recommendationUrl;
 
     @Column(nullable = false, length = 500)
