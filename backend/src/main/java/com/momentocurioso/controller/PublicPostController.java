@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
+import java.util.Optional;
 
 @RestController
 public class PublicPostController {
@@ -40,12 +41,21 @@ public class PublicPostController {
     @GetMapping("/posts/{slug}/thumbnail")
     public ResponseEntity<byte[]> getThumbnail(@PathVariable String slug) {
         PostResponse post = postService.getPublishedBySlug(slug);
-        return thumbnailService.decode(post.thumbnail())
-                .map(thumbnail -> ResponseEntity.ok()
-                        .contentType(thumbnail.mediaType())
-                        .contentLength(thumbnail.content().length)
-                        .cacheControl(CacheControl.maxAge(Duration.ofDays(7)).cachePublic())
-                        .body(thumbnail.content()))
+        return imageResponse(thumbnailService.decode(post.thumbnail()));
+    }
+
+    @GetMapping("/posts/{slug}/social-thumbnail")
+    public ResponseEntity<byte[]> getSocialThumbnail(@PathVariable String slug) {
+        PostResponse post = postService.getPublishedBySlug(slug);
+        return imageResponse(thumbnailService.createSocial(slug, post.thumbnail()));
+    }
+
+    private ResponseEntity<byte[]> imageResponse(Optional<PostThumbnailService.PostThumbnail> thumbnail) {
+        return thumbnail.map(image -> ResponseEntity.ok()
+                .contentType(image.mediaType())
+                .contentLength(image.content().length)
+                .cacheControl(CacheControl.maxAge(Duration.ofDays(7)).cachePublic())
+                .body(image.content()))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

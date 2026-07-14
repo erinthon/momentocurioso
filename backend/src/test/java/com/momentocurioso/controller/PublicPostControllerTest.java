@@ -158,4 +158,22 @@ class PublicPostControllerTest {
         mockMvc.perform(get("/posts/titulo/thumbnail"))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    void getSocialThumbnail_returnsXCompatibleJpeg() throws Exception {
+        byte[] image = new byte[]{4, 5, 6};
+        PostResponse post = new PostResponse(
+                1L, "Título", "titulo", "Resumo", "<p>Conteúdo</p>",
+                "data:image/jpeg;base64,AQID", "tecnologia", PostStatus.PUBLISHED,
+                LocalDateTime.now(), LocalDateTime.now());
+        when(postService.getPublishedBySlug("titulo")).thenReturn(post);
+        when(thumbnailService.createSocial("titulo", post.thumbnail())).thenReturn(Optional.of(
+                new PostThumbnailService.PostThumbnail(image, MediaType.IMAGE_JPEG)));
+
+        mockMvc.perform(get("/posts/titulo/social-thumbnail"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.IMAGE_JPEG))
+                .andExpect(content().bytes(image))
+                .andExpect(header().string("Cache-Control", "max-age=604800, public"));
+    }
 }
