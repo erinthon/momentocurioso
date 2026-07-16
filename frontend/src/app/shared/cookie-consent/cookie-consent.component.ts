@@ -81,8 +81,8 @@ const PUBLIC_PREFIXES = ['/blog', '/privacidade', '/termos'];
     @if (showBanner()) {
       <div class="cookie-banner" role="dialog" aria-live="polite" aria-label="Consentimento de cookies">
         <p class="cookie-text">
-          🍪 Usamos cookies para medir a audiência (Google Analytics) e exibir anúncios
-          (Google AdSense). O site funciona normalmente se você recusar. Detalhes na
+          🍪 Usamos cookies para medir a audiência (Google Analytics). O site funciona
+          normalmente se você recusar. Detalhes na
           <a class="cookie-link" routerLink="/privacidade">Política de Privacidade</a>.
         </p>
         <div class="cookie-actions">
