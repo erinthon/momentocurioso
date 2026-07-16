@@ -122,6 +122,20 @@ describe('PostListComponent — BUG-011: forkJoin resiliente', () => {
     expect(component.totalElements).toBe(2);
   }));
 
+  it('should place newsletter signup immediately before the footer', fakeAsync(() => {
+    fixture.detectChanges();
+    httpMock.expectOne((req) => req.url.includes('/topics')).flush(MOCK_TOPICS);
+    httpMock.expectOne((req) => req.url.includes('/posts')).flush(MOCK_POSTS_PAGE);
+
+    tick(100);
+    fixture.detectChanges();
+
+    const pageEndElements = fixture.nativeElement
+      .querySelectorAll('app-newsletter-signup, app-blog-footer') as NodeListOf<Element>;
+    const pageEnd = Array.from(pageEndElements, element => element.tagName.toLowerCase());
+    expect(pageEnd).toEqual(['app-newsletter-signup', 'app-blog-footer']);
+  }));
+
   it('should set loading false after any combination of success or failure', fakeAsync(() => {
     fixture.detectChanges();
 

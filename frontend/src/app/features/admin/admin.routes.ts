@@ -52,6 +52,11 @@ export const ADMIN_ROUTES: Routes = [
       import('./social-links/social-links.component').then(m => m.AdminSocialLinksComponent)
   },
   {
+    path: 'newsletter',
+    loadComponent: () =>
+      import('./newsletter/newsletter.component').then(m => m.AdminNewsletterComponent)
+  },
+  {
     path: 'users',
     loadComponent: () =>
       import('./users/users.component').then(m => m.AdminUsersComponent)

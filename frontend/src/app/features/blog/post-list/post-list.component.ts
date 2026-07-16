@@ -16,6 +16,7 @@ import { ApiService } from '../../../core/services/api.service';
 import { BlogNavbarComponent } from '../../../shared/blog-navbar/blog-navbar.component';
 import { LogoMarkComponent } from '../../../shared/logo-mark/logo-mark.component';
 import { BlogFooterComponent } from '../../../shared/blog-footer/blog-footer.component';
+import { NewsletterSignupComponent } from '../../../shared/newsletter-signup/newsletter-signup.component';
 
 interface PostSummary {
   id: number;
@@ -37,7 +38,7 @@ interface Topic {
 @Component({
   selector: 'app-post-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, BlogNavbarComponent, InfiniteScrollDirective, LogoMarkComponent, BlogFooterComponent],
+  imports: [CommonModule, RouterLink, BlogNavbarComponent, InfiniteScrollDirective, LogoMarkComponent, BlogFooterComponent, NewsletterSignupComponent],
   styles: [`
     /* ── Hero ── */
     .hero {
@@ -496,6 +497,8 @@ interface Topic {
            class="scroll-sentinel">
       </div>
     </main>
+
+    <app-newsletter-signup title="Receba uma curiosidade toda semana" />
 
     <app-blog-footer />
   `

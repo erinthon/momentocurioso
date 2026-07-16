@@ -28,13 +28,14 @@ public class RateLimitFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-        if (!request.getServletPath().startsWith("/auth/")) {
+        if (!isRateLimited(request)) {
             chain.doFilter(request, response);
             return;
         }
 
         String ip = resolveClientIp(request);
-        Bucket bucket = buckets.computeIfAbsent(ip, k -> createBucket());
+        String bucketKey = request.getServletPath().startsWith("/auth/") ? "auth:" + ip : "newsletter:" + ip;
+        Bucket bucket = buckets.computeIfAbsent(bucketKey, k -> createBucket());
 
         if (bucket.tryConsume(1)) {
             chain.doFilter(request, response);
@@ -44,6 +45,12 @@ public class RateLimitFilter extends OncePerRequestFilter {
             response.getWriter().write(
                     "{\"status\":429,\"message\":\"Too many requests. Please try again in a minute.\"}");
         }
+    }
+
+    private boolean isRateLimited(HttpServletRequest request) {
+        return request.getServletPath().startsWith("/auth/")
+                || ("POST".equals(request.getMethod())
+                && "/newsletter/subscriptions".equals(request.getServletPath()));
     }
 
     private Bucket createBucket() {

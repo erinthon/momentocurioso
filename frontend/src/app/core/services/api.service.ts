@@ -8,7 +8,7 @@ import { environment } from '../../../environments/environment';
 export class ApiService {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly baseUrl = isPlatformServer(this.platformId)
-    ? `${environment.siteUrl}/api`
+    ? environment.serverApiUrl
     : environment.apiUrl;
 
   constructor(private http: HttpClient) {}
@@ -28,6 +28,10 @@ export class ApiService {
       params: httpParams,
       transferCache: options?.transferCache
     });
+  }
+
+  getText(path: string): Observable<string> {
+    return this.http.get(`${this.baseUrl}${path}`, { responseType: 'text' });
   }
 
   post<T>(path: string, body: unknown): Observable<T> {

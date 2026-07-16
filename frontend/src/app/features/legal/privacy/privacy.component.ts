@@ -23,11 +23,16 @@ import { LegalShellComponent } from '../legal-shell/legal-shell.component';
         são coletados e quais são os seus direitos.
       </p>
 
-      <h2>O que não pedimos</h2>
+      <h2>Dados fornecidos por você</h2>
       <p>
-        <strong>Você não precisa criar conta para ler o site.</strong> Não há cadastro público, comentários
-        nem newsletter. Não pedimos nem coletamos diretamente nome, e-mail, telefone ou qualquer outro dado
-        que identifique você.
+        <strong>Você não precisa criar conta para ler o site.</strong> Ao se inscrever na newsletter, coletamos
+        o seu e-mail e, se você quiser informar, o seu nome. Esses dados são usados exclusivamente para enviar
+        a Dose Semanal de Curiosidade e administrar a sua inscrição.
+      </p>
+      <p>
+        A inscrição exige consentimento específico e pode incluir uma confirmação por e-mail. Cada edição traz
+        um link de cancelamento. Ao cancelar, interrompemos os envios; você também pode pedir a exclusão definitiva
+        pelo endereço de contato informado nesta política.
       </p>
 
       <h2>Cookies e Google Analytics</h2>
@@ -59,8 +64,12 @@ import { LegalShellComponent } from '../legal-shell/legal-shell.component';
         leitores procuram.
       </p>
       <p>
-        <strong>Não vendemos nem alugamos os seus dados.</strong> O compartilhamento se restringe ao Google,
-        nas funções descritas acima.
+        Para a newsletter, o consentimento é solicitado separadamente no formulário de inscrição e pode ser
+        revogado a qualquer momento pelo link existente nos próprios e-mails.
+      </p>
+      <p>
+        <strong>Não vendemos nem alugamos os seus dados.</strong> O compartilhamento se restringe ao Google e
+        ao provedor de entrega da newsletter, apenas nas funções descritas nesta política.
       </p>
 
       <h2>Como revogar o consentimento</h2>
@@ -86,9 +95,10 @@ import { LegalShellComponent } from '../legal-shell/legal-shell.component';
       <h2>O que guardamos no seu navegador</h2>
       <p>
         Além dos cookies do Google, o site grava no armazenamento local do navegador apenas a
-        <strong>sua decisão sobre os cookies</strong> (para não perguntar de novo a cada visita) e a
-        preferência de tema claro/escuro. Se você for administrador do site e fizer login, um token de
-        autenticação também fica guardado ali, só para manter a sessão.
+        <strong>sua decisão sobre os cookies</strong> (para não perguntar de novo a cada visita), a
+        preferência de tema claro/escuro e um marcador que indica que uma solicitação de newsletter já foi
+        enviada neste navegador. Esse marcador não contém o seu nome nem o seu e-mail. Se você for administrador
+        do site e fizer login, um token de autenticação também fica guardado ali, só para manter a sessão.
       </p>
 
       <h2>Transferência internacional</h2>
@@ -96,6 +106,11 @@ import { LegalShellComponent } from '../legal-shell/legal-shell.component';
         Os dados coletados pelo Google podem ser processados em servidores fora do Brasil, conforme
         a <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">
           política de privacidade do Google</a> e o art. 33 da LGPD.
+      </p>
+      <p>
+        O endereço de e-mail também é processado pelo provedor de entrega contratado para realizar o envio da
+        newsletter. Esse operador recebe somente os dados necessários para a entrega e deve protegê-los conforme
+        a legislação aplicável.
       </p>
 
       <h2>Seus direitos</h2>
@@ -137,7 +152,7 @@ export class PrivacyComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.seo.setPage({
       title: 'Política de Privacidade',
-      description: 'Como o Momento Curioso trata os seus dados: cookies, Google Analytics e os seus direitos pela LGPD.',
+      description: 'Como o Momento Curioso trata os seus dados: newsletter, cookies, Google Analytics e os seus direitos pela LGPD.',
       path: '/privacidade'
     });
   }

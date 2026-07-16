@@ -22,6 +22,14 @@ import { LegalShellComponent } from '../legal-shell/legal-shell.component';
         como isso afeta os seus dados estão na <a routerLink="/privacidade">Política de Privacidade</a>.
       </p>
 
+      <h2>Newsletter</h2>
+      <p>
+        A inscrição na newsletter é opcional e exige um endereço de e-mail válido e consentimento específico.
+        Você pode cancelar os envios a qualquer momento pelo link presente nos próprios e-mails. O site pode
+        guardar no seu navegador um marcador sem dados pessoais para avisar que uma solicitação já foi enviada.
+        Os detalhes estão na <a routerLink="/privacidade">Política de Privacidade</a>.
+      </p>
+
       <h2>Conteúdo gerado por inteligência artificial</h2>
       <p>
         Os textos e as imagens são produzidos <strong>com apoio de inteligência artificial</strong> e

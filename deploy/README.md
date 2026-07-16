@@ -42,6 +42,27 @@ grava em `/etc/momentocurioso.env` (root, modo 600) no servidor; execuções
 seguintes preservam esse arquivo. A chave SSH (`momentocurioso-key.pem`) fica
 fora do repositório.
 
+### Newsletter por e-mail
+
+O envio fica desabilitado até que um provedor SMTP seja configurado em
+`/etc/momentocurioso.env`. A captura local continua funcional sem SMTP, mas em
+produção a confirmação por e-mail e o disparo das edições exigem:
+
+```dotenv
+NEWSLETTER_MAIL_ENABLED=true
+NEWSLETTER_FROM_EMAIL=contato@momentocurioso.ia.br
+NEWSLETTER_FROM_NAME=Momento Curioso
+NEWSLETTER_TOKEN_SECRET=<segredo longo e estável>
+MAIL_HOST=<host SMTP>
+MAIL_PORT=587
+MAIL_USERNAME=<usuário SMTP>
+MAIL_PASSWORD=<senha SMTP>
+```
+
+O domínio remetente deve ter SPF, DKIM e DMARC configurados no provedor de DNS.
+O `NEWSLETTER_TOKEN_SECRET` não deve ser rotacionado sem necessidade, pois ele
+assina os links de cancelamento já enviados.
+
 ## Re-deploy
 
 ```bash
