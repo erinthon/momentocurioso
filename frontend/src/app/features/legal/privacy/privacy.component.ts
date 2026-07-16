@@ -16,7 +16,7 @@ import { LegalShellComponent } from '../legal-shell/legal-shell.component';
     }
   `],
   template: `
-    <app-legal-shell title="Política de Privacidade" updatedAt="14 de julho de 2026">
+    <app-legal-shell title="Política de Privacidade" updatedAt="16 de julho de 2026">
       <p>
         O <strong>Momento Curioso</strong> (momentocurioso.ia.br) respeita a sua privacidade.
         Esta política explica, de forma direta, quais dados são coletados quando você visita o site, por que
@@ -35,14 +35,16 @@ import { LegalShellComponent } from '../legal-shell/legal-shell.component';
         pelo endereço de contato informado nesta política.
       </p>
 
-      <h2>Cookies e serviços do Google</h2>
+      <h2>Cookies e Google Analytics</h2>
       <p>
-        O que coletamos vem de dois serviços do Google, que só são carregados <strong>depois que você aceita
-        os cookies</strong> no banner exibido na sua primeira visita. Se você recusar, ou enquanto não
-        decidir, <strong>nenhum script de terceiros é carregado</strong> e o site funciona normalmente.
+        O que coletamos vem de um único serviço de terceiro, o <strong>Google Analytics</strong>, que só é
+        carregado <strong>depois que você aceita os cookies</strong> no banner exibido na sua primeira visita.
+        Se você recusar, ou enquanto não decidir, <strong>nenhum script de terceiros é carregado</strong> e o
+        site funciona normalmente. <strong>O site não exibe publicidade</strong> e não usa cookies para fins
+        publicitários.
       </p>
 
-      <p><strong>Google Analytics</strong> — mede a audiência de forma agregada. Coleta automaticamente:</p>
+      <p>O Google Analytics mede a audiência de forma agregada. Coleta automaticamente:</p>
       <ul>
         <li>endereço IP (tratado pelo Google);</li>
         <li>tipo de dispositivo, navegador e sistema operacional;</li>
@@ -55,25 +57,11 @@ import { LegalShellComponent } from '../legal-shell/legal-shell.component';
         fora dessa medição.
       </p>
 
-      <p>
-        <strong>Google AdSense</strong> — exibe os anúncios que custeiam o site. O Google, como fornecedor
-        terceiro, usa cookies e identificadores para veicular anúncios com base nas suas visitas a este e a
-        outros sites, inclusive <strong>anúncios personalizados</strong>. O tratamento desses dados é feito
-        pelo Google e por seus parceiros, conforme
-        <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener">
-          as políticas de publicidade do Google</a>.
-      </p>
-      <p>
-        Você pode desativar a personalização dos anúncios, sem sair do site, nas
-        <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener">
-          Configurações de anúncios do Google</a>.
-      </p>
-
       <h2>Base legal</h2>
       <p>
         O fundamento é o <strong>seu consentimento</strong> (art. 7º, I, da LGPD), coletado pelo banner de
-        cookies antes de qualquer script de medição ou publicidade ser carregado. A finalidade se limita a
-        entender o que os leitores procuram e a sustentar o site com publicidade.
+        cookies antes de qualquer script de medição ser carregado. A finalidade se limita a entender o que os
+        leitores procuram.
       </p>
       <p>
         Para a newsletter, o consentimento é solicitado separadamente no formulário de inscrição e pode ser
@@ -164,7 +152,7 @@ export class PrivacyComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.seo.setPage({
       title: 'Política de Privacidade',
-      description: 'Como o Momento Curioso trata os seus dados: newsletter, cookies, Google Analytics, AdSense e os seus direitos pela LGPD.',
+      description: 'Como o Momento Curioso trata os seus dados: newsletter, cookies, Google Analytics e os seus direitos pela LGPD.',
       path: '/privacidade'
     });
   }

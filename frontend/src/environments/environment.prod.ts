@@ -3,6 +3,5 @@ export const environment = {
   apiUrl: '/api',
   serverApiUrl: 'https://momentocurioso.ia.br/api',
   siteUrl: 'https://momentocurioso.ia.br',
-  googleAnalyticsId: 'G-6RT70ZMDMH',
-  adsenseClientId: 'ca-pub-2804795678255361'
+  googleAnalyticsId: 'G-6RT70ZMDMH'
 };
